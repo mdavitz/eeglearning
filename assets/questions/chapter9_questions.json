@@ -1,0 +1,41 @@
+[
+  {
+    "id": "9Q1",
+    "figure": "9q1.png",
+    "questionText": "This EEG is from a 7-year-old boy with episodes of inattention at home and at school (Fig. 9Q1). The most appropriate sentence for the clinical correlation of the report is:",
+    "options": [
+      { "value": "A", "text": "This EEG shows 3 Hz generalized spike and wave discharges." },
+      { "value": "B", "text": "Given the patient’s age group and presenting complaint, these findings are most consistent with the diagnosis of childhood absence epilepsy." },
+      { "value": "C", "text": "Given the patient’s age group and presenting complaint, these findings are most consistent with the diagnosis of childhood absence epilepsy. Carbamazepine is a first-line medication." },
+      { "value": "D", "text": "This is a normal EEG with very vigorous eye blinking. Clinical correlation is advised." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "The clinical picture (7 years old, brief episodes of staring) plus 3 Hz generalized spike-and-wave discharges are classic for childhood absence epilepsy, so the report should contextualize the EEG by stating that diagnosis rather than simply restating the waveform or recommending medication."
+  },
+  {
+    "id": "9Q2",
+    "figure": "9q2.png",
+    "questionText": "A 36-year-old woman is in the ER with left upper-extremity weakness (Fig. 9Q2). In the Impression and Clinical Correlation section you write:",
+    "options": [
+      { "value": "A", "text": "This normal EEG neither refutes nor supports the diagnosis of epilepsy." },
+      { "value": "B", "text": "This EEG shows a subtle asymmetry of faster frequencies with a relative attenuation of these faster frequencies on the right anteriorly. Possible reasons include a right anterior stroke (acute or chronic), a right subdural or epidural collection, or a skull defect on the left." },
+      { "value": "C", "text": "This EEG shows a subtle asymmetry of faster frequencies with a relative attenuation of those faster frequencies on the right anteriorly. This asymmetry is most likely secondary to poor electrode placement, with the right-sided electrodes too far apart." },
+      { "value": "D", "text": "This EEG shows occasional bilateral synchronous posterior epileptiform potentials, which represent a possible seizure focus." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "The record demonstrates N2 sleep with subtle right-hemispheric attenuation of faster frequencies (spindles and POSTS), which is most appropriately attributed to a structural lesion (e.g., right anterior stroke) rather than technical artifact or epileptiform discharges."
+  },
+  {
+    "id": "9Q3",
+    "figure": "9q3.png",
+    "questionText": "In your EEG report template you have a section titled “Interictal epileptiform discharges, rhythmic or periodic patterns.” What would you record for this EEG (Fig. 9Q3)?",
+    "options": [
+      { "value": "A", "text": "Continuous left-hemisphere lateralized rhythmic delta activity (LRDA)." },
+      { "value": "B", "text": "Continuous 1–1.5 Hz left-lateralized periodic discharges (LPDs) which are most prominent posteriorly." },
+      { "value": "C", "text": "None present. There is abundant pulse artifact best seen on the left." },
+      { "value": "D", "text": "An ongoing left posterior seizure." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "The EEG shows continuous left-posterior periodic discharges at roughly 1–1.5 Hz (LPDs), not rhythmic delta activity, artifact, or an ictal pattern."
+  }
+]

@@ -1,0 +1,61 @@
+/*-----------------------------------------------
+  TABS COMPONENT STYLES
+-----------------------------------------------*/
+
+/* Tab Container */
+.tab-container {
+  margin-bottom: 1.5rem;
+}
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.tab-nav-item {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.tab-nav-item:hover {
+  color: var(--accent-color);
+}
+
+.tab-nav-item.active {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile-friendly tabs */
+@media (max-width: 768px) {
+  .tab-nav {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .tab-nav-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+} 

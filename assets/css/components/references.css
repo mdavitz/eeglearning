@@ -1,0 +1,79 @@
+/*-----------------------------------------------
+  REFERENCE COMPONENTS STYLES
+-----------------------------------------------*/
+
+/* Reference Cards Container */
+.reference-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Reference Card Link */
+.reference-card-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(var(--accent-rgb, 0, 102, 204), 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--accent-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 250px;
+}
+
+.reference-card-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  background-color: rgba(var(--accent-rgb, 0, 102, 204), 0.15);
+}
+
+.reference-card-icon {
+  margin-right: 12px;
+  font-size: 1.4em;
+  color: #e74c3c;
+}
+
+.reference-card-text strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.reference-card-subtext {
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.reference-download-icon {
+  margin-left: auto;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* Dark mode overrides */
+body.dark .reference-card-link {
+  background-color: rgba(var(--accent-rgb, 41, 151, 255), 0.15);
+}
+
+body.dark .reference-card-link:hover {
+  background-color: rgba(var(--accent-rgb, 41, 151, 255), 0.25);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .reference-card-link {
+    flex: 1 1 100%;
+    padding: 14px 16px;
+  }
+  
+  .reference-card-icon {
+    font-size: 1.2em;
+  }
+  
+  .reference-card-text strong {
+    font-size: 1em;
+  }
+} 

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "8Q1",
+    "figure": "8q1.png",
+    "questionText": "An 88-year-old man has a high grade subarachnoid hemorrhage due to a ruptured right MCA bifurcation aneurysm, which was emergently coiled. On Day 5 he develops subtle left upper extremity drift. You review his quantitative EEG, specifically the alpha/delta ratios (Fig. 8Q1).",
+    "options": [
+      { "value": "A", "text": "Alpha/delta ratios are higher in the right hemisphere because of decreased CBF and delayed cerebral ischemia on the right." },
+      { "value": "B", "text": "Alpha/delta ratios are higher in the right hemisphere because of ongoing seizure in the right hemisphere." },
+      { "value": "C", "text": "Alpha/delta ratios are lower in the right hemisphere because of decreased CBF and delayed cerebral ischemia on the right." },
+      { "value": "D", "text": "Alpha/delta ratios are higher in the left hemisphere because of ongoing seizure in the left hemisphere." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "Delayed cerebral ischemia causes a drop in alpha and a rise in delta activity, so the alpha/delta ratio falls in the ischemic (right) hemisphere."
+  },
+  {
+    "id": "8Q2",
+    "figure": "8q2.png",
+    "questionText": "A 47-year-old woman with remote right frontal stroke is comatose off sedation. A 45-minute epoch of her quantitative EEG is shown (Fig. 8Q2) with a green bracket, arrow, and box. These markings most likely represent:",
+    "options": [
+      { "value": "A", "text": "Bilateral non-convulsive status epilepticus." },
+      { "value": "B", "text": "Burst suppression." },
+      { "value": "C", "text": "Ventilator artifact." },
+      { "value": "D", "text": "Cardiac arrest artifact." }
+    ],
+    "correctAnswerLetter": "A",
+    "explanation": "The bracket marks frequent bilateral high-amplitude seizures (NCSE), the arrow a midazolam bolus/infusion causing suppression, and the box a breakthrough seizure, indicating the need to increase the infusion."
+  },
+  {
+    "id": "8Q3",
+    "figure": "8q3.png",
+    "questionText": "A 29-year-old man suffers an out-of-hospital cardiac arrest with 15 min to ROSC. Off sedation he remains comatose with only brainstem reflexes. Continuous EEG shows a compressed 20 s sample (timebase 15 mm/s) (Fig. 8Q3).",
+    "options": [
+      { "value": "A", "text": "This pattern predicts a good neurological recovery." },
+      { "value": "B", "text": "This is an isoelectric EEG confirming brain death." },
+      { "value": "C", "text": "This pattern is consistent with burst suppression." },
+      { "value": "D", "text": "This is status epilepticus." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "Alternating low-amplitude bursts and suppression periods (1–2 s bursts, high suppression ratio) define burst suppression, which after cardiac arrest off sedation portends a very poor prognosis."
+  }
+]

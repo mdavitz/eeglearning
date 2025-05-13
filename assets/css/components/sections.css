@@ -1,0 +1,142 @@
+/* assets/css/components/sections.css */
+
+/* Section Styling */
+/* General container for a collapsible section */
+.section {
+  margin-bottom: 1.5rem; /* Spacing below each section */
+  border: 1px solid var(--border-color); /* Optional: Add border */
+  border-radius: 8px; /* Optional: Rounded corners */
+  overflow: hidden; /* Ensures content doesn't spill out */
+  background-color: var(--background-color); /* Use theme background */
+}
+
+/* Header for the collapsible section */
+.section-header {
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 1rem 1.5rem; /* Add padding */
+  cursor: pointer;
+  color: var(--primary-color);
+  background-color: var(--card-bg); /* Slightly different background for header */
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: flex; /* Use flexbox for alignment */
+  justify-content: space-between; /* Space out title and icon */
+  align-items: center; /* Vertically align items */
+  border-bottom: 1px solid var(--border-color); /* Separator line */
+}
+
+.section-header:hover {
+  background-color: var(--info-bg); /* Highlight on hover */
+  color: var(--accent-color);
+}
+
+/* Content area that gets shown/hidden */
+.section-content {
+  padding: 1rem 1.5rem; /* Padding inside the content area */
+  /* display: none; Will be controlled by JS */
+  max-height: 0; /* Start collapsed */
+  overflow: hidden; /* Hide content when collapsed */
+  transition: max-height 0.5s ease-out, padding 0.5s ease-out, display 0s ease 0.5s; /* Added display transition delay */
+  background-color: var(--background-color);
+  display: block; /* Ensure it's block for layout even when collapsed */
+}
+
+/* Styles when the section is expanded */
+.section-header.expanded + .section-content {
+  /* display: block; Replaced by max-height transition */
+  max-height: 2000px; /* Set a large max-height for expansion */
+  padding: 1rem 1.5rem; /* Ensure padding is present when expanded */
+  transition: max-height 0.5s ease-in, padding 0.5s ease-in, display 0s ease 0s;
+}
+
+/* Icon used to indicate expand/collapse state */
+.expand-icon {
+  margin-left: 10px;
+  font-size: 0.8em; /* Slightly larger icon */
+  transition: transform 0.3s ease;
+  color: var(--text-muted); /* Muted color for icon */
+}
+
+/* Rotate icon when section is expanded */
+.section-header.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+
+/* Quick links styling - Copied from seizure-management.css */
+.quick-links {
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+  gap: 12px;
+  margin: 0 auto 2rem auto; /* Increased bottom margin */
+  max-width: 800px; /* Adjust max-width if needed */
+  width: 100%;
+  padding: 0 1rem; /* Add horizontal padding */
+  box-sizing: border-box; /* Include padding in width calculation */
+  justify-content: center; /* Center items if they don't fill the row */
+}
+
+.quick-links a {
+  display: inline-block;
+  padding: 10px 18px;
+  color: var(--accent-color);
+  text-decoration: none;
+  border-radius: 980px; /* Pill shape */
+  background-color: rgba(0, 102, 204, 0.1); /* Explicit color from seizure page */
+  border: none; /* No border */
+  transition: background-color 0.3s, transform 0.3s;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap; /* Prevent wrapping within a link */
+}
+
+.quick-links a:hover {
+  background-color: rgba(0, 102, 204, 0.2); /* Explicit color from seizure page */
+  transform: scale(1.02); /* Slightly smaller hover effect */
+}
+
+.quick-links a.active {
+  background-color: var(--accent-color);
+  color: white; /* White text on active */
+}
+
+/* Dark mode adjustments */
+body.dark .quick-links a {
+  background-color: rgba(41, 151, 255, 0.15); /* Explicit color from seizure page */
+   color: var(--accent-color-dark); /* Added to ensure text color changes */
+}
+
+body.dark .quick-links a:hover {
+  background-color: rgba(41, 151, 255, 0.25); /* Explicit color from seizure page */
+}
+
+body.dark .quick-links a.active {
+  background-color: var(--accent-color-dark); /* Use dark accent color */
+  color: var(--background-color); /* Use background color for text for contrast */
+}
+
+/* Responsive grid adjustment */
+@media (max-width: 768px) {
+  .quick-links {
+     /* Keep grid for better wrapping */
+     gap: 8px;
+  }
+}
+
+/* Fade-in animation (can be kept or moved to base.css if used elsewhere) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Apply fade in to section content if desired */
+/* .section-content { animation: fadeIn 0.5s ease; } */
+
+/* Add some spacing adjustments specific to info-boxes within sections if needed */
+.section-content .info-box {
+  margin-top: 0; /* Remove top margin if section-content already has padding */
+  margin-bottom: 0; /* Remove bottom margin if section-content already has padding */
+  box-shadow: none; /* Remove shadow if section provides container */
+  border: none; /* Remove border if section provides container */
+  padding: 0; /* Remove padding if section-content provides it */
+} 

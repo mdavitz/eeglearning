@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Atlas - EEG Curriculum</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_atlas.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+  
+  <style>
+    /* EEG Atlas Specific Styles - Modern Design */
+    .page-eeg_atlas {
+      display: flex;
+      flex-direction: column;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    
+    #eeg-atlas-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Search and filter section */
+    .atlas-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    /* Search box styling */
+    .search-container {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 15px 20px 15px 45px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      font-size: 1rem;
+      background: var(--info-bg);
+      color: var(--text-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .search-box:before {
+      content: '\f002';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-color);
+      z-index: 1;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 2px 12px rgba(0,102,204,0.15);
+    }
+    
+    /* Category filter buttons */
+    #sidebar-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+    }
+    
+    #sidebar-buttons button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+    }
+    
+    #sidebar-buttons button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    #sidebar-buttons button.active {
+      background-color: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,102,204,0.25);
+    }
+    
+    /* Main atlas content layout */
+    .atlas-content {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+      gap: 2rem;
+    }
+    
+    @media (max-width: 992px) {
+      .atlas-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Atlas list styling */
+    .atlas-sidebar {
+      background: var(--info-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    
+    #atlas-list {
+      list-style: none; 
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    #atlas-list li {
+      margin-bottom: 12px;
+    }
+    
+    #atlas-list .category-header {
+      cursor: pointer;
+      font-weight: 600;
+      padding: 12px 15px;
+      color: var(--text-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.03);
+    }
+    
+    body.dark #atlas-list .category-header {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    #atlas-list .category-header:hover {
+      color: var(--accent-color);
+      background: rgba(0,102,204,0.08);
+    }
+    
+    #atlas-list .category-header::after {
+      content: "\f107";
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      transition: transform 0.3s ease;
+      font-size: 1rem;
+    }
+    
+    #atlas-list .category-header.open::after {
+      transform: rotate(180deg);
+    }
+    
+    #atlas-list .category-items {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 0 10px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    #atlas-list .category-items.open {
+      max-height: 1000px;
+      transition: max-height 0.5s ease-in;
+      margin-top: 8px;
+    }
+    
+    #atlas-list .eeg-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      color: var(--text-color);
+      transition: all 0.2s ease;
+      border-radius: 6px;
+      margin-bottom: 5px;
+    }
+    
+    #atlas-list .eeg-item:hover {
+      color: var(--accent-color);
+      background: rgba(0,102,204,0.05);
+      transform: translateX(4px);
+    }
+    
+    /* Main content styling */
+    .main-content {
+      background: var(--info-bg);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    /* Detail content styling */
+    #detail-content {
+      border-radius: 8px;
+    }
+    
+    #detail-content h2 {
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+    
+    #detail-content h2 i {
+      color: var(--accent-color);
+    }
+    
+    #detail-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto 1.5rem;
+    }
+    
+    #detail-content img:hover {
+      transform: scale(1.02);
+    }
+    
+    #detail-content p {
+      margin-top: 1rem;
+      line-height: 1.7;
+      color: var(--text-color);
+      font-size: 1.05rem;
+    }
+    
+    /* Flashcard styling */
+    #flashcard-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .flashcard {
+      width: 100%;
+      min-height: 300px;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      margin-bottom: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .flashcard:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .flashcard-front, .flashcard-back {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .flashcard-front img, .flashcard-back img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .flashcard-back h3 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    
+    .flashcard-back p {
+      line-height: 1.7;
+      color: var(--text-color);
+      font-size: 1.05rem;
+    }
+    
+    .flashcard-controls {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 1.5rem;
+    }
+    
+    .flashcard-controls button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .flashcard-controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,102,204,0.25);
+    }
+    
+    /* Favorites styling */
+    .favorite-star {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: 10px;
+    }
+    
+    .favorite-star:hover {
+      transform: scale(1.2);
+    }
+    
+    .favorite-animate {
+      transform: scale(1.2);
+      animation: pulse 0.4s ease;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1.2); }
+    }
+    
+    /* Modal styles for the full screen carousel mode */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .carousel-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      width: 100%;
+      background: transparent;
+    }
+    
+    /* Carousel previews */
+    .carousel-preview {
+      flex: 1;
+      max-width: 15%;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+    
+    .carousel-preview:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    
+    .carousel-preview img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Preview caption style */
+    .carousel-preview .preview-caption {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 14px;
+    }
+    
+    /* Carousel center */
+    .carousel-main {
+      flex: 4;
+      max-width: 70%;
+      text-align: center;
+    }
+    
+    .carousel-main img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2100;
+      transition: all 0.2s ease;
+    }
+    
+    .modal-close:hover {
+      color: var(--accent-color);
+      transform: scale(1.1);
+    }
+    
+    /* Carousel navigation arrows */
+    .carousel-prev,
+    .carousel-next {
+      position: absolute;
+      top: 50%;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 10px;
+      transform: translateY(-50%);
+      transition: all 0.2s ease;
+      z-index: 2050;
+      background: rgba(0,0,0,0.3);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .carousel-prev:hover,
+    .carousel-next:hover {
+      color: var(--accent-color);
+      background: rgba(0,0,0,0.5);
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .carousel-prev { left: 20px; }
+    .carousel-next { right: 20px; }
+    
+    /* Caption text under the center image */
+    #carousel-caption {
+      text-align: center;
+      color: #fff;
+      margin-top: 16px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+    
+    /* Autocomplete styling */
+    #autocomplete {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--info-bg);
+      z-index: 1000;
+      list-style: none;
+      padding: 0;
+      margin: 5px 0 0;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      display: none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    #autocomplete li {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    #autocomplete li:last-child {
+      border-bottom: none;
+    }
+    
+    #autocomplete li:hover {
+      background-color: rgba(0,102,204,0.08);
+      color: var(--accent-color);
+    }
+    
+    /* Fullscreen button for images */
+    .fullscreen-hint {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .image-container {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto;
+    }
+    
+    .image-container:hover .fullscreen-hint {
+      opacity: 1;
+    }
+    
+    /* Media queries for responsive design */
+    @media (max-width: 992px) {
+      #eeg-atlas-container {
+        padding: 1.5rem;
+      }
+      
+      .atlas-sidebar {
+        position: relative;
+        top: 0;
+        max-height: none;
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.8rem;
+      }
+      
+      #sidebar-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      #sidebar-buttons button {
+        width: 100%;
+      }
+      
+      .main-content {
+        padding: 1.5rem;
+      }
+      
+      .carousel-preview {
+        display: none;
+      }
+      
+      .carousel-main {
+        max-width: 90%;
+      }
+      
+      .modal-close {
+        top: 10px;
+        right: 15px;
+        font-size: 30px;
+      }
+      
+      .carousel-prev, .carousel-next {
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+      
+      #eeg-atlas-container {
+        padding: 1rem;
+      }
+      
+      .main-content {
+        padding: 1rem;
+      }
+      
+      #detail-content h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-eeg_atlas">
+      <h2 class="page-title">EEG Atlas</h2>
+      <div id="eeg-atlas-container">
+        <!-- Search and filter controls -->
+        <div class="atlas-controls">
+          <!-- Search bar -->
+          <div class="search-container">
+            <div class="search-box">
+              <input type="text" id="searchBar" placeholder="Search EEG patterns..." />
+              <ul id="autocomplete"></ul>
+            </div>
+          </div>
+          
+          <!-- Category filter buttons -->
+          <div id="sidebar-buttons">
+            <button id="all-btn" class="active" onclick="filterCategory('all')">All Patterns</button>
+            <button id="normal-btn" onclick="filterCategory('normal')">Normal Patterns</button>
+            <button id="abnormal-btn" onclick="filterCategory('abnormal')">Abnormal Findings</button>
+            <button id="epileptiform-btn" onclick="filterCategory('epileptiform')">Epileptiform</button>
+            <button id="pediatric-btn" onclick="filterCategory('pediatric')">Pediatric</button>
+            <button id="artifacts-btn" onclick="filterCategory('artifacts')">Artifacts</button>
+            <button id="persyst-btn" onclick="filterCategory('persyst')">Persyst Examples</button>
+          </div>
+        </div>
+        
+        <!-- Main atlas content with sidebar and detail area -->
+        <div class="atlas-content">
+          <!-- Sidebar with categorized EEG patterns -->
+          <div class="atlas-sidebar">
+            <ul id="atlas-list">
+              <!-- Normal Patterns -->
+              <li data-category="normal">
+                <div class="category-header">Normal EEG Patterns</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('posterior-dominant-rhythm')">Posterior Dominant Rhythm (PDR)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('mu-rhythm')">Mu Rhythm</li>
+                  <li class="eeg-item" onclick="showEEGDetail('lambda-waves')">Lambda Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('sleep-patterns')">Sleep Architecture</li>
+                  <li class="eeg-item" onclick="showEEGDetail('vertex')">Vertex Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('k-complexes')">K-Complexes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('sleep-spindles')">Sleep Spindles</li>
+                  <li class="eeg-item" onclick="showEEGDetail('posts')">Positive Occipital Sharp Transients of Sleep (POSTS)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('beta-activity')">Beta Activity</li>
+                </ul>
+              </li>
+              
+              <!-- Background Abnormalities -->
+              <li data-category="abnormal">
+                <div class="category-header">Background Abnormalities</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('focal-slowing')">Focal Slowing</li>
+                  <li class="eeg-item" onclick="showEEGDetail('diffuse-slowing')">Diffuse Slowing</li>
+                  <li class="eeg-item" onclick="showEEGDetail('rhythmic-delta')">Rhythmic Delta Activity</li>
+                  <li class="eeg-item" onclick="showEEGDetail('asymmetries')">Asymmetries</li>
+                  <li class="eeg-item" onclick="showEEGDetail('suppressed')">Suppressed Background</li>
+                  <li class="eeg-item" onclick="showEEGDetail('burst-suppression')">Burst-Suppression Pattern</li>
+                  <li class="eeg-item" onclick="showEEGDetail('discontinuous')">Discontinuous Background</li>
+                  <li class="eeg-item" onclick="showEEGDetail('triphasic-waves')">Triphasic Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('frontal-intermittent')">Generalized Rhythmic Delta Activity (GRDA)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('temporal-intermittent')">Regional Rhythmic Delta Activity (RRDA)</li>
+                </ul>
+              </li>
+
+              <!-- Epileptiform Patterns -->
+              <li data-category="epileptiform">
+                <div class="category-header">Epileptiform Patterns</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('focal-spike')">Spikes and Sharp Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('temporal-spikes')">Temporal Lobe Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('central-spikes')">Central Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('frontal-spikes')">Frontal Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('occipital-spikes')">Occipital Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('generalized-spike-wave')">Generalized Spike-and-Wave</li>
+                  <li class="eeg-item" onclick="showEEGDetail('seizure-pattern')">Seizure Pattern</li>
+                  <li class="eeg-item" onclick="showEEGDetail('hypsarrhythmia')">Hypsarrhythmia</li>
+                  <li class="eeg-item" onclick="showEEGDetail('leds')">Lateralized Epileptiform Discharges</li>
+                  <li class="eeg-item" onclick="showEEGDetail('pleds')">Lateralized Periodic Discharges (LPDs)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('bipeds')">Bilateral Independent Periodic Discharges (BIPDs)</li>
+                </ul>
+              </li>
+              
+              <!-- Pediatric Patterns -->
+              <li data-category="pediatric">
+                <div class="category-header">Pediatric EEG Patterns</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('central-temporal-spikes')">Centrotemporal Spikes (Rolandic Epilepsy)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('neonatal-seizures')">Neonatal Seizures</li>
+                  <li class="eeg-item" onclick="showEEGDetail('trace-alternant')">Trace Alternant</li>
+                  <li class="eeg-item" onclick="showEEGDetail('premature-patterns')">Premature EEG Patterns</li>
+                  <li class="eeg-item" onclick="showEEGDetail('delta-brush')">Delta Brush</li>
+                  <li class="eeg-item" onclick="showEEGDetail('childhood-absence')">Childhood Absence 3Hz Spike-Wave</li>
+                  <li class="eeg-item" onclick="showEEGDetail('jme-pattern')">Juvenile Myoclonic Epilepsy Pattern</li>
+                </ul>
+              </li>
+              
+              <!-- Artifacts -->
+              <li data-category="artifacts">
+                <div class="category-header">Common Artifacts</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('eyeblink')">Eye Blink Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('eyeflutter')">Eye Flutter</li>
+                  <li class="eeg-item" onclick="showEEGDetail('eyemovement')">Eye Movement Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('ecg-artifact')">ECG Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('muscle-artifact')">Muscle Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('movement')">Movement Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('chewing')">Chewing Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('sweat')">Sweat Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('electrode-artifact')">Electrode Artifact</li>
+                  <li class="eeg-item" onclick="showEEGDetail('electrode-pop')">Electrode Pop</li>
+                  <li class="eeg-item" onclick="showEEGDetail('sixty-hz')">60Hz Line Noise</li>
+                  <li class="eeg-item" onclick="showEEGDetail('bedpt')">Bed Physical Therapy Artifact</li>
+                </ul>
+              </li>
+
+              <!-- Added Persyst Section -->
+              <li data-category="persyst">
+                <div class="category-header">Persyst Examples</div>
+                <ul class="category-items">
+                  <!-- Persyst examples will be added here -->
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-beta')">Beta Activity Visualization</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-cape')">CAPE (Continuous Amplitude-Integrated EEG)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-iic')">IIC (Ictal-Interictal Continuum)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-lrda')">LRDA Visualization</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-slow')">Slow Wave Activity</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-status')">Status Epilepticus Detection</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-sup')">Suppression Analysis</li>
+                  <li class="eeg-item" onclick="showEEGDetail('persyst-sz')">Seizure Detection</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Detail content section -->
+          <div class="main-content" id="detail-content">
+            <h2><i class="fa-solid fa-brain"></i> Competency-Based EEG Education</h2>
+            <p>Welcome to the EEG Atlas featuring "must-know" EEG findings for neurology residents as identified by the International League Against Epilepsy (ILAE) and epilepsy education experts.</p>
+            <p>This atlas contains the core EEG patterns that every neurologist should be able to recognize based on competency-based curriculum studies.</p>
+            <p><em>Reference: Nascimento FA, Jing J, Strowd R, et al. Competency-based EEG education: a list of "must-know" EEG findings for adult and child neurology residents. Epileptic Disord. 2022;24(5):979-982.</em></p>
+            <p>Select a pattern from the sidebar to view detailed information, images, and descriptions.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <!-- Full-Screen Carousel Modal -->
+  <div id="carousel-modal" class="modal">
+    <div class="carousel-container">
+      <span class="modal-close" onclick="closeCarousel()">&times;</span>
+      
+      <div class="carousel-prev" onclick="prevCarousel()">
+        <i class="fa-solid fa-chevron-left"></i>
+      </div>
+      
+      <div class="carousel-preview carousel-preview-left" onclick="prevCarousel()">
+        <img id="carousel-preview-left" src="" alt="Previous Preview" />
+        <div class="preview-caption" id="carousel-preview-left-caption"></div>
+      </div>
+      
+      <div class="carousel-main">
+        <img id="carousel-image" alt="Expanded EEG Image" loading="lazy" />
+        <div id="carousel-caption"></div>
+      </div>
+      
+      <div class="carousel-preview carousel-preview-right" onclick="nextCarousel()">
+        <img id="carousel-preview-right" src="" alt="Next Preview" />
+        <div class="preview-caption" id="carousel-preview-right-caption"></div>
+      </div>
+      
+      <div class="carousel-next" onclick="nextCarousel()">
+        <i class="fa-solid fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Load header
+    fetch('includes/header.html')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(data => {
+        document.getElementById('header-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading header:', error));
+    
+    // Load footer
+    fetch('includes/footer.html')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then(data => {
+        document.getElementById('footer-container').innerHTML = data;
+      })
+      .catch(error => console.error('Error loading footer:', error));
+    
+    // Initialize EEG Atlas specific functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeEegAtlas();
+    });
+    
+    // Data store for EEG Atlas patterns
+    const eegAtlasData = {
+      // Template for adding new entries:
+      /*
+      'pattern-id': {
+        title: 'Pattern Name',
+        category: 'normal/abnormal/epileptiform/artifacts/etc',
+        icon: 'fa-solid fa-icon-name',
+        images: [
+          { src: 'assets/atlas/image1.png', alt: 'Description of image 1', fallbackText: 'Fallback text 1' },
+          { src: 'assets/atlas/image2.png', alt: 'Description of image 2', fallbackText: 'Fallback text 2' }
+          // Add new images here in the same format
+        ],
+        description: 'Detailed description of the pattern.',
+        features: [
+          'Feature 1',
+          'Feature 2',
+          'Feature 3',
+          'Feature 4',
+          'Feature 5'
+        ],
+        significance: 'Clinical significance information.'
+      },
+      */
+      
+      'focal-spike': {
+        title: 'Spikes and Sharp Waves',
+        category: 'epileptiform',
+        icon: 'fa-solid fa-bolt',
+        images: [
+          { src: 'assets/atlas/spike_wave.png', alt: 'Spike and sharp wave discharges', fallbackText: 'Spike and Sharp Wave Image' },
+          { src: 'assets/atlas/spikeav.png', alt: 'Spike anterior-vertex', fallbackText: 'Spike Anterior-Vertex' },
+          { src: 'assets/atlas/spikebp.png', alt: 'Spike bi-parietal', fallbackText: 'Spike Bi-Parietal' },
+          { src: 'assets/atlas/sharpav.png', alt: 'Sharp wave anterior-vertex', fallbackText: 'Sharp Wave Anterior-Vertex' },
+          { src: 'assets/atlas/sharpbp.png', alt: 'Sharp wave bi-parietal', fallbackText: 'Sharp Wave Bi-Parietal' },
+          { src: 'assets/atlas/sharslow.png', alt: 'Sharp and slow wave', fallbackText: 'Sharp and Slow Wave' },
+          { src: 'assets/atlas/spikeandwave.png', alt: 'Spike-and-wave complex', fallbackText: 'Spike-and-Wave Complex' }
+          // Add new spike/sharp wave images here
+        ],
+        description: 'Epileptiform discharges that are transients clearly distinguishable from background activity with pointed peaks. Spikes have a duration of 20-70 ms, while sharp waves have a duration of 70-200 ms.',
+        features: [
+          'Pointed peak (spikes narrower than sharp waves)',
+          'Usually followed by a slow wave',
+          'Asymmetric upslope and downslope',
+          'Stand out from the background',
+          'May be focal or generalized'
+        ],
+        significance: 'Strongly associated with epilepsy, especially when frequent. Location can help identify the epileptogenic zone. Temporal spikes are often associated with temporal lobe epilepsy, central spikes with frontal lobe epilepsy, etc.<br><br>From the ILAE Competency-Based EEG Education guidelines, this is considered a core "must-know" pattern for all neurology residents.'
+      },
+      
+      'posterior-dominant-rhythm': {
+        title: 'Posterior Dominant Rhythm (PDR)',
+        category: 'normal',
+        icon: 'fa-solid fa-wave-square',
+        images: [
+          { src: 'assets/atlas/posterior-dominant-rhythm.png', alt: 'Posterior Dominant Rhythm', fallbackText: 'Posterior Dominant Rhythm Image' }
+          // Add new PDR images here
+        ],
+        description: 'The posterior dominant rhythm (PDR), also known as the alpha rhythm, is a normal pattern characterized by 8-13 Hz activity that is maximal over the posterior regions of the head. It is present in the relaxed, awake state with eyes closed.',
+        features: [
+          'Frequency of 8-13 Hz in adults',
+          'Maximum amplitude over the posterior regions',
+          'Attenuates with eye opening',
+          'Symmetrical between hemispheres',
+          'Develops between 3-4 months of age and reaches adult frequency by adolescence'
+        ],
+        significance: 'The PDR is a key feature in assessing the normality of an EEG recording. Asymmetries, slowing, or absence of the PDR can indicate underlying neurological dysfunction. Assessment of the PDR is an essential component of every EEG interpretation.<br><br>From the ILAE Competency-Based EEG Education guidelines, this is considered a fundamental "must-know" pattern for all neurology residents.'
+      },
+      
+      'sleep-patterns': {
+        title: 'Sleep Patterns',
+        category: 'normal',
+        icon: 'fa-solid fa-moon',
+        images: [
+          { src: 'assets/atlas/sleep-patterns.png', alt: 'Sleep Patterns Overview', fallbackText: 'Sleep Patterns Overview' },
+          { src: 'assets/atlas/N2sleep.png', alt: 'Stage N2 Sleep', fallbackText: 'Stage N2 Sleep' },
+          { src: 'assets/atlas/Vertex.png', alt: 'Vertex Sharp Waves', fallbackText: 'Vertex Sharp Waves' },
+          { src: 'assets/atlas/POSTS.png', alt: 'Positive Occipital Sharp Transients of Sleep', fallbackText: 'POSTS' }
+          // Add new sleep pattern images here
+        ],
+        description: 'Sleep has distinctive EEG patterns that change through different sleep stages. These include vertex waves, K-complexes, sleep spindles, and POSTs.',
+        features: [
+          'Vertex waves: Sharp negative waves maximal at the vertex',
+          'K-complexes: High-amplitude biphasic slow waves',
+          'Sleep spindles: 12-14 Hz oscillations lasting 0.5-1.5 seconds',
+          'POSTs: Positive sharp transients in the occipital regions during drowsiness and light sleep'
+        ],
+        significance: 'Normal sleep architecture includes transitions between stages with typical EEG patterns. Understanding these patterns is essential for distinguishing normal from abnormal findings and for evaluating sleep disorders.'
+      },
+      
+      'rhythmic-patterns': {
+        title: 'Rhythmic and Periodic Patterns',
+        category: 'abnormal',
+        icon: 'fa-solid fa-circle-notch',
+        images: [
+          { src: 'assets/atlas/LRDA.png', alt: 'Lateralized Rhythmic Delta Activity', fallbackText: 'LRDA' },
+          { src: 'assets/atlas/LRDAR.png', alt: 'Lateralized Rhythmic Delta Activity with Riding Faster Activity', fallbackText: 'LRDA with Riding Fast Activity' },
+          { src: 'assets/atlas/GPD.png', alt: 'Generalized Periodic Discharges', fallbackText: 'GPD' },
+          { src: 'assets/atlas/mildslow.png', alt: 'Mild Diffuse Slowing', fallbackText: 'Mild Diffuse Slowing' }
+          // Add new rhythmic pattern images here
+        ],
+        description: 'Rhythmic and periodic patterns are characterized by repetitive waveforms occurring at relatively regular intervals. They may be focal, lateralized, or generalized.',
+        features: [
+          'Rhythmic Delta Activity: Continuous rhythmic activity in the delta range (1-4 Hz)',
+          'Periodic Discharges: Recurring waveforms with relatively uniform morphology and duration',
+          'May have superimposed faster frequencies',
+          'May evolve in frequency, morphology, or location'
+        ],
+        significance: 'These patterns exist on the ictal-interictal continuum and may be associated with seizures, encephalopathy, structural lesions, or medication effects. Some patterns may require treatment even without clinical seizures.'
+      },
+      
+      'seizure-patterns': {
+        title: 'Seizure Patterns',
+        category: 'epileptiform',
+        icon: 'fa-solid fa-bolt-lightning',
+        images: [
+          { src: 'assets/atlas/tseizure.png', alt: 'Temporal Lobe Seizure', fallbackText: 'Temporal Lobe Seizure' },
+          { src: 'assets/atlas/pseizure.png', alt: 'Parietal Lobe Seizure', fallbackText: 'Parietal Lobe Seizure' },
+          { src: 'assets/atlas/epileptiformburst.png', alt: 'Epileptiform Burst', fallbackText: 'Epileptiform Burst' }
+          // Add new seizure pattern images here
+        ],
+        description: 'Electrographic seizure patterns are characterized by rhythmic activity with evolution in frequency, amplitude, and/or spatial distribution.',
+        features: [
+          'Evolving rhythmic activity',
+          'Typically lasts at least 10 seconds',
+          'May start with low-voltage fast activity (LVFA)',
+          'Often shows spatial evolution',
+          'Post-ictal slowing or suppression often follows'
+        ],
+        significance: 'Electrographic seizures may occur with or without clinical manifestations. Identification is crucial for diagnosis and management of epilepsy, as well as for recognizing nonconvulsive status epilepticus in critically ill patients.'
+      },
+      
+      'artifact-patterns': {
+        title: 'Common Artifacts',
+        category: 'artifacts',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/Eyeblink.png', alt: 'Eye Blink Artifact', fallbackText: 'Eye Blink Artifact' },
+          { src: 'assets/atlas/eyeflutter.png', alt: 'Eye Flutter', fallbackText: 'Eye Flutter' },
+          { src: 'assets/atlas/Chewing.png', alt: 'Chewing Artifact', fallbackText: 'Chewing Artifact' },
+          { src: 'assets/atlas/movement.png', alt: 'Movement Artifact', fallbackText: 'Movement Artifact' },
+          { src: 'assets/atlas/Shivering.png', alt: 'Shivering Artifact', fallbackText: 'Shivering Artifact' },
+          { src: 'assets/atlas/sweat.png', alt: 'Sweat Artifact', fallbackText: 'Sweat Artifact' },
+          { src: 'assets/atlas/notch.png', alt: 'Notch Filter Artifact', fallbackText: 'Notch Filter Artifact' },
+          { src: 'assets/atlas/BedPT.png', alt: 'Bed Patient Disconnect Transient', fallbackText: 'Bed Patient Disconnect Transient' }
+          // Add new artifact images here
+        ],
+        description: 'Artifacts are waveforms that are not of cerebral origin. They can be physiological (from the patient) or non-physiological (from equipment or environment).',
+        features: [
+          'Eye movement artifacts: Primarily frontal, usually phase-reversing at Fp1/Fp2',
+          'Muscle artifacts: High frequency (>30 Hz), usually seen over temporalis muscles',
+          'Movement artifacts: High amplitude, often affecting multiple channels',
+          'Electrode artifacts: May affect single channels or groups of channels',
+          'Environmental artifacts: 60 Hz noise, electrode pops, etc.'
+        ],
+        significance: 'Recognizing artifacts is crucial to avoid misinterpretation as pathological patterns. Some artifacts can mimic epileptiform activity or seizures, leading to misdiagnosis if not correctly identified.'
+      },
+      
+      'abnormal-patterns': {
+        title: 'Abnormal Background Patterns',
+        category: 'abnormal',
+        icon: 'fa-solid fa-skull',
+        images: [
+          { src: 'assets/atlas/suppressed.png', alt: 'Suppressed/Burst-Suppression', fallbackText: 'Suppressed/Burst-Suppression' },
+          { src: 'assets/atlas/burst.png', alt: 'Burst Activity', fallbackText: 'Burst Activity' },
+          { src: 'assets/atlas/discontinuous.png', alt: 'Discontinuous Background', fallbackText: 'Discontinuous Background' },
+          { src: 'assets/atlas/focalattenuation.png', alt: 'Focal Attenuation', fallbackText: 'Focal Attenuation' }
+          // Add new abnormal background pattern images here
+        ],
+        description: 'Abnormal background patterns reflect disruptions in normal cerebral function and can provide important diagnostic and prognostic information.',
+        features: [
+          'Suppression: Marked voltage attenuation (<10 µV)',
+          'Burst-suppression: Alternating periods of suppression and bursts of activity',
+          'Discontinuous: Intermittent periods of attenuation',
+          'Focal abnormalities: Asymmetries, focal slowing, or attenuation'
+        ],
+        significance: 'Abnormal background patterns can indicate encephalopathy, structural lesions, or severe brain dysfunction. The degree and pattern of abnormality often correlate with prognosis, especially in anoxic brain injury and coma.'
+      },
+      
+      'special-patterns': {
+        title: 'Special EEG Patterns',
+        category: 'normal',
+        icon: 'fa-solid fa-star',
+        images: [
+          { src: 'assets/atlas/photic.png', alt: 'Photic Stimulation Response', fallbackText: 'Photic Stimulation Response' }
+          // Add new special pattern images here
+        ],
+        description: 'Special EEG patterns include normal variants and responses to activation procedures like photic stimulation.',
+        features: [
+          'Photic driving: Entrainment of posterior rhythms to photic stimulation',
+          'Photoparoxysmal response: Generalized spike-wave discharges triggered by photic stimulation',
+          'Other activations: Hyperventilation, sleep deprivation'
+        ],
+        significance: 'These patterns can help identify certain epilepsy syndromes (e.g., JME with photoparoxysmal response) or confirm normal neurophysiological responses.'
+      },
+      
+      // Persyst Examples
+      'persyst-beta': {
+        title: 'Persyst Beta Activity Visualization',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystbeta.png', alt: 'Persyst Beta Activity Visualization', fallbackText: 'Persyst Beta Activity Visualization' }
+          // Add new persyst beta images here
+        ],
+        description: 'Persyst visualization showing beta frequency (13-30 Hz) activity across both hemispheres. The spectrograms display frequency power distribution over time.',
+        features: [
+          'FFT Spectrograms showing frequency distribution',
+          'Rhythmicity Spectrograms for both hemispheres',
+          'Asymmetry analysis between hemispheres',
+          'Automated EEG (aEEG) trending'
+        ],
+        significance: 'Beta activity is normally seen during wakefulness, especially with mental activity. Excessive beta can be associated with certain medications (e.g., benzodiazepines, barbiturates) or anxiety states.'
+      },
+      
+      'persyst-cape': {
+        title: 'Persyst CAPE (Continuous Amplitude-Integrated EEG)',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystcape.png', alt: 'Persyst CAPE Visualization', fallbackText: 'Persyst CAPE Visualization' }
+          // Add new persyst CAPE images here
+        ],
+        description: 'Continuous Amplitude-Integrated EEG (CAPE) is a compressed time display of EEG amplitude, allowing for long-term monitoring and trend identification.',
+        features: [
+          'Compressed view showing hours of EEG data',
+          'Amplitude trends over time',
+          'Easy identification of significant changes',
+          'Seizure probability indicators'
+        ],
+        significance: 'CAPE is particularly useful in critical care settings, allowing clinicians to quickly identify significant EEG changes and seizure activity over long recording periods.'
+      },
+      
+      'persyst-iic': {
+        title: 'Persyst IIC (Ictal-Interictal Continuum)',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystiic.png', alt: 'Persyst IIC Visualization', fallbackText: 'Persyst IIC Visualization' }
+          // Add new persyst IIC images here
+        ],
+        description: 'Visualization of the Ictal-Interictal Continuum (IIC), representing patterns that fall between clear interictal and ictal activities.',
+        features: [
+          'Highlights rhythmic or periodic patterns',
+          'Shows evolution of epileptiform discharges',
+          'Detects subtle seizure activity',
+          'Automatic spike and seizure detection'
+        ],
+        significance: 'The IIC represents patterns that may have uncertain clinical significance but could potentially progress to seizures in susceptible patients. These include periodic discharges, rhythmic delta activity, and subclinical rhythmic electrographic discharges.'
+      },
+      
+      'persyst-lrda': {
+        title: 'Persyst LRDA (Lateralized Rhythmic Delta Activity)',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystlrda.png', alt: 'Persyst LRDA Visualization', fallbackText: 'Persyst LRDA Visualization' }
+          // Add new persyst LRDA images here
+        ],
+        description: 'Visualization of Lateralized Rhythmic Delta Activity (LRDA), a pattern characterized by rhythmic delta (1-4 Hz) activity that is lateralized to one hemisphere.',
+        features: [
+          'Visualization of lateralized delta activity',
+          'Rhythmicity Spectrograms showing asymmetric slowing',
+          'Frequency spectrogram with delta emphasis',
+          'Automated detection markers'
+        ],
+        significance: 'LRDA can be associated with acute brain injury, stroke, or seizure onset. It may be an important biomarker in the ictal-interictal continuum, sometimes preceding seizures or indicating an area of dysfunction.'
+      },
+      
+      'persyst-slow': {
+        title: 'Persyst Slow Wave Activity',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystslow.png', alt: 'Persyst Slow Wave Visualization', fallbackText: 'Persyst Slow Wave Visualization' }
+          // Add new persyst slow wave images here
+        ],
+        description: 'Visualization of slow wave activity (delta: 0.5-4 Hz) across both hemispheres, with quantitative analysis of distribution and intensity.',
+        features: [
+          'Delta power visualization',
+          'Asymmetry analysis of slow waves',
+          'Spectral analysis across frequency bands',
+          'Temporal evolution of slow activity'
+        ],
+        significance: 'Focal or diffuse slow wave activity can indicate structural lesions, encephalopathy, or sleep states. The distribution and reactivity of slow waves can provide important diagnostic information about brain function and pathology.'
+      },
+      
+      'persyst-status': {
+        title: 'Persyst Status Epilepticus Detection',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persyststatus.png', alt: 'Persyst Status Epilepticus Visualization', fallbackText: 'Persyst Status Epilepticus Visualization' }
+          // Add new persyst status epilepticus images here
+        ],
+        description: 'Visualization showing status epilepticus detection and analysis with prominent seizure probability indicators and rhythmic activity detection.',
+        features: [
+          'Seizure detection markers',
+          'Seizure probability trending',
+          'Rhythmic activity analysis',
+          'FFT spectral analysis during seizure activity'
+        ],
+        significance: 'Status epilepticus is a neurological emergency requiring rapid detection and intervention. Automated detection can alert clinical teams to subtle electrographic status epilepticus that might otherwise be missed, especially in sedated or critically ill patients.'
+      },
+      
+      'persyst-sup': {
+        title: 'Persyst Suppression Analysis',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystsup.png', alt: 'Persyst Suppression Analysis', fallbackText: 'Persyst Suppression Analysis' }
+          // Add new persyst suppression analysis images here
+        ],
+        description: 'Visualization showing suppression analysis, including suppression ratio between hemispheres for detecting burst-suppression patterns or severely suppressed EEG activity.',
+        features: [
+          'Suppression ratio quantification',
+          'Comparison between hemispheres',
+          'Trend analysis of suppression over time',
+          'Integration with spectral analysis'
+        ],
+        significance: 'Suppression patterns can indicate severe encephalopathy, effects of anesthetic agents, hypothermia, or poor neurological prognosis in certain clinical contexts. Quantitative suppression analysis helps clinicians objectively monitor these states.'
+      },
+      
+      'persyst-sz': {
+        title: 'Persyst Seizure Detection',
+        category: 'persyst',
+        icon: 'fa-solid fa-chart-line',
+        images: [
+          { src: 'assets/atlas/persystsz.png', alt: 'Persyst Seizure Detection', fallbackText: 'Persyst Seizure Detection' }
+          // Add new persyst seizure detection images here
+        ],
+        description: 'Visualization of Persyst\'s automated seizure detection algorithm, showing probability indicators and EEG changes during seizure activity.',
+        features: [
+          'Seizure probability indicators',
+          'Seizure detection markers',
+          'Spectral changes during seizure activity',
+          'Rhythmic activity detection'
+        ],
+        significance: 'Automated seizure detection algorithms can provide early warning of electrographic seizures, which is particularly important in critical care settings where clinical seizures may be subtle or absent due to sedation.'
+      },
+      
+      // Individual pattern entries
+      'vertex': {
+        title: 'Vertex Waves',
+        category: 'normal',
+        icon: 'fa-solid fa-moon',
+        images: [
+          { src: 'assets/atlas/Vertex.png', alt: 'Vertex Sharp Waves', fallbackText: 'Vertex Sharp Waves' }
+          // Add new vertex wave images here
+        ],
+        description: 'Vertex waves are sharp negative waves maximal at the vertex (top of the head) that occur during drowsiness and light sleep (stage N1).',
+        features: [
+          'Sharp negative waveforms maximal at the vertex (Cz)',
+          'Occur during drowsiness and light sleep (stage N1)',
+          'Amplitude can reach up to 200 μV',
+          'May be followed by a positive component',
+          'Often occur in bursts in response to stimuli during light sleep'
+        ],
+        significance: 'Vertex waves are a normal feature of drowsiness and light sleep. They help define stage N1 sleep and are considered a normal physiological phenomenon.'
+      },
+      
+      'posts': {
+        title: 'Positive Occipital Sharp Transients of Sleep (POSTS)',
+        category: 'normal',
+        icon: 'fa-solid fa-moon',
+        images: [
+          { src: 'assets/atlas/POSTS.png', alt: 'Positive Occipital Sharp Transients of Sleep', fallbackText: 'POSTS' }
+          // Add new POSTS images here
+        ],
+        description: 'Positive Occipital Sharp Transients of Sleep (POSTS) are sharp positive waves occurring in the occipital regions during drowsiness and light sleep.',
+        features: [
+          'Sharp positive waves in the occipital regions',
+          'Occur predominantly during drowsiness and stage N1 sleep',
+          'Often bilateral but can be asymmetric',
+          'Amplitude usually ranges from 50-100 μV',
+          'Typically occur in bursts'
+        ],
+        significance: 'POSTS are normal sleep phenomena and should not be confused with pathological discharges. Their presence helps confirm sleep onset and light sleep stages.'
+      },
+      
+      // Artifact pattern entries
+      'eyeblink': {
+        title: 'Eye Blink Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/Eyeblink.png', alt: 'Eye Blink Artifact', fallbackText: 'Eye Blink Artifact' }
+          // Add new eye blink artifact images here
+        ],
+        description: 'Eye blink artifacts are common physiological artifacts seen predominantly in the anterior channels, resulting from the movement of the eyelids.',
+        features: [
+          'High amplitude vertical deflections in frontal channels (Fp1, Fp2, F7, F8)',
+          'Usually bilateral and symmetric',
+          'Can reach amplitudes of 50-100 μV or higher',
+          'Brief duration of 0.3-0.4 seconds',
+          'Often occurs multiple times in alert patients'
+        ],
+        significance: 'Eye blink artifacts are normal physiological findings that should be recognized to avoid misinterpretation as pathological slow waves or frontal sharp waves. They are especially important to identify when evaluating for frontal abnormalities.'
+      },
+      
+      'eyeflutter': {
+        title: 'Eye Flutter Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/eyeflutter.png', alt: 'Eye Flutter Artifact', fallbackText: 'Eye Flutter Artifact' }
+          // Add new eye flutter artifact images here
+        ],
+        description: 'Eye flutter artifact appears as rhythmic, fast activity in the frontal channels caused by rapid eyelid movements or tremor.',
+        features: [
+          'Rhythmic activity typically around 8-12 Hz',
+          'Maximal in the frontal polar and frontal channels',
+          'Can resemble alpha activity but is confined to frontal regions',
+          'Amplitude varies but usually in the 20-50 μV range',
+          'Often occurs in intermittent bursts'
+        ],
+        significance: 'Eye flutter artifact can be mistaken for frontal seizure activity or focal beta activity. Recognizing its characteristic distribution limited to frontal channels helps avoid misinterpretation.'
+      },
+      
+      'chewing': {
+        title: 'Chewing Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/Chewing.png', alt: 'Chewing Artifact', fallbackText: 'Chewing Artifact' }
+          // Add new chewing artifact images here
+        ],
+        description: 'Chewing artifacts appear as rhythmic, high-frequency muscle activity primarily seen in the temporal regions, caused by jaw muscle contractions.',
+        features: [
+          'Rhythmic, high-frequency (20-100 Hz) activity',
+          'Maximum amplitude over the temporal regions (T3/T4, F7/F8)',
+          'Often bilateral but can be asymmetric depending on chewing pattern',
+          'Usually occurs in rhythmic bursts corresponding to jaw movements',
+          'Can obscure underlying cerebral activity'
+        ],
+        significance: 'Chewing artifacts are important to recognize as they can mimic temporal lobe seizures or lateralized high-frequency abnormalities. Asking the patient to stop chewing confirms the artifact nature.'
+      },
+      
+      'movement': {
+        title: 'Movement Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/movement.png', alt: 'Movement Artifact', fallbackText: 'Movement Artifact' }
+          // Add new movement artifact images here
+        ],
+        description: 'Movement artifacts are large amplitude waveforms affecting multiple channels simultaneously, caused by patient movement.',
+        features: [
+          'High amplitude, often exceeding normal cerebral activity',
+          'Usually affects multiple channels simultaneously',
+          'Irregular, non-physiological waveforms',
+          'Often corresponds to observed patient movements',
+          'Can completely obscure underlying cerebral activity'
+        ],
+        significance: 'Movement artifacts are common in EEG recordings and must be recognized to avoid misinterpretation as cerebral abnormalities. They are particularly important to identify when evaluating for seizures or encephalopathy.'
+      },
+      
+      'sweat': {
+        title: 'Sweat Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/sweat.png', alt: 'Sweat Artifact', fallbackText: 'Sweat Artifact' }
+          // Add new sweat artifact images here
+        ],
+        description: 'Sweat artifacts appear as slow, high-amplitude baseline shifts caused by changes in skin conductance due to perspiration.',
+        features: [
+          'Slow, undulating baseline shifts',
+          'Typically <0.5 Hz frequency',
+          'Can affect multiple channels and regions',
+          'Often increases during the recording as the patient warms up',
+          'May be more prominent in anxious or febrile patients'
+        ],
+        significance: 'Sweat artifacts can mimic cerebral slow waves and potentially be misinterpreted as delta activity. Recognizing their characteristic appearance helps distinguish them from pathological slow activity.'
+      },
+      
+      'shivering': {
+        title: 'Shivering Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/Shivering.png', alt: 'Shivering Artifact', fallbackText: 'Shivering Artifact' }
+          // Add new shivering artifact images here
+        ],
+        description: 'Shivering artifacts appear as regular, fast, rhythmic muscle activity across multiple channels due to involuntary muscle tremors, often in cold environments.',
+        features: [
+          'Regular, rhythmic activity typically at 4-8 Hz',
+          'Affects multiple channels simultaneously',
+          'Often waxes and wanes in amplitude',
+          'Can be widespread but typically more prominent over muscle regions',
+          'May increase or decrease depending on patient comfort and temperature'
+        ],
+        significance: 'Shivering artifacts can mimic cerebral rhythmic activity or even seizure activity. Recognition is important to avoid misinterpretation as pathological rhythms, particularly in critically ill patients in cold environments.'
+      },
+      
+      'sixty-hz': {
+        title: '60Hz Line Noise Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/notch.png', alt: 'Notch Filter Artifact', fallbackText: 'Notch Filter Artifact' }
+          // Add new 60Hz line noise images here
+        ],
+        description: '60Hz line noise appears as a regular, fast oscillation at exactly 60Hz (in North America) due to electrical interference from nearby power sources.',
+        features: [
+          'Regular, rhythmic activity at exactly 60Hz',
+          'Can affect single channels or groups of channels',
+          'Often persists throughout the recording',
+          'May be more prominent with poor electrode impedance',
+          'Can be reduced with notch filters but may still be visible'
+        ],
+        significance: '60Hz line noise is a common non-physiological artifact that must be recognized to avoid misinterpretation as high-frequency cerebral activity. While it can often be reduced with filters, its presence may indicate issues with electrode impedance or electrical grounding.'
+      },
+      
+      'electrode-artifact': {
+        title: 'Electrode and Connection Artifacts',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/BedPT.png', alt: 'Bed Patient Disconnect Transient', fallbackText: 'Bed Patient Disconnect Transient' }
+          // Add new electrode artifact images here
+        ],
+        description: 'Electrode artifacts appear as abrupt changes in the EEG signal due to issues with electrode contact, wire connections, or patient movement affecting the electrodes.',
+        features: [
+          'Abrupt, high-amplitude changes in the EEG signal',
+          'Often affects single channels or groups of channels',
+          'May show characteristic "electrode pop" morphology',
+          'Can appear as transient disconnections or impedance changes',
+          'Often correlated with patient movement or staff intervention'
+        ],
+        significance: 'Electrode artifacts are common in EEG recordings and must be recognized to avoid misinterpretation as cerebral events. They can sometimes mimic epileptiform discharges, especially "electrode pops," which can resemble spikes or sharp waves.'
+      },
+      
+      'bedpt': {
+        title: 'Bed Physical Therapy Artifact',
+        category: 'artifact-patterns',
+        icon: 'fa-solid fa-triangle-exclamation',
+        images: [
+          { src: 'assets/atlas/BedPT.png', alt: 'Bed Physical Therapy Artifact', fallbackText: 'Bed Physical Therapy Artifact' }
+          // Add new Bed PT artifact images here
+        ],
+        description: 'Bed Physical Therapy artifacts occur during rehabilitation activities for patients confined to bed, causing movement and muscle-related signal disturbances in the EEG.',
+        features: [
+          'Rhythmic or irregular high-amplitude waveforms',
+          'Often affects multiple channels simultaneously',
+          'Correlation with physical therapy sessions',
+          'May include muscle artifact components',
+          'Typically appears in prolonged recordings of hospitalized patients'
+        ],
+        significance: 'Recognizing Bed Physical Therapy artifacts is important in ICU and inpatient EEG monitoring to avoid misinterpretation of movement-related changes as cerebral events. These artifacts are common during care activities and should be annotated appropriately during long-term monitoring.'
+      },
+      
+      // Abnormal pattern entries
+      'generalized-periodic-discharges': {
+        title: 'Generalized Periodic Discharges (GPDs)',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-circle-notch',
+        images: [
+          { src: 'assets/atlas/GPD.png', alt: 'Generalized Periodic Discharges', fallbackText: 'GPD' }
+          // Add new GPD images here
+        ],
+        description: 'Generalized Periodic Discharges (GPDs) are synchronous discharges occurring periodically throughout all or most EEG channels with a relatively uniform morphology and duration.',
+        features: [
+          'Generalized, bilateral, synchronous discharges',
+          'Relatively uniform morphology and duration',
+          'Regular or nearly regular periodicity, typically 0.5-3 Hz',
+          'May have sharp, spike, or polyspike components',
+          'Often occur in the context of encephalopathy or coma'
+        ],
+        significance: 'GPDs are commonly seen in toxic-metabolic encephalopathies, anoxic brain injury, and certain encephalitides. They exist on the ictal-interictal continuum and can be associated with nonconvulsive status epilepticus in some cases. The presence of GPDs often suggests a significant cerebral dysfunction and may correlate with poorer outcomes, particularly in anoxic brain injury.'
+      },
+      
+      'rhythmic-delta': {
+        title: 'Lateralized Rhythmic Delta Activity (LRDA)',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-circle-notch',
+        images: [
+          { src: 'assets/atlas/LRDA.png', alt: 'Lateralized Rhythmic Delta Activity', fallbackText: 'LRDA' },
+          { src: 'assets/atlas/LRDAR.png', alt: 'LRDA with Riding Faster Activity', fallbackText: 'LRDA with Riding Fast Activity' }
+          // Add new LRDA images here
+        ],
+        description: 'Lateralized Rhythmic Delta Activity (LRDA) is a pattern of rhythmic activity in the delta frequency range (1-4 Hz) that is lateralized to one hemisphere or region.',
+        features: [
+          'Rhythmic delta activity (1-4 Hz)',
+          'Lateralized to one hemisphere or region',
+          'May have superimposed faster frequencies ("riding" rhythms)',
+          'Can evolve in frequency, morphology, or location',
+          'Often seen in patients with acute brain injury or seizure tendency'
+        ],
+        significance: 'LRDA is an important pattern on the ictal-interictal continuum. It may represent an evolving focal seizure, a postictal state, or a biomarker of focal cerebral dysfunction. When LRDA has superimposed faster frequencies (LRDA+F), it has a higher association with seizures and may require treatment in some clinical contexts.'
+      },
+      
+      'focal-slowing': {
+        title: 'Focal Slowing',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-skull',
+        images: [
+          { src: 'assets/atlas/mildslow.png', alt: 'Mild Focal Slowing', fallbackText: 'Mild Focal Slowing' }
+          // Add new focal slowing images here
+        ],
+        description: 'Focal slowing refers to abnormal slow activity (delta or theta) that is localized to a specific region of the brain, often indicating underlying structural or functional pathology.',
+        features: [
+          'Localized slow activity (delta 0.5-4 Hz or theta 4-8 Hz)',
+          'Persistent throughout the recording',
+          'May be intermittent or continuous',
+          'Often asymmetric compared to homologous regions of the opposite hemisphere',
+          'May be associated with reduced amplitude in the affected region'
+        ],
+        significance: 'Focal slowing is a non-specific finding that suggests underlying structural or functional pathology in the affected region. Common causes include stroke, tumor, trauma, inflammation, or postictal states. The persistence, location, and evolution of focal slowing can provide important diagnostic information.'
+      },
+      
+      'discontinuous': {
+        title: 'Discontinuous Background',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-skull',
+        images: [
+          { src: 'assets/atlas/discontinuous.png', alt: 'Discontinuous Background', fallbackText: 'Discontinuous Background' }
+          // Add new discontinuous background images here
+        ],
+        description: 'A discontinuous background is characterized by periods of relatively higher amplitude activity alternating with periods of relative attenuation, without meeting criteria for burst-suppression.',
+        features: [
+          'Alternating periods of higher amplitude activity and attenuation',
+          'Attenuated periods do not meet criteria for suppression (<10 µV)',
+          'Occurs in a somewhat irregular pattern',
+          'May be seen in encephalopathy or in premature neonates',
+          'Can be normal in sleep or abnormal depending on context'
+        ],
+        significance: 'A discontinuous background can be normal in neonates (especially premature) and during certain sleep stages, but is usually abnormal in adults when present during wakefulness. In adults, it often indicates significant encephalopathy and may evolve into burst-suppression in severe cases.'
+      },
+      
+      'burst-suppression': {
+        title: 'Burst-Suppression Pattern',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-skull',
+        images: [
+          { src: 'assets/atlas/burst.png', alt: 'Burst Activity', fallbackText: 'Burst Activity' },
+          { src: 'assets/atlas/suppressed.png', alt: 'Suppressed/Burst-Suppression', fallbackText: 'Suppressed/Burst-Suppression' }
+          // Add new burst-suppression images here
+        ],
+        description: 'Burst-suppression is a severe abnormal pattern characterized by alternating periods of high-amplitude "bursts" of activity and periods of marked suppression (<10 µV).',
+        features: [
+          'Alternating high-amplitude bursts and periods of suppression (<10 µV)',
+          'Regular or irregular intervals between bursts',
+          'Burst morphology may contain normal or abnormal waveforms',
+          'Suppression periods typically last 1-10 seconds',
+          'Bursts are typically 0.5-5 seconds in duration'
+        ],
+        significance: 'Burst-suppression is a highly abnormal pattern seen in severe encephalopathy, particularly after anoxic brain injury, with certain anesthetic agents (propofol, barbiturates), or in hypothermia. It generally indicates profound cerebral dysfunction and often correlates with poor neurological outcomes, especially if persistent and unreactive.'
+      },
+      
+      'focal-attenuation': {
+        title: 'Focal Attenuation',
+        category: 'abnormal-patterns',
+        icon: 'fa-solid fa-skull',
+        images: [
+          { src: 'assets/atlas/focalattenuation.png', alt: 'Focal Attenuation', fallbackText: 'Focal Attenuation' }
+          // Add new focal attenuation images here
+        ],
+        description: 'Focal attenuation refers to a localized reduction in EEG amplitude compared to homologous areas of the opposite hemisphere or surrounding regions.',
+        features: [
+          'Reduced amplitude in a focal region',
+          'Typically >50% lower amplitude than homologous region',
+          'May be associated with focal slowing',
+          'Persistent throughout the recording',
+          'Can be subtle and require careful comparison of amplitudes'
+        ],
+        significance: 'Focal attenuation often indicates structural lesions (such as tumor, stroke, or subdural fluid collections) underlying the affected electrodes. It may also be seen with skull defects or over areas of cortical damage. The presence of focal attenuation should prompt consideration of neuroimaging if not already performed.'
+      }
+    };
+    
+    function initializeEegAtlas() {
+      // Add event listener to category headers for expanding/collapsing
+      document.querySelectorAll('.category-header').forEach(header => {
+        header.addEventListener('click', function(e) {
+          e.preventDefault();
+          this.classList.toggle('open');
+          this.nextElementSibling.classList.toggle('open');
+        });
+      });
+      
+      // Initially open all categories
+      document.querySelectorAll('.category-header').forEach(header => {
+        header.classList.add('open');
+        header.nextElementSibling.classList.add('open');
+      });
+      
+      // Initialize search functionality
+      document.getElementById('searchBar').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterEEGItems(searchTerm);
+      });
+      
+      // Make image containers clickable for fullscreen view
+      document.querySelectorAll('.image-container img').forEach(img => {
+        img.addEventListener('click', function() {
+          openCarouselBySrc(this.src);
+        });
+      });
+      
+      // Populate the Persyst section with any Persyst-labeled images in the atlas directory
+      populatePersystSection();
+    }
+    
+    // Dynamically populate the Persyst section with any images containing 'persyst' in the filename
+    function populatePersystSection() {
+      // This is a placeholder for a functionality that would scan the assets/atlas directory
+      // and automatically add entries for any file with 'persyst' in the name
+      // In a real implementation, this would be a server-side function or use a pre-generated list
+      
+      // For demonstration purposes, we'll add placeholder items to the Persyst section
+      // When actual Persyst-labeled images are added to the atlas directory, they will be shown
+      const persystSection = document.querySelector('li[data-category="persyst"] .category-items');
+      
+      // Clear any existing placeholder items
+      persystSection.innerHTML = '';
+      
+      // Add items from the eegAtlasData object
+      const persystItems = Object.keys(eegAtlasData).filter(key => 
+        eegAtlasData[key].category === 'persyst' || key.toLowerCase().includes('persyst')
+      );
+      
+      if (persystItems.length > 0) {
+        persystItems.forEach(key => {
+          if (key !== 'persyst-example-1') { // Skip the generic example
+            const item = eegAtlasData[key];
+            persystSection.innerHTML += `<li class="eeg-item" onclick="showEEGDetail('${key}')">${item.title}</li>`;
+          }
+        });
+      } else {
+        // If no items found, show the default example
+        persystSection.innerHTML = '<li class="eeg-item" onclick="showEEGDetail(\'persyst-example-1\')">Example Persyst Finding 1</li>';
+        persystSection.innerHTML += '<p class="persyst-note">Add Persyst-labeled images to the assets/atlas directory to have them appear here.</p>';
+      }
+    }
+    
+    function isFavorite(patternId) {
+      return getFavorites().includes(patternId);
+    }
+    
+    function getFavorites() {
+      const storedFavorites = localStorage.getItem("eegFavorites");
+      return storedFavorites ? JSON.parse(storedFavorites) : [];
+    }
+    
+    function toggleFavorite(patternId, event) {
+      event.stopPropagation();
+      
+      const favorites = getFavorites();
+      const index = favorites.indexOf(patternId);
+      
+      if (index > -1) {
+        favorites.splice(index, 1);
+      } else {
+        favorites.push(patternId);
+      }
+      
+      localStorage.setItem("eegFavorites", JSON.stringify(favorites));
+      
+      // Update the star display
+      const star = event.target;
+      star.textContent = isFavorite(patternId) ? "★" : "☆";
+      star.classList.add("favorite-animate");
+      setTimeout(() => star.classList.remove("favorite-animate"), 300);
+    }
+    
+    // Carousel functionality
+    let carouselData = [];
+    let currentCarouselIndex = 0;
+    
+    function openCarouselBySrc(src) {
+      // We'll use a placeholder approach since we don't have a full dataset
+      // In a real implementation, you'd match this with your actual data
+      carouselData = [
+        { src: src, title: "Current Image" },
+        { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300'><rect width='600' height='300' fill='%23f0f0f0'/><text x='300' y='150' font-family='Arial' font-size='24' text-anchor='middle' dominant-baseline='middle' fill='%23999'>Next Image</text></svg>", title: "Next EEG Pattern" },
+        { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300'><rect width='600' height='300' fill='%23f0f0f0'/><text x='300' y='150' font-family='Arial' font-size='24' text-anchor='middle' dominant-baseline='middle' fill='%23999'>Previous Image</text></svg>", title: "Previous EEG Pattern" }
+      ];
+      
+      currentCarouselIndex = 0;
+      updateCarouselDisplay();
+      document.getElementById("carousel-modal").style.display = "flex";
+    }
+    
+    function closeCarousel() {
+      document.getElementById("carousel-modal").style.display = "none";
+    }
+    
+    function prevCarousel() {
+      currentCarouselIndex = (currentCarouselIndex - 1 + carouselData.length) % carouselData.length;
+      updateCarouselDisplay();
+    }
+    
+    function nextCarousel() {
+      currentCarouselIndex = (currentCarouselIndex + 1) % carouselData.length;
+      updateCarouselDisplay();
+    }
+    
+    function updateCarouselDisplay() {
+      const entry = carouselData[currentCarouselIndex];
+      const prevIndex = (currentCarouselIndex - 1 + carouselData.length) % carouselData.length;
+      const nextIndex = (currentCarouselIndex + 1) % carouselData.length;
+      
+      document.getElementById("carousel-image").src = entry.src;
+      document.getElementById("carousel-caption").textContent = entry.title;
+      
+      document.getElementById("carousel-preview-left").src = carouselData[prevIndex].src;
+      document.getElementById("carousel-preview-left-caption").textContent = carouselData[prevIndex].title;
+      
+      document.getElementById("carousel-preview-right").src = carouselData[nextIndex].src;
+      document.getElementById("carousel-preview-right-caption").textContent = carouselData[nextIndex].title;
+    }
+    
+    // Handle keyboard events for the carousel
+    document.addEventListener('keydown', function(e) {
+      const modal = document.getElementById("carousel-modal");
+      if (modal.style.display === "flex") {
+        if (e.key === "ArrowLeft") {
+          prevCarousel();
+        } else if (e.key === "ArrowRight") {
+          nextCarousel();
+        } else if (e.key === "Escape") {
+          closeCarousel();
+        }
+      }
+    });
+    
+    // Show EEG detail content
+    function showEEGDetail(patternId) {
+      const detailContent = document.getElementById('detail-content');
+      const patternData = eegAtlasData[patternId];
+      
+      let htmlContent = '';
+      const title = patternData?.title || patternId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const iconClass = patternData?.icon || 'fa-solid fa-brain'; // Default icon
+      
+      // Check if this is a Persyst pattern (either by data flag or by ID)
+      const isPersyst = patternData?.category === 'persyst' || patternId.toLowerCase().includes('persyst');
+      
+      if (patternData) {
+        // Generate HTML from the data object
+        htmlContent = `
+          <h2>
+            <i class="${iconClass}"></i> 
+            ${patternData.title}
+            <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
+          </h2>
+        `;
+        
+        // Add images for patterns that have defined images
+        if (patternData.images && patternData.images.length > 0) {
+          patternData.images.forEach(img => {
+            htmlContent += `
+              <div class="image-container">
+                <img src="${img.src}" alt="${img.alt}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>${img.fallbackText || 'Image loading error'}</text></svg>';">
+                <div class="fullscreen-hint">
+                  <i class="fa-solid fa-expand"></i> Click for fullscreen
+                </div>
+              </div>
+            `;
+          });
+        } 
+        // For Persyst entries, try to find all matching Persyst images
+        else if (isPersyst) {
+          // For Persyst entries, try to load all images with persyst in the name
+          // This would normally require server-side functionality
+          // For now, we'll use a placeholder image path with the pattern ID
+          const imgPath = `assets/atlas/${patternId}.png`;
+          htmlContent += `
+            <div class="image-container">
+              <img src="${imgPath}" alt="${title}" 
+                onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Persyst image will appear here when added to atlas directory</text></svg>';">
+              <div class="fullscreen-hint">
+                <i class="fa-solid fa-expand"></i> Click for fullscreen
+              </div>
+            </div>
+          `;
+        }
+        
+        // Add description
+        if (patternData.description) {
+          htmlContent += `
+            <h3>Description</h3>
+            <p>${patternData.description}</p>
+          `;
+        }
+        
+        // Add key features
+        if (patternData.features && patternData.features.length > 0) {
+          htmlContent += `
+            <h3>Key Features</h3>
+            <ul>
+              ${patternData.features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+          `;
+        }
+        
+        // Add clinical significance
+        if (patternData.significance) {
+          htmlContent += `
+            <h3>Clinical Significance</h3>
+            <p>${patternData.significance}</p>
+          `;
+        }
+        
+        // Add Persyst specific note if this is a Persyst item
+        if (isPersyst) {
+          htmlContent += `
+            <div class="persyst-note" style="margin-top: 20px; padding: 15px; background: rgba(0,102,204,0.05); border-radius: 8px;">
+              <h3><i class="fa-solid fa-chart-line"></i> About Persyst</h3>
+              <p>Persyst is an advanced EEG analysis software that provides automated seizure and spike detection, 
+              quantitative EEG (qEEG) analysis, and brain mapping. It helps neurologists and technologists
+              visualize and interpret EEG data more efficiently.</p>
+            </div>
+          `;
+        }
+        
+      } else {
+        // Default content for patterns not yet in the data object
+        // Try to load an image if it follows the naming convention
+        const defaultImagePath = `assets/atlas/${patternId}.png`;
+        htmlContent = `
+          <h2>
+            <i class="${iconClass}"></i> 
+            ${title}
+            <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
+          </h2>
+          
+          <div class="image-container">
+            <img src="${defaultImagePath}" alt="${title}" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Image Coming Soon</text></svg>';">
+            <div class="fullscreen-hint">
+              <i class="fa-solid fa-expand"></i> Click for fullscreen
+            </div>
+          </div>
+          
+          <p>This EEG pattern is part of the ILAE "must-know" findings for neurology residents.</p>
+          <p>Detailed content for ${title} is coming soon. This will include waveform characteristics, clinical significance, and example images.</p>
+          <p><em>Reference: Nascimento FA, Jing J, Strowd R, et al. Competency-based EEG education: a list of "must-know" EEG findings for adult and child neurology residents. Epileptic Disord. 2022;24(5):979-982.</em></p>
+        `;
+        
+        // Add Persyst specific note if this is a Persyst item (based on ID)
+        if (isPersyst) {
+          htmlContent += `
+            <div class="persyst-note" style="margin-top: 20px; padding: 15px; background: rgba(0,102,204,0.05); border-radius: 8px;">
+              <h3><i class="fa-solid fa-chart-line"></i> About Persyst</h3>
+              <p>Persyst is an advanced EEG analysis software that provides automated seizure and spike detection, 
+              quantitative EEG (qEEG) analysis, and brain mapping. It helps neurologists and technologists
+              visualize and interpret EEG data more efficiently.</p>
+            </div>
+          `;
+        }
+      }
+      
+      detailContent.innerHTML = htmlContent;
+      
+      // Make newly added images clickable for fullscreen view
+      document.querySelectorAll('.image-container img').forEach(img => {
+        img.addEventListener('click', function() {
+          openCarouselBySrc(this.src);
+        });
+      });
+      
+      // Check if this item is a favorite and update the star
+      const starIcon = detailContent.querySelector('.favorite-star');
+      if (starIcon) {
+        starIcon.textContent = isFavorite(patternId) ? "★" : "☆";
+      }
+      
+      // If on mobile, scroll to the detail content
+      if (window.innerWidth < 992) {
+        detailContent.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    // Filter EEG items based on search term
+    function filterEEGItems(searchTerm) {
+      const items = document.querySelectorAll('.eeg-item');
+      let hasVisibleItems = false;
+      
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const matches = text.includes(searchTerm);
+        item.style.display = matches ? 'block' : 'none';
+        if (matches) hasVisibleItems = true;
+      });
+      
+      // Show/hide categories based on whether they have visible items
+      document.querySelectorAll('.category-header').forEach(header => {
+        const categoryItems = header.nextElementSibling;
+        const hasVisibleCategoryItems = Array.from(categoryItems.querySelectorAll('.eeg-item'))
+          .some(item => item.style.display !== 'none');
+        
+        header.parentElement.style.display = hasVisibleCategoryItems ? 'block' : 'none';
+      });
+      
+      // If search term is empty, show all categories
+      if (searchTerm === '') {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          item.style.display = 'block';
+        });
+      }
+    }
+    
+    // Filter by category
+    function filterCategory(category) {
+      // Update active button
+      document.querySelectorAll('#sidebar-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      // Ensure the button exists before trying to add 'active' class
+      const activeButton = document.getElementById(category + '-btn');
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
+      
+      // Show/hide categories based on selection
+      if (category === 'all') {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          item.style.display = 'block';
+        });
+      } else {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          if (item.dataset.category === category) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+      
+      // Clear the search bar
+      document.getElementById('searchBar').value = '';
+    }
+  </script>
+</body>
+</html>

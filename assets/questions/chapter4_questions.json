@@ -1,0 +1,67 @@
+[
+  {
+    "id": "4Q1",
+    "figure": "4q1.png",
+    "questionText": "At 9:00 a.m. on Tuesday morning while at work, a 36-year-old woman presents with sudden focal neurological deficits. A STAT EEG is obtained (Fig. 4Q1). After reviewing the EEG you urge the team to:",
+    "options": [
+      { "value": "A", "text": "Do a lumbar puncture; this EEG is highly suspicious for herpes encephalitis." },
+      { "value": "B", "text": "Call psychiatry; this EEG is normal." },
+      { "value": "C", "text": "Activate the stroke team and start mixing the TPA." },
+      { "value": "D", "text": "Get a urine toxicology; this woman has been doing drugs." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "Sudden onset of focal deficits is almost always vascular—anosognosia (lack of awareness of deficit) further points to acute stroke. This EEG shows rhythmic delta indicative of acute ischemia; there are no LPDs or focal spikes suggesting encephalitis, so immediate stroke treatment is warranted."  
+  },
+  {
+    "id": "4Q2",
+    "figure": "4q2.png",
+    "questionText": "A 64-year-old man with known multi-infarct dementia and a history of well-controlled seizures is admitted for altered mental status. An EEG is done (Fig. 4Q2). You conclude:",
+    "options": [
+      { "value": "A", "text": "The EEG shows polymorphic slowing which is worse on the right. He must have more vascular burden on the right." },
+      { "value": "B", "text": "The EEG shows ongoing seizure activity and he should be urgently treated." },
+      { "value": "C", "text": "The shunt is failing; this EEG is consistent with raised intracranial pressure." },
+      { "value": "D", "text": "It would be prudent to start an ASM and continue video EEG monitoring." }
+    ],
+    "correctAnswerLetter": "D",
+    "explanation": "This EEG shows diffuse slowing with maximal right-hemispheric involvement—consistent with recent seizures in a patient with vascular risk. Starting an anti-seizure medication (ASM) and monitoring is appropriate. The right-sided slowing is rhythmic (not polymorphic), and there are no clear ongoing ictal discharges or shunt-failure signs."  
+  },
+  {
+    "id": "4Q3",
+    "figure": "4q3.png",
+    "questionText": "A 26-year-old woman presents with an episode of rising out-of-body sensation and confusion. After looking at the EEG (Fig. 4Q3) you are most suspicious that:",
+    "options": [
+      { "value": "A", "text": "She has left hemispheric dysfunction; there is a sleep spindle better formed on the right." },
+      { "value": "B", "text": "The EEG is normal; it shows phantom spike-and-wave, a benign variant." },
+      { "value": "C", "text": "She may well have epilepsy." },
+      { "value": "D", "text": "She is having focal right-sided theta in N3 sleep, consistent with sleep-walking and requiring sleep-hygiene counseling." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "The EEG shows a brief right-hemispheric ictal-appearing rhythm with sharp waves—highly suggestive of focal seizures. Sleep spindles are alpha-beta bursts, not sharp waves; phantom spike-wave is diffuse and benign."  
+  },
+  {
+    "id": "4Q4",
+    "figure": "4q4.png",
+    "questionText": "You are asked to consult on a 28-year-old woman on the psychiatric ward with confusing features on her exam. After looking at her EEG (Fig. 4Q4) you:",
+    "options": [
+      { "value": "A", "text": "Order a stat lithium level; this EEG represents lithium toxicity." },
+      { "value": "B", "text": "Transfer her to neurology." },
+      { "value": "C", "text": "Advise the psychiatrists to start lamotrigine 25 mg daily." },
+      { "value": "D", "text": "Note the normal vertex waves and suggest adding an antipsychotic." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This EEG shows frequent right frontotemporal sharp waves during sleep—classic for partial-onset seizures, which can mimic panic attacks or psychiatric symptoms. Neurology evaluation (and ASM initiation) takes priority over psychiatric management."  
+  },
+  {
+    "id": "4Q5",
+    "figure": "4q5.png",
+    "questionText": "Figure 4Q5 shows sporadic epileptiform discharges characterized by spikes followed by slow waves. Which of the following is true?",
+    "options": [
+      { "value": "A", "text": "These are vertex waves indicative of stage 1 sleep." },
+      { "value": "B", "text": "These are sporadic epileptiform discharges with a phase reversal at Cz." },
+      { "value": "C", "text": "This is a Cz electrode pop artifact." },
+      { "value": "D", "text": "This pattern is typical of benign neonatal sleep." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "A clear phase reversal at the central (Cz) electrode, combined with the classic spike–slow-wave morphology, confirms these are true epileptiform discharges rather than artifact or benign sleep waves."  
+  }
+]

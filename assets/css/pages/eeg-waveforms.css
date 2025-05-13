@@ -1,0 +1,1482 @@
+/* Slider Container Styles */
+.slider-container {
+  margin-bottom: 24px;
+  position: relative;
+  padding: 0 10px;
+}
+
+.slider-container label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: color var(--transition-duration);
+}
+
+.slider-container label span {
+  color: var(--accent-color);
+  font-weight: 700;
+  transition: color var(--transition-duration);
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 6px;
+  outline: none;
+  -webkit-appearance: none;
+  margin-bottom: 22px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 6px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 6px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--accent-hover);
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: var(--accent-hover);
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  background: var(--accent-active);
+  transform: scale(1.15);
+}
+
+input[type="range"]:active::-moz-range-thumb {
+  background: var(--accent-active);
+  transform: scale(1.15);
+}
+
+.slider-label-min,
+.slider-label-max {
+  position: absolute;
+  bottom: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--transition-duration);
+}
+
+.slider-label-min {
+  left: 10px;
+}
+
+.slider-label-max {
+  right: 10px;
+}
+
+#spike-adjusters {
+  background: var(--info-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 3px 8px var(--shadow-color);
+  transition: all var(--transition-duration);
+  border: 1px solid var(--border-color);
+}
+
+#spike-adjusters h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  transition: color var(--transition-duration);
+}
+
+/* Dark Mode Support */
+.dark-mode .slider-container label {
+  color: var(--text-color);
+}
+
+.dark-mode .slider-container label span {
+  color: var(--accent-color);
+}
+
+.dark-mode input[type="range"] {
+  background: var(--border-color);
+}
+
+.dark-mode input[type="range"]::-webkit-slider-thumb {
+  background: var(--accent-color);
+  border-color: var(--info-bg);
+}
+
+.dark-mode input[type="range"]::-moz-range-thumb {
+  background: var(--accent-color);
+  border-color: var(--info-bg);
+}
+
+.dark-mode .slider-label-min,
+.dark-mode .slider-label-max {
+  color: var(--text-secondary);
+}
+
+.dark-mode #spike-adjusters {
+  background: var(--info-bg);
+  box-shadow: 0 3px 10px var(--shadow-color);
+}
+
+.dark-mode #spike-adjusters h4 {
+  color: var(--primary-color);
+}
+
+/* Add CSS for the findings display */
+.findings-display {
+  position: relative;
+  background: var(--info-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  max-width: 100%;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s ease;
+  display: none;
+}
+
+.findings-display.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.findings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.findings-header h4 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.findings-header h4 i {
+  color: var(--accent-color);
+}
+
+.findings-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.findings-close:hover {
+  color: var(--accent-color);
+}
+
+.findings-content {
+  padding: 5px;
+}
+
+.findings-content h3 {
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+}
+
+.findings-section {
+  margin-bottom: 20px;
+}
+
+.findings-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  border-left: 3px solid var(--accent-color);
+  padding-left: 8px;
+}
+
+.findings-section p {
+  margin: 8px 0;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+/* Add styling for the Sleep EEG tab link */
+.tab-link {
+  display: inline-block;
+  background: var(--info-bg);
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-link:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-color);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* Also ensure the tab controls styling works for the Sleep EEG tab */
+.tab-controls .tab-btn {
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  margin-right: 5px;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.tab-controls .tab-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.tab-controls a.tab-btn {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+/* Styling for sleep controls */
+.sleep-stage-selector {
+  margin-bottom: 15px;
+}
+
+.sleep-stage-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sleep-stage-selector select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.sleep-stage-selector select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.sleep-pattern-toggles {
+  margin-bottom: 15px;
+}
+
+.sleep-pattern-toggles h5 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.sleep-pattern-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sleep-pattern-buttons button {
+  padding: 6px 12px;
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sleep-pattern-buttons button:hover {
+  background-color: var(--hover-bg);
+  transform: translateY(-2px);
+}
+
+.sleep-pattern-buttons button.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.sleep-info {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 5px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.sleep-info h5 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.sleep-info h5 span {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.sleep-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/*-----------------------------------------------
+  EEG WAVEFORM SIMULATOR STYLING
+-----------------------------------------------*/
+
+/* Tab buttons - Apple style */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2em;
+}
+
+.tab-buttons button, 
+.tab-buttons a {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background-color 0.3s, transform 0.3s;
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+}
+
+.tab-buttons button:hover,
+.tab-buttons a:hover {
+  transform: scale(1.02);
+  background-color: rgba(0, 102, 204, 0.2);
+}
+
+.tab-buttons button.active,
+.tab-buttons a.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* Dark mode overrides */
+body.dark .tab-buttons button:not(.active),
+body.dark .tab-buttons a:not(.active) {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
+}
+
+body.dark .tab-buttons button:hover:not(.active),
+body.dark .tab-buttons a:hover:not(.active) {
+  background-color: rgba(41, 151, 255, 0.25);
+}
+
+/* Subtitle styles */
+.page-subtitle {
+  text-align: center;
+  color: var(--primary-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* Phase Reversal Simulator */
+.phase-reversal-simulator {
+  margin: 30px 0;
+}
+
+.simulator-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Head diagram and controls layout */
+.simulator-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.head-diagram-wrapper {
+  flex: 0 0 450px;
+  position: relative;
+}
+
+.head-diagram {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1) inset;
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.simulation-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.control-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.montage-selection,
+.discharge-type,
+.voltage-control {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.montage-selection label,
+.discharge-type span,
+.voltage-control span {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* Improved select styles */
+#reversal-montage-select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  cursor: pointer;
+  background-color: white;
+}
+
+#reversal-montage-select:hover {
+  border-color: var(--primary-color);
+}
+
+/* Toggle Switch for Discharge Type */
+.toggle-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.discharge-toggle {
+  opacity: 0;
+  position: absolute;
+  left: -9999px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  background-color: #ccc;
+  border-radius: 30px;
+  transition: 0.2s;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 24px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.discharge-toggle:checked + .toggle-label .toggle-slider {
+  background-color: var(--success-color);
+}
+
+.discharge-toggle:checked + .toggle-label .toggle-slider:before {
+  transform: translateX(30px);
+}
+
+.toggle-option {
+  font-size: 0.95rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.toggle-option.active {
+  opacity: 1;
+  font-weight: 500;
+}
+
+/* Improved Voltage Slider */
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.voltage-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #ddd;
+  outline: none;
+}
+
+.voltage-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s;
+}
+
+.voltage-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s;
+  border: none;
+}
+
+.voltage-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.voltage-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider-value {
+  position: relative;
+  text-align: center;
+  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+.slider-with-markers {
+  position: relative;
+  width: 100%;
+  padding-bottom: 25px;
+}
+
+.slider-track {
+  position: absolute;
+  top: -13px;
+  left: 0;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #ddd, var(--primary-color));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slider-markers {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* Instructions Box */
+.instructions {
+  margin-top: 20px;
+  padding: 12px 15px;
+  background-color: rgba(0, 136, 255, 0.1);
+  border-left: 3px solid var(--primary-color);
+  border-radius: 3px;
+  font-size: 0.95rem;
+}
+
+/* Activity Source */
+.activity-source {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,0,0,0.7) 0%, rgba(255,0,0,0) 70%);
+}
+
+.activity-source.visible {
+  opacity: 1;
+}
+
+/* Electrode Styles */
+.electrode {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border: 2px solid #0066cc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0066cc;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.2s ease;
+}
+
+.electrode:hover {
+  background-color: #f0f7ff;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.electrode.active {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+  box-shadow: 0 0 0 4px rgba(255, 77, 77, 0.3);
+}
+
+/* EEG Display */
+.eeg-display {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.waveform-display {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  height: 500px;
+  overflow: auto;
+}
+
+.waveform-group {
+  margin-bottom: 15px;
+}
+
+.waveform-group-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.waveform-channel {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.channel-label {
+  width: 80px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.channel-waveform {
+  flex: 1;
+  height: 100%;
+  background-color: #f9f9f9;
+  border-radius: 3px;
+  position: relative;
+}
+
+.channel-waveform svg {
+  width: 100%;
+  height: 100%;
+}
+
+.channel-waveform.highlighted {
+  background-color: rgba(255, 77, 77, 0.1);
+}
+
+/* Phase Reversal Markers */
+.phase-reversal-marker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 77, 77, 0.7);
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.phase-reversal-marker:after {
+  content: "Phase Reversal";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 77, 77, 0.9);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-bottom: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .simulator-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .head-diagram-wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .simulation-controls {
+    width: 100%;
+  }
+}
+
+/* Page title styling to match other pages */
+.page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark .page-title {
+  color: var(--text-color);
+}
+
+/* Continue with existing styles (unchanged) */
+
+/* Enhance responsive adjustments */
+@media (max-width: 1024px) {
+  .simulator-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .head-diagram-wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .simulation-controls {
+    width: 100%;
+  }
+}
+
+/* Added Responsive styles for medium screens */
+@media (max-width: 992px) {
+  .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+  }
+  
+  .findings-display {
+    padding: 18px;
+  }
+  
+  .findings-header h4 {
+    font-size: 1.1rem;
+  }
+  
+  .findings-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .findings-section h4 {
+    font-size: 1rem;
+  }
+  
+  .tab-buttons button, 
+  .tab-buttons a {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+  
+  .simulator-container {
+    padding: 18px;
+    gap: 18px;
+  }
+  
+  .head-diagram {
+    max-width: 380px;
+    max-height: 380px;
+  }
+  
+  .electrode {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+  
+  .waveform-display {
+    height: 450px;
+  }
+}
+
+/* Tablets and small laptops */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .page-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  #spike-adjusters {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  #spike-adjusters h4 {
+    font-size: 1rem;
+  }
+  
+  .slider-container {
+    margin-bottom: 20px;
+  }
+  
+  .slider-container label {
+    font-size: 0.9rem;
+  }
+  
+  .tab-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .tab-buttons button, 
+  .tab-buttons a {
+    width: 100%;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .findings-display {
+    padding: 15px;
+    margin: 15px 0;
+  }
+  
+  .findings-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  
+  .findings-header h4 {
+    font-size: 1rem;
+    gap: 6px;
+  }
+  
+  .findings-close {
+    font-size: 1.1rem;
+  }
+  
+  .findings-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .findings-section h4 {
+    font-size: 0.95rem;
+  }
+  
+  .findings-section p {
+    font-size: 0.9rem;
+  }
+  
+  .simulator-container {
+    padding: 15px;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .head-diagram-wrapper {
+    max-width: 320px;
+  }
+  
+  .head-diagram {
+    max-width: 320px;
+    max-height: 320px;
+  }
+  
+  .electrode {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+  
+  .simulation-controls {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .montage-selection label,
+  .discharge-type span,
+  .voltage-control span {
+    font-size: 0.9rem;
+  }
+  
+  #reversal-montage-select {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .slider-value {
+    font-size: 0.95rem;
+  }
+  
+  .instructions {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .waveform-display {
+    padding: 8px;
+    height: 400px;
+  }
+  
+  .waveform-group-label {
+    font-size: 0.85rem;
+  }
+  
+  .waveform-channel {
+    height: 35px;
+  }
+  
+  .channel-label {
+    width: 70px;
+    font-size: 0.8rem;
+  }
+  
+  .sleep-stage-selector select {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  
+  .sleep-pattern-buttons button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: auto;
+  }
+  
+  .sleep-info h5 {
+    font-size: 0.9rem;
+  }
+  
+  .sleep-info p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  .page-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  #spike-adjusters {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  #spike-adjusters h4 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+  
+  .slider-container {
+    margin-bottom: 16px;
+    padding: 0 5px;
+  }
+  
+  .slider-container label {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  
+  .slider-label-min,
+  .slider-label-max {
+    font-size: 0.75rem;
+  }
+  
+  input[type="range"] {
+    margin-bottom: 18px;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tab-buttons button, 
+  .tab-buttons a {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    min-width: auto;
+  }
+  
+  .findings-display {
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+  }
+  
+  .findings-header {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+  
+  .findings-header h4 {
+    font-size: 0.95rem;
+  }
+  
+  .findings-close {
+    font-size: 1rem;
+  }
+  
+  .findings-content h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .findings-section {
+    margin-bottom: 15px;
+  }
+  
+  .findings-section h4 {
+    font-size: 0.9rem;
+    padding-left: 6px;
+  }
+  
+  .findings-section p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  
+  .simulator-container {
+    padding: 12px;
+    gap: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  .head-diagram-wrapper {
+    max-width: 260px;
+  }
+  
+  .head-diagram {
+    max-width: 260px;
+    max-height: 260px;
+  }
+  
+  .electrode {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  
+  .simulation-controls {
+    padding: 10px;
+    gap: 10px;
+    border-radius: 6px;
+  }
+  
+  .montage-selection label,
+  .discharge-type span,
+  .voltage-control span {
+    font-size: 0.85rem;
+    min-width: 90px;
+  }
+  
+  #reversal-montage-select {
+    padding: 7px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  
+  .slider-value {
+    font-size: 0.9rem;
+    margin-top: 3px;
+  }
+  
+  .slider-with-markers {
+    padding-bottom: 20px;
+  }
+  
+  .slider-markers {
+    font-size: 0.7rem;
+  }
+  
+  .instructions {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    margin-top: 15px;
+  }
+  
+  .waveform-display {
+    padding: 6px;
+    height: 350px;
+    border-radius: 6px;
+  }
+  
+  .waveform-group-label {
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+  }
+  
+  .waveform-channel {
+    height: 30px;
+    margin-bottom: 3px;
+  }
+  
+  .channel-label {
+    width: 60px;
+    font-size: 0.75rem;
+    padding-right: 8px;
+  }
+  
+  .phase-reversal-marker:after {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+  
+  .sleep-stage-selector label {
+    font-size: 0.85rem;
+  }
+  
+  .sleep-stage-selector select {
+    font-size: 0.85rem;
+    padding: 7px;
+  }
+  
+  .sleep-pattern-toggles h5 {
+    font-size: 0.9rem;
+  }
+  
+  .sleep-pattern-buttons button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: auto;
+  }
+  
+  .sleep-info h5 {
+    font-size: 0.9rem;
+  }
+  
+  .sleep-info p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  #spike-adjusters {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+  }
+  
+  #spike-adjusters h4 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+  }
+  
+  .slider-container {
+    margin-bottom: 14px;
+  }
+  
+  .slider-container label {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+  
+  .tab-buttons button, 
+  .tab-buttons a {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .findings-display {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+  }
+  
+  .findings-header h4 {
+    font-size: 0.9rem;
+  }
+  
+  .findings-content h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  
+  .findings-section h4 {
+    font-size: 0.85rem;
+  }
+  
+  .findings-section p {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  
+  .simulator-container {
+    padding: 10px;
+    gap: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+  }
+  
+  .head-diagram-wrapper {
+    max-width: 220px;
+  }
+  
+  .head-diagram {
+    max-width: 220px;
+    max-height: 220px;
+  }
+  
+  .electrode {
+    width: 24px;
+    height: 24px;
+    font-size: 0.65rem;
+    border-width: 1px;
+  }
+  
+  .electrode.active {
+    box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.3);
+  }
+  
+  .simulation-controls {
+    padding: 8px;
+    gap: 8px;
+    border-radius: 5px;
+  }
+  
+  .montage-selection label,
+  .discharge-type span,
+  .voltage-control span {
+    font-size: 0.8rem;
+    min-width: 80px;
+  }
+  
+  #reversal-montage-select {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+  }
+  
+  .slider-value {
+    font-size: 0.85rem;
+  }
+  
+  .instructions {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    margin-top: 12px;
+    border-radius: 4px;
+  }
+  
+  .waveform-display {
+    padding: 5px;
+    height: 300px;
+    border-radius: 5px;
+  }
+  
+  .waveform-group-label {
+    font-size: 0.75rem;
+  }
+  
+  .waveform-channel {
+    height: 25px;
+  }
+  
+  .channel-label {
+    width: 50px;
+    font-size: 0.7rem;
+    padding-right: 6px;
+  }
+  
+  .sleep-stage-selector label {
+    font-size: 0.8rem;
+  }
+  
+  .sleep-stage-selector select {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+  
+  .sleep-pattern-buttons button {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+  }
+} 

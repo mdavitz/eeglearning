@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- Set viewport to 320px width for retro style -->
+  <meta name="viewport" content="width=320, initial-scale=1.0">
+  <title>Galaxibrain – Retro Space Shooter</title>
+  <!-- Load retro 8-bit font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Container for canvas only */
+    #gameContainer {
+      position: relative;
+      width: 320px;
+    }
+    canvas {
+      display: block;
+      background: black;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 10px #0f0;
+    }
+    /* Mute button stays at top-right of the viewport */
+    #muteButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 12px;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    #muteButton:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Mute Button -->
+  <button id="muteButton">Mute</button>
+  <!-- Game container holds only the canvas -->
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+  </div>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // ----------------------- ASSET LOADING -----------------------
+    const bgImg = new Image();
+    bgImg.src = "background.png"; // Full-screen background image.
+    const shipImg = new Image();
+    shipImg.src = "bird.png";       // Player's ship.
+    const enemyImg = new Image();
+    enemyImg.src = "neuron.png";    // Enemy image (rotated 90°).
+
+    // ----------------------- AUDIO -----------------------
+    const shootSound = new Audio("flap.wav");
+    const explosionSound = new Audio("score.wav");
+    const hitSound = new Audio("hit.wav");
+    const bgMusic = new Audio("music2.m4a");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.2;
+    document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
+    document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
+
+    // ----------------------- VOLUME TOGGLE -----------------------
+    const muteButton = document.getElementById("muteButton");
+    let isMuted = false;
+    muteButton.addEventListener("click", function() {
+      isMuted = !isMuted;
+      [shootSound, explosionSound, hitSound, bgMusic].forEach(sound => sound.muted = isMuted);
+      muteButton.textContent = isMuted ? "Unmute" : "Mute";
+    });
+
+    // ----------------------- GAME VARIABLES -----------------------
+    let gameState = "menu"; // "menu", "playing", "gameover"
+    let score = 0;
+    let frames = 0;
+    let level = 1;
+
+    // ----------------------- PLAYER -----------------------
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 40,
+      width: 40,
+      height: 40,
+      speed: 3,
+      movingLeft: false,
+      movingRight: false,
+      draw: function() {
+        ctx.drawImage(shipImg, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+      },
+      update: function() {
+        if (this.movingLeft && this.x - this.width/2 > 0) {
+          this.x -= this.speed;
+        }
+        if (this.movingRight && this.x + this.width/2 < canvas.width) {
+          this.x += this.speed;
+        }
+      }
+    };
+
+    // ----------------------- PLAYER PROJECTILES -----------------------
+    const projectiles = [];
+    function shoot() {
+      projectiles.push({
+        x: player.x,
+        y: player.y - player.height/2,
+        width: 5,
+        height: 10,
+        speed: 5
+      });
+      shootSound.currentTime = 0;
+      shootSound.play();
+    }
+    function updateProjectiles() {
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        projectiles[i].y -= projectiles[i].speed;
+        if (projectiles[i].y + projectiles[i].height < 0) {
+          projectiles.splice(i, 1);
+        }
+      }
+    }
+    function drawProjectiles() {
+      ctx.fillStyle = "#0f0";
+      projectiles.forEach(proj => {
+        ctx.fillRect(proj.x - proj.width/2, proj.y, proj.width, proj.height);
+      });
+    }
+
+    // ----------------------- ENEMY FORMATION (Galaxibrain Style) -----------------------
+    let formation = null;
+    const formationCols = 6;
+    const baseRows = 3;
+    const enemyWidth = 30;
+    const enemyHeight = 30;
+    function createFormation() {
+      const formationRows = baseRows + Math.floor((level - 1) / 2);
+      const spacingX = 40;
+      const spacingY = 35;
+      formation = {
+        x: 20,
+        y: 50,
+        dx: 1 + (level - 1) * 0.5,
+        enemies: []
+      };
+      for (let r = 0; r < formationRows; r++) {
+        for (let c = 0; c < formationCols; c++) {
+          formation.enemies.push({
+            offsetX: c * spacingX,
+            offsetY: r * spacingY,
+            dive: false
+          });
+        }
+      }
+    }
+
+    // ----------------------- FORMATION UPDATE (Diving & Shooting) -----------------------
+    const diveSpeed = 2;
+    function updateFormation() {
+      // Update formation horizontal position.
+      formation.x += formation.dx;
+      
+      // Compute horizontal boundaries based on non-diving enemies if available.
+      let activeEnemies = formation.enemies.filter(e => !e.dive);
+      let minOffset = activeEnemies.length ? Math.min(...activeEnemies.map(e => e.offsetX)) : Math.min(...formation.enemies.map(e => e.offsetX));
+      let maxOffset = activeEnemies.length ? Math.max(...activeEnemies.map(e => e.offsetX)) + enemyWidth : Math.max(...formation.enemies.map(e => e.offsetX)) + enemyWidth;
+      let leftBound = formation.x + minOffset;
+      let rightBound = formation.x + maxOffset;
+      
+      // Clamp formation.x and reverse direction if boundaries exceed canvas.
+      if (leftBound < 0) {
+        formation.x = -minOffset;
+        formation.dx = -formation.dx;
+      }
+      if (rightBound > canvas.width) {
+        formation.x = canvas.width - maxOffset;
+        formation.dx = -formation.dx;
+      }
+      
+      // Trigger diving occasionally.
+      if (frames % (150 - level * 5) === 0) {
+        let nonDiving = formation.enemies.filter(e => !e.dive);
+        if (nonDiving.length) {
+          let enemy = nonDiving[Math.floor(Math.random() * nonDiving.length)];
+          enemy.dive = true;
+          enemy.absoluteX = formation.x + enemy.offsetX;
+          enemy.absoluteY = formation.y + enemy.offsetY;
+          // Compute dive vector aimed at player's current position.
+          let dx = player.x - enemy.absoluteX;
+          let dy = player.y - enemy.absoluteY;
+          let mag = Math.hypot(dx, dy);
+          enemy.diveVx = (dx / mag) * diveSpeed;
+          enemy.diveVy = (dy / mag) * diveSpeed;
+        }
+      }
+      // Update diving enemies.
+      formation.enemies.forEach((enemy, index) => {
+        if (enemy.dive) {
+          enemy.absoluteX += enemy.diveVx;
+          enemy.absoluteY += enemy.diveVy;
+          // Remove enemy if it moves past the bottom.
+          if (enemy.absoluteY - enemyHeight/2 > canvas.height) {
+            formation.enemies.splice(index, 1);
+          }
+        }
+      });
+      // Enemy shooting.
+      if (frames % Math.max(180 - level * 10, 60) === 0 && formation.enemies.length > 0) {
+        enemyShoot();
+      }
+    }
+
+    // ----------------------- ENEMY PROJECTILES -----------------------
+    const enemyProjectiles = [];
+    function enemyShoot() {
+      const shooter = formation.enemies[Math.floor(Math.random() * formation.enemies.length)];
+      let ex, ey;
+      if (shooter.dive) {
+        ex = shooter.absoluteX;
+        ey = shooter.absoluteY;
+      } else {
+        ex = formation.x + shooter.offsetX;
+        ey = formation.y + shooter.offsetY;
+      }
+      const dx = player.x - ex;
+      const dy = player.y - ey;
+      const dist = Math.hypot(dx, dy);
+      const speed = 2 + level * 0.3;
+      const vx = (dx / dist) * speed;
+      const vy = (dy / dist) * speed;
+      enemyProjectiles.push({
+        x: ex,
+        y: ey,
+        width: 4,
+        height: 8,
+        vx: vx,
+        vy: vy
+      });
+    }
+    function updateEnemyProjectiles() {
+      for (let i = enemyProjectiles.length - 1; i >= 0; i--) {
+        enemyProjectiles[i].x += enemyProjectiles[i].vx;
+        enemyProjectiles[i].y += enemyProjectiles[i].vy;
+        if (
+          enemyProjectiles[i].y > canvas.height ||
+          enemyProjectiles[i].x < 0 ||
+          enemyProjectiles[i].x > canvas.width
+        ) {
+          enemyProjectiles.splice(i, 1);
+        }
+      }
+    }
+    function drawEnemyProjectiles() {
+      ctx.fillStyle = "red";
+      enemyProjectiles.forEach(proj => {
+        ctx.fillRect(proj.x - proj.width/2, proj.y, proj.width, proj.height);
+      });
+    }
+
+    // ----------------------- COLLISION DETECTION -----------------------
+    function collision(rect1, rect2) {
+      return !(rect1.x + rect1.width/2 < rect2.x - rect2.width/2 ||
+               rect1.x - rect1.width/2 > rect2.x + rect2.width/2 ||
+               rect1.y + rect1.height/2 < rect2.y - rect2.height/2 ||
+               rect1.y - rect1.height/2 > rect2.y + rect2.height/2);
+    }
+    function checkProjectileCollisions() {
+      for (let i = formation.enemies.length - 1; i >= 0; i--) {
+        const enemy = formation.enemies[i];
+        let ex, ey;
+        if (enemy.dive) {
+          ex = enemy.absoluteX;
+          ey = enemy.absoluteY;
+        } else {
+          ex = formation.x + enemy.offsetX;
+          ey = formation.y + enemy.offsetY;
+        }
+        const enemyRect = { x: ex, y: ey, width: enemyWidth, height: enemyHeight };
+        for (let j = projectiles.length - 1; j >= 0; j--) {
+          const proj = projectiles[j];
+          const projRect = { x: proj.x, y: proj.y, width: proj.width, height: proj.height };
+          if (collision(enemyRect, projRect)) {
+            explosionSound.currentTime = 0;
+            explosionSound.play();
+            formation.enemies.splice(i, 1);
+            projectiles.splice(j, 1);
+            score++;
+            break;
+          }
+        }
+      }
+    }
+    function checkPlayerProjectileCollisions() {
+      const playerRect = { x: player.x, y: player.y, width: player.width, height: player.height };
+      for (let i = enemyProjectiles.length - 1; i >= 0; i--) {
+        const proj = enemyProjectiles[i];
+        const projRect = { x: proj.x, y: proj.y, width: proj.width, height: proj.height };
+        if (collision(playerRect, projRect)) {
+          hitSound.play();
+          gameState = "gameover";
+        }
+      }
+    }
+    function checkPlayerCollisions() {
+      const playerRect = { x: player.x, y: player.y, width: player.width, height: player.height };
+      for (let enemy of formation.enemies) {
+        let ex, ey;
+        if (enemy.dive) {
+          ex = enemy.absoluteX;
+          ey = enemy.absoluteY;
+        } else {
+          ex = formation.x + enemy.offsetX;
+          ey = formation.y + enemy.offsetY;
+        }
+        const enemyRect = { x: ex, y: ey, width: enemyWidth, height: enemyHeight };
+        if (collision(playerRect, enemyRect)) {
+          hitSound.play();
+          gameState = "gameover";
+        }
+      }
+    }
+
+    // ----------------------- INPUT HANDLING (Keyboard) -----------------------
+    document.addEventListener("keydown", function(e) {
+      if (gameState === "playing") {
+        if (e.code === "ArrowLeft") { player.movingLeft = true; }
+        if (e.code === "ArrowRight") { player.movingRight = true; }
+        if (e.code === "Space") { shoot(); }
+      }
+      if (e.code === "Enter" && gameState === "menu") {
+        createFormation();
+        gameState = "playing";
+      }
+      if (e.code === "Enter" && gameState === "gameover") {
+        resetGame();
+        createFormation();
+        gameState = "playing";
+      }
+    });
+    document.addEventListener("keyup", function(e) {
+      if (e.code === "ArrowLeft") { player.movingLeft = false; }
+      if (e.code === "ArrowRight") { player.movingRight = false; }
+    });
+
+    // ----------------------- TOUCH CONTROLS (Canvas-Based) -----------------------
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      let x, y;
+      if (e.touches) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
+      return { x, y };
+    }
+    canvas.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      // If game is in menu or gameover state, start the game.
+      if (gameState === "menu" || gameState === "gameover") {
+        resetGame();
+        createFormation();
+        gameState = "playing";
+        return;
+      }
+      const pos = getCanvasCoordinates(e);
+      // Check if touch is within player's bounding box (with margin).
+      if (
+        pos.x >= player.x - player.width/2 - 10 &&
+        pos.x <= player.x + player.width/2 + 10 &&
+        pos.y >= player.y - player.height/2 - 10 &&
+        pos.y <= player.y + player.height/2 + 10
+      ) {
+        shoot();
+      } else {
+        // Otherwise, if touch is on left half, move left; right half, move right.
+        if (pos.x < canvas.width / 2) {
+          player.movingLeft = true;
+          player.movingRight = false;
+        } else {
+          player.movingRight = true;
+          player.movingLeft = false;
+        }
+      }
+    });
+    canvas.addEventListener("touchmove", function(e) {
+      e.preventDefault();
+      const pos = getCanvasCoordinates(e);
+      if (
+        pos.x >= player.x - player.width/2 - 10 &&
+        pos.x <= player.x + player.width/2 + 10 &&
+        pos.y >= player.y - player.height/2 - 10 &&
+        pos.y <= player.y + player.height/2 + 10
+      ) {
+        player.movingLeft = false;
+        player.movingRight = false;
+        shoot();
+      } else if (pos.x < canvas.width / 2) {
+        player.movingLeft = true;
+        player.movingRight = false;
+      } else {
+        player.movingRight = true;
+        player.movingLeft = false;
+      }
+    });
+    canvas.addEventListener("touchend", function(e) {
+      e.preventDefault();
+      player.movingLeft = false;
+      player.movingRight = false;
+    });
+    canvas.addEventListener("click", function(e) {
+      if (gameState === "menu" || gameState === "gameover") {
+        resetGame();
+        createFormation();
+        gameState = "playing";
+      }
+    });
+
+    // ----------------------- GAME RESET -----------------------
+    function resetGame() {
+      score = 0;
+      frames = 0;
+      level = 1;
+      player.x = canvas.width / 2;
+      projectiles.length = 0;
+      enemyProjectiles.length = 0;
+      formation = null;
+    }
+
+    // ----------------------- DRAW BACKGROUND -----------------------
+    function drawBackground() {
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+    }
+
+    // ----------------------- DRAW HUD -----------------------
+    function drawHUD() {
+      ctx.fillStyle = "#0f0";
+      ctx.font = "12px 'Press Start 2P'";
+      ctx.textAlign = "left";
+      ctx.fillText("SCORE: " + score, 10, 20);
+      ctx.fillText("LEVEL: " + level, 10, 40);
+    }
+
+    // ----------------------- DRAW MENU & GAMEOVER -----------------------
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0f0";
+      ctx.font = "16px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("GALAXIBRAIN", canvas.width/2, canvas.height/2 - 20);
+      ctx.font = "10px 'Press Start 2P'";
+      ctx.fillText("Tap or Press ENTER to start", canvas.width/2, canvas.height/2 + 10);
+    }
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0,0,0,0.8)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0f0";
+      ctx.font = "16px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 20);
+      ctx.font = "10px 'Press Start 2P'";
+      ctx.fillText("Score: " + score, canvas.width/2, canvas.height/2);
+      ctx.fillText("Tap or Press ENTER to restart", canvas.width/2, canvas.height/2 + 20);
+    }
+
+    // ----------------------- MAIN GAME LOOP -----------------------
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      frames++;
+      if (gameState === "menu") {
+        drawMenu();
+      } else if (gameState === "gameover") {
+        drawGameOver();
+      } else if (gameState === "playing") {
+        player.update();
+        updateProjectiles();
+        updateEnemyProjectiles();
+        updateFormation();
+        checkProjectileCollisions();
+        checkPlayerProjectileCollisions();
+        checkPlayerCollisions();
+        player.draw();
+        drawProjectiles();
+        drawEnemyProjectiles();
+        // Draw each enemy using the enemy image rotated 90° clockwise.
+        formation.enemies.forEach(enemy => {
+          let ex, ey;
+          if (enemy.dive) {
+            ex = enemy.absoluteX;
+            ey = enemy.absoluteY;
+          } else {
+            ex = formation.x + enemy.offsetX;
+            ey = formation.y + enemy.offsetY;
+          }
+          ctx.save();
+          ctx.translate(ex, ey);
+          ctx.rotate(Math.PI/2);
+          ctx.drawImage(enemyImg, -enemyWidth/2, -enemyHeight/2, enemyWidth, enemyHeight);
+          ctx.restore();
+        });
+        drawHUD();
+        if (formation.enemies.length === 0) {
+          level++;
+          createFormation();
+        }
+      }
+      requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+
+    // ----------------------- STOP MUSIC WHEN POPUP CLOSES -----------------------
+    window.addEventListener("beforeunload", () => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    });
+  </script>
+</body>
+</html>

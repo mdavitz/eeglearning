@@ -1,0 +1,72 @@
+[
+  {
+    "id": "6Q1",
+    "questionText": "A patient has tried two anti-seizure medications at therapeutic doses and continues to have one focal-to-bilateral tonic–clonic seizure per month. A reasonable next step is:",
+    "options": [
+      { "value": "A", "text": "Bilateral SEEG to figure out where the seizures are coming from." },
+      { "value": "B", "text": "Do a scalp EEG, MRI brain, and neuropsychological testing and present in a multidisciplinary conference to develop a hypothesis of the seizure onset zone and possible other options." },
+      { "value": "C", "text": "Tell the patient epilepsy surgery is too dangerous and their seizures are not that bad anyway." },
+      { "value": "D", "text": "Place a vagal nerve stimulator (VNS)." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "Before considering VNS or stereo-EEG, a standard pre-surgical workup (scalp EEG to characterize seizures, epilepsy-protocol MRI, neuropsychological testing) should be completed and then reviewed in a multidisciplinary epilepsy conference."
+  },
+  {
+    "id": "6Q2",
+    "questionText": "In which drug-resistant epilepsy patient would an intracranial EEG NOT be necessary (i.e. the patient could go straight to resective surgery or LITT)?",
+    "options": [
+      { "value": "A", "text": "Seizures consisting of an anxious feeling, scalp EEG showing right temporal-lobe onsets, MRI with right mesial temporal sclerosis, and poor spatial memory on neuropsychological testing." },
+      { "value": "B", "text": "A non-verbal autistic patient who has focal-to-bilateral tonic–clonic seizures without an observable warning; EEG shows left hemispheric onsets and MRI is non-lesional." },
+      { "value": "C", "text": "Nocturnal hypermotor seizures that are difficult to lateralize on scalp EEG with ventriculomegaly on MRI." },
+      { "value": "D", "text": "Déjà vu followed by loss of awareness; scalp EEG shows bilateral independent hippocampal onsets and MRI shows bilateral periventricular nodular heterotopias." }
+    ],
+    "correctAnswerLetter": "A",
+    "explanation": "In choice A, clinical semiology, scalp EEG, MRI findings, and neuropsychological testing are all concordant localizing to the right mesial temporal lobe, so the patient can proceed directly to resective surgery or LITT without intracranial monitoring."
+  },
+  {
+    "id": "6Q3",
+    "questionText": "Which answer is correct regarding the proper settings during an intracranial EEG study?",
+    "options": [
+      { "value": "A", "text": "High-frequency filter at 30 Hz." },
+      { "value": "B", "text": "Sampling frequency > 512 Hz." },
+      { "value": "C", "text": "Amplifier sensitivity can remain at 7 µV/mm." },
+      { "value": "D", "text": "Timebase 10 mm/s." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "Sampling > 512 Hz is required to avoid aliasing (Nyquist theorem). A 30 Hz high-frequency filter would remove important high-frequency oscillations; intracranial sensitivity is typically set around 50 µV/mm; timebase is usually 30 mm/s."
+  },
+  {
+    "id": "6Q4",
+    "questionText": "A 19-year-old with drug-resistant epilepsy has seizures consisting of rightward eye deviation. SEEG targeting the left frontal eye fields was performed. Below is the table of implanted electrode contacts and their anatomical targets, followed by the pattern seen at contacts LpClE 5–8:",
+    "table": {
+      "headers": ["Lead abbreviation", "Internal contact", "External contact"],
+      "rows": [
+        ["LmCmS (8 contacts)", "Middle cingulate", "Middle superior frontal gyrus"],
+        ["LpCpM (10 contacts)", "Mid-posterior cingulate", "Posterior middle frontal gyrus (mesial)"],
+        ["LpClE (12 contacts)", "Posterior cingulate", "Frontal eye fields (lateral)"]
+      ]
+    },
+    "figure": "6q4.png",
+    "options": [
+      { "value": "A", "text": "Continuous periodic discharges as seen in focal cortical dysplasia." },
+      { "value": "B", "text": "Low-amplitude spikes with admixed fast activity as seen in nodular heterotopia." },
+      { "value": "C", "text": "LRDA." },
+      { "value": "D", "text": "Artifact." }
+    ],
+    "correctAnswerLetter": "A",
+    "explanation": "The continuous periodic discharges (LPDs) at these contacts are characteristic of focal cortical dysplasia; they are too large for the low-amplitude pattern of heterotopia, not smooth like LRDA, and unlike typical intracranial artifacts."
+  },
+  {
+    "id": "6Q5",
+    "figure": "6q5.png",
+    "questionText": "The image below shows stimulation of contacts LpClE 5–6 (double-headed arrow) in the same patient. Directly after stimulation, the patient’s eyes deviate to the right just as in a typical seizure. This finding is most consistent with:",
+    "options": [
+      { "value": "A", "text": "After-discharges caused by stimulation." },
+      { "value": "B", "text": "No effect from stimulation." },
+      { "value": "C", "text": "Focal seizure caused by stimulation." },
+      { "value": "D", "text": "Interictal discharges." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "An electrographic seizure evolves in frequency and morphology immediately after stimulation, accompanied by the patient’s typical clinical sign (eye deviation), indicating a focal seizure induced by stimulation."
+  }
+]

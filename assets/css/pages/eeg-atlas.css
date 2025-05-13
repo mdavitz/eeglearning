@@ -1,0 +1,750 @@
+/*-----------------------------------------------
+  EEG ATLAS SPECIFIC STYLES
+-----------------------------------------------*/
+
+/* Page title styling to match other pages */
+.page-eeg_atlas .page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark .page-eeg_atlas .page-title {
+  color: var(--text-color);
+}
+
+#eeg-atlas-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--info-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transition: background var(--transition-duration), box-shadow var(--transition-duration), padding 0.3s ease, border-radius 0.3s ease;
+}
+
+/* Atlas controls section */
+.atlas-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: margin 0.3s ease, padding 0.3s ease;
+}
+
+/* Sidebar buttons in a 2x2 grid */
+#sidebar-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  max-width: 600px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  transition: gap 0.3s ease, margin 0.3s ease;
+}
+
+#sidebar-buttons button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, padding 0.3s ease, font-size 0.3s ease, min-width 0.3s ease;
+  background-color: var(--accent-color);
+  color: white;
+  min-width: 120px;
+  display: inline-block;
+  text-align: center;
+}
+
+#sidebar-buttons button:hover {
+  transform: scale(1.02);
+  background-color: var(--accent-hover);
+}
+
+#sidebar-buttons button.active {
+  background-color: var(--accent-color);
+}
+
+#sidebar-buttons button:not(.active) {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+}
+
+body.dark #sidebar-buttons button:not(.active) {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
+}
+
+/* EEG videos in atlas container */
+#eeg-atlas-container #eeg-videos {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  height: auto;
+  transition: gap 0.3s ease;
+}
+
+/* Search and filter styles */
+.search-container {
+  margin-bottom: 24px;
+  width: 100%;
+  transition: margin 0.3s ease;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 16px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  transition: margin 0.3s ease;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  background: var(--info-bg);
+  color: var(--text-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.3s ease, padding 0.3s ease, font-size 0.3s ease, border-radius 0.3s ease;
+}
+
+.search-box:before {
+  content: '\f002';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent-color);
+  z-index: 1;
+  transition: left 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+}
+
+/* Atlas list styling */
+#atlas-list {
+  list-style: none; 
+  padding-left: 0;
+  max-width: 600px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  transition: padding 0.3s ease;
+}
+
+#atlas-list li {
+  margin-bottom: 8px;
+  transition: margin 0.3s ease;
+}
+
+#atlas-list .category-header {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: color 0.2s ease, border-color var(--transition-duration), padding 0.3s ease, font-size 0.3s ease;
+}
+
+#atlas-list .category-header:hover {
+  color: var(--accent-color);
+}
+
+#atlas-list .category-header::after {
+  content: "+";
+  font-size: 1.2rem;
+  transition: transform 0.3s ease, font-size 0.3s ease;
+}
+
+#atlas-list .category-header.open::after {
+  transform: rotate(45deg);
+}
+
+#atlas-list .category-items {
+  list-style: none;
+  margin: 0;
+  padding-left: 16px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+
+#atlas-list .category-items.open {
+  max-height: 1000px;
+  transition: max-height 0.5s ease-in;
+}
+
+#atlas-list .eeg-item {
+  padding: 10px 0;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: color 0.2s, transform 0.2s, padding 0.3s ease, font-size 0.3s ease;
+}
+
+#atlas-list .eeg-item:hover {
+  color: var(--accent-color);
+  transform: translateX(4px);
+}
+
+/* Main content styling */
+.atlas-content {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+  gap: 24px;
+  transition: gap 0.3s ease;
+}
+
+.atlas-sidebar {
+  background: var(--info-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  transition: padding 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
+}
+
+#eeg-atlas-container .main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  background: var(--info-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease, border-radius 0.3s ease;
+}
+
+/* Detail content styling */
+#detail-content {
+  padding: 16px;
+  border-radius: 8px;
+  transition: padding 0.3s ease;
+}
+
+#detail-content h2 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 1.8rem;
+  transition: color var(--transition-duration), font-size 0.3s ease, margin 0.3s ease, gap 0.3s ease;
+}
+
+#detail-content h2 i {
+  color: var(--accent-color);
+  transition: font-size 0.3s ease;
+}
+
+#detail-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: box-shadow var(--transition-duration), border-radius 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+#detail-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 1.05rem;
+  transition: font-size 0.3s ease, line-height 0.3s ease, margin 0.3s ease;
+}
+
+/* Flashcard styling */
+#flashcard-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  transition: margin 0.3s ease;
+}
+
+.flashcard {
+  width: 100%;
+  min-height: 300px;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease, padding 0.3s ease, min-height 0.3s ease, border-radius 0.3s ease;
+}
+
+/* Enhanced Responsive styles */
+/* Medium screens */
+@media (max-width: 992px) {
+  .page-eeg_atlas .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .page-eeg_atlas .page-title:after {
+    width: 70px;
+  }
+  
+  #eeg-atlas-container {
+    padding: 20px;
+  }
+  
+  .atlas-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .atlas-sidebar {
+    position: relative;
+    top: 0;
+    max-height: none;
+    padding: 1.25rem;
+  }
+  
+  #eeg-atlas-container .main-content {
+    padding: 20px;
+  }
+  
+  #detail-content h2 {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+  
+  #detail-content p {
+    font-size: 1rem;
+  }
+  
+  .flashcard {
+    padding: 1.75rem;
+    min-height: 250px;
+    margin-bottom: 1.75rem;
+  }
+}
+
+/* Tablets and small laptops */
+@media (max-width: 768px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+    padding-bottom: 8px;
+  }
+  
+  .page-eeg_atlas .page-title:after {
+    width: 60px;
+    height: 3px;
+  }
+  
+  #eeg-atlas-container {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.2rem;
+  }
+  
+  #eeg-atlas-container #eeg-videos {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  #sidebar-buttons {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  #sidebar-buttons button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  
+  .search-box {
+    max-width: 100%;
+    margin-bottom: 14px;
+  }
+  
+  .search-box input {
+    font-size: 0.95rem;
+    padding: 10px 12px 10px 38px;
+  }
+  
+  .search-box:before {
+    left: 15px;
+  }
+  
+  #atlas-list {
+    max-width: 100%;
+  }
+  
+  #atlas-list .category-header {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
+  
+  #atlas-list .category-header::after {
+    font-size: 1.1rem;
+  }
+  
+  #atlas-list .category-items {
+    padding-left: 12px;
+  }
+  
+  #atlas-list .eeg-item {
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .atlas-sidebar {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  #eeg-atlas-container .main-content {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  #detail-content {
+    padding: 12px;
+  }
+  
+  #detail-content h2 {
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+    gap: 8px;
+  }
+  
+  #detail-content img {
+    border-radius: 6px;
+    margin-bottom: 1.2rem;
+  }
+  
+  #detail-content p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+  }
+  
+  .flashcard {
+    padding: 1.5rem;
+    min-height: 220px;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+    padding-bottom: 6px;
+  }
+  
+  .page-eeg_atlas .page-title:after {
+    width: 50px;
+    height: 3px;
+  }
+  
+  #eeg-atlas-container {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+  }
+  
+  #sidebar-buttons {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  #sidebar-buttons button {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    min-width: 90px;
+    border-radius: 20px;
+  }
+  
+  .search-box input {
+    font-size: 0.9rem;
+    padding: 8px 10px 8px 35px;
+    border-radius: 6px;
+  }
+  
+  .search-box:before {
+    left: 12px;
+  }
+  
+  #atlas-list .category-header {
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  #atlas-list .category-header::after {
+    font-size: 1rem;
+  }
+  
+  #atlas-list .category-items {
+    padding-left: 10px;
+  }
+  
+  #atlas-list .eeg-item {
+    padding: 6px 0;
+    font-size: 0.85rem;
+  }
+  
+  .atlas-sidebar {
+    padding: 0.8rem;
+    border-radius: 8px;
+  }
+  
+  #eeg-atlas-container .main-content {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  #detail-content {
+    padding: 10px;
+  }
+  
+  #detail-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    gap: 6px;
+  }
+  
+  #detail-content h2 i {
+    font-size: 0.9rem;
+  }
+  
+  #detail-content img {
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  #detail-content p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0.7rem;
+  }
+  
+  .flashcard {
+    padding: 1.2rem;
+    min-height: 200px;
+    margin-bottom: 1.2rem;
+    border-radius: 10px;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+    padding-bottom: 5px;
+  }
+  
+  .page-eeg_atlas .page-title:after {
+    width: 40px;
+    height: 2px;
+  }
+  
+  #eeg-atlas-container {
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+  }
+  
+  #sidebar-buttons {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  
+  #sidebar-buttons button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: 80px;
+    border-radius: 16px;
+  }
+  
+  .search-box input {
+    font-size: 0.85rem;
+    padding: 7px 8px 7px 32px;
+    border-radius: 5px;
+  }
+  
+  .search-box:before {
+    left: 10px;
+  }
+  
+  #atlas-list .category-header {
+    padding: 7px 0;
+    font-size: 0.85rem;
+  }
+  
+  #atlas-list .category-header::after {
+    font-size: 0.9rem;
+  }
+  
+  #atlas-list .category-items {
+    padding-left: 8px;
+  }
+  
+  #atlas-list .eeg-item {
+    padding: 5px 0;
+    font-size: 0.8rem;
+  }
+  
+  .atlas-sidebar {
+    padding: 0.7rem;
+    border-radius: 6px;
+  }
+  
+  #eeg-atlas-container .main-content {
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  #detail-content {
+    padding: 8px;
+  }
+  
+  #detail-content h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    gap: 5px;
+  }
+  
+  #detail-content h2 i {
+    font-size: 0.8rem;
+  }
+  
+  #detail-content img {
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+  }
+  
+  #detail-content p {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    margin-bottom: 0.6rem;
+  }
+  
+  .flashcard {
+    padding: 1rem;
+    min-height: 180px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 992px) {
+  .page-eeg_atlas .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  #eeg-atlas-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  #eeg-atlas-container {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.4rem !important; 
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  #eeg-atlas-container {
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-eeg_atlas .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  #eeg-atlas-container {
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .atlas-controls {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.6rem;
+  }
+} 

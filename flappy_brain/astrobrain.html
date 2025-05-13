@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Astrobrain – Upgraded Asteroids</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      position: relative;
+    }
+    canvas {
+      background: url('space-background.jpg') no-repeat center center / cover;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 10px #0f0;
+    }
+    #joystick {
+      position: absolute;
+      left: 10%;
+      bottom: 10%;
+      width: 80px;
+      height: 80px;
+      background: rgba(0,255,0,0.5);
+      border-radius: 50%;
+      touch-action: none;
+    }
+    #shootButton {
+      position: absolute;
+      right: 10%;
+      bottom: 10%;
+      width: 60px;
+      height: 60px;
+      background: rgba(255,0,0,0.5);
+      border-radius: 50%;
+      touch-action: none;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      line-height: 60px;
+      font-family: 'Press Start 2P', monospace;
+      border: none;
+    }
+    #muteButton {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
+      cursor: pointer;
+    }
+    #muteButton:active {
+      box-shadow: none;
+      transform: translateX(-50%) translateY(3px);
+    }
+    #scoreBoard {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #0f0;
+      font-size: 16px;
+      text-shadow: 1px 1px 2px black;
+    }
+    #gameOverScreen {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0f0;
+      font-size: 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border: 2px solid #0f0;
+      cursor: pointer;
+      z-index: 1001;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="320" height="480"></canvas>
+  <div id="joystick"></div>
+  <button id="shootButton">🔥</button>
+  <button id="muteButton">Mute</button>
+  <div id="scoreBoard">Score: 0 | Level: 1 | High: 0</div>
+  <div id="gameOverScreen">GAME OVER<br><br>Press Space or tap to Restart</div>
+
+  <script>
+    // Get DOM elements
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const joystick = document.getElementById("joystick");
+    const shootButton = document.getElementById("shootButton");
+    const muteButton = document.getElementById("muteButton");
+    const scoreBoard = document.getElementById("scoreBoard");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+
+    // Load images
+    const neuronImg = new Image();
+    neuronImg.src = "neuron.png";
+    const asteroidImg = new Image();
+    asteroidImg.src = "bird.png";
+    const bgImg = new Image();
+    bgImg.src = "space-background.jpg";
+
+    // Load sounds
+    const shootSound = new Audio("shoot.mp3");
+    const explosionSound = new Audio("explosion.mp3");
+    const gameOverSound = new Audio("gameover.mp3");
+
+    // Mute toggle
+    let isMuted = false;
+    muteButton.addEventListener("click", function() {
+      isMuted = !isMuted;
+      [shootSound, explosionSound, gameOverSound].forEach(sound => sound.muted = isMuted);
+      muteButton.textContent = isMuted ? "Unmute" : "Mute";
+    });
+
+    // Game state variables
+    let gameState = "menu";
+    let score = 0;
+    let level = 1;
+    let highScore = localStorage.getItem("highScore") || 0;
+    let frames = 0;
+
+    // ----------------------- PARTICLE EFFECTS -----------------------
+    const particles = [];
+    const particleColors = ["#ff0", "#0f0", "#0ff", "#f0f", "#fff", "#f80", "#08f"];
+    function createParticles(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          velocity: {
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2
+          },
+          lifetime: 30,
+          size: Math.random() * 3 + 1,
+          color: particleColors[Math.floor(Math.random() * particleColors.length)]
+        });
+      }
+    }
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].velocity.x;
+        particles[i].y += particles[i].velocity.y;
+        particles[i].lifetime--;
+        if (particles[i].lifetime <= 0) particles.splice(i, 1);
+      }
+    }
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
+    }
+
+    // ----------------------- ARRAYS -----------------------
+    const powerUps = [];
+    const enemies = [];
+    const enemyBullets = [];
+
+    function spawnPowerUp() {
+      const type = "shield";
+      const size = 20;
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      powerUps.push({ x, y, size, type });
+    }
+    setInterval(spawnPowerUp, 15000);
+
+    // ----------------------- PLAYER OBJECT -----------------------
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      width: 40,
+      height: 40,
+      rotation: 0,
+      velocity: { x: 0, y: 0 },
+      thrusting: false,
+      shieldActive: false,
+      shieldTimer: 0,
+      draw: function() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(neuronImg, -this.width / 2, -this.height / 2, this.width, this.height);
+        if (this.shieldActive) {
+          ctx.beginPath();
+          ctx.arc(0, 0, this.width, 0, Math.PI * 2);
+          ctx.strokeStyle = "#0ff";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+        ctx.restore();
+      },
+      update: function() {
+        if (gameState !== "playing") return;
+        if (this.thrusting) {
+          this.velocity.x += Math.cos(this.rotation) * 0.03;
+          this.velocity.y += Math.sin(this.rotation) * 0.03;
+        }
+        this.velocity.x *= 0.98;
+        this.velocity.y *= 0.98;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+        wrapAround(this);
+        if (this.shieldActive) {
+          this.shieldTimer--;
+          if (this.shieldTimer <= 0) this.shieldActive = false;
+        }
+        checkPlayerCollision();
+        checkPowerUpCollision();
+      },
+      reset: function() {
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
+        this.velocity = { x: 0, y: 0 };
+        this.rotation = 0;
+      }
+    };
+
+    // ----------------------- ASTEROIDS -----------------------
+    const asteroids = [];
+    function createAsteroid(size = 40) {
+      let x, y;
+      const threshold = 80;
+      do {
+        x = Math.random() * canvas.width;
+        y = Math.random() * canvas.height;
+      } while (Math.hypot(x - player.x, y - player.y) < threshold);
+      const speedMultiplier = 1 + (level - 1) * 0.1;
+      asteroids.push({
+        x, y, size,
+        velocity: {
+          x: (Math.random() * 1.2 - 0.6) * speedMultiplier,
+          y: (Math.random() * 1.2 - 0.6) * speedMultiplier
+        }
+      });
+    }
+    function drawAsteroids() {
+      asteroids.forEach(ast => {
+        ctx.drawImage(asteroidImg, ast.x - ast.size / 2, ast.y - ast.size / 2, ast.size, ast.size);
+      });
+    }
+    function updateAsteroids() {
+      if (gameState !== "playing") return;
+      asteroids.forEach(ast => {
+        ast.x += ast.velocity.x;
+        ast.y += ast.velocity.y;
+        wrapAround(ast);
+      });
+    }
+
+    // ----------------------- PLAYER BULLETS -----------------------
+    const bullets = [];
+    // Global hue for cycling bullet colors
+    let bulletHue = 0;
+    function shootBullet() {
+      if (gameState !== "playing") return;
+      // Assign a rainbow color based on current hue
+      bullets.push({
+        x: player.x,
+        y: player.y,
+        velocity: {
+          x: Math.cos(player.rotation) * 3,
+          y: Math.sin(player.rotation) * 3
+        },
+        lifetime: 60,
+        hue: bulletHue
+      });
+      // Cycle hue
+      bulletHue = (bulletHue + 20) % 360;
+      shootSound.currentTime = 0;
+      shootSound.play();
+    }
+    function updateBullets() {
+      if (gameState !== "playing") return;
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].x += bullets[i].velocity.x;
+        bullets[i].y += bullets[i].velocity.y;
+        bullets[i].lifetime--;
+        wrapAround(bullets[i]);
+        if (bullets[i].lifetime <= 0) bullets.splice(i, 1);
+      }
+    }
+    function drawBullets() {
+      bullets.forEach(bullet => {
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${bullet.hue}, 100%, 50%)`;
+        ctx.fill();
+      });
+    }
+
+    // ----------------------- ENEMY BULLETS -----------------------
+    function updateEnemyBullets() {
+      if (gameState !== "playing") return;
+      for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        enemyBullets[i].x += enemyBullets[i].velocity.x;
+        enemyBullets[i].y += enemyBullets[i].velocity.y;
+        enemyBullets[i].lifetime--;
+        wrapAround(enemyBullets[i]);
+        if (enemyBullets[i].lifetime <= 0) enemyBullets.splice(i, 1);
+      }
+    }
+    function drawEnemyBullets() {
+      enemyBullets.forEach(bullet => {
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = "#f00";
+        ctx.fill();
+      });
+    }
+
+    // ----------------------- ENEMIES -----------------------
+    function createEnemy() {
+      let x = Math.random() < 0.5 ? 0 : canvas.width;
+      let y = Math.random() * canvas.height;
+      enemies.push({
+        x: x,
+        y: y,
+        width: 30,
+        height: 30,
+        rotation: 0,
+        shootTimer: 120,
+        speed: 1.5
+      });
+    }
+    function updateEnemies() {
+      if (gameState !== "playing") return;
+      enemies.forEach(enemy => {
+        enemy.rotation = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+        enemy.velocity = {
+          x: Math.cos(enemy.rotation) * enemy.speed,
+          y: Math.sin(enemy.rotation) * enemy.speed
+        };
+        enemy.x += enemy.velocity.x;
+        enemy.y += enemy.velocity.y;
+        wrapAround(enemy);
+        enemy.shootTimer--;
+        if (enemy.shootTimer <= 0) {
+          enemyBullets.push({
+            x: enemy.x,
+            y: enemy.y,
+            velocity: {
+              x: Math.cos(enemy.rotation) * 2,
+              y: Math.sin(enemy.rotation) * 2
+            },
+            lifetime: 120
+          });
+          enemy.shootTimer = 120;
+        }
+      });
+    }
+    function drawEnemies() {
+      enemies.forEach(enemy => {
+        ctx.save();
+        ctx.translate(enemy.x, enemy.y);
+        ctx.rotate(enemy.rotation);
+        ctx.beginPath();
+        ctx.moveTo(-enemy.width/2, enemy.height/2);
+        ctx.lineTo(enemy.width/2, enemy.height/2);
+        ctx.lineTo(0, -enemy.height/2);
+        ctx.closePath();
+        ctx.fillStyle = "#f00";
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // ----------------------- COLLISION DETECTION -----------------------
+    function checkBulletEnemyCollisions() {
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          let dx = bullets[i].x - enemies[j].x;
+          let dy = bullets[i].y - enemies[j].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < enemies[j].width / 2 + 3) {
+            createParticles(enemies[j].x, enemies[j].y, 20);
+            explosionSound.currentTime = 0;
+            explosionSound.play();
+            score += 20;
+            updateScore();
+            enemies.splice(j, 1);
+            bullets.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+    function checkCollisions() {
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        for (let j = asteroids.length - 1; j >= 0; j--) {
+          let dx = bullets[i].x - asteroids[j].x;
+          let dy = bullets[i].y - asteroids[j].y;
+          if (Math.sqrt(dx * dx + dy * dy) < asteroids[j].size / 2) {
+            let size = asteroids[j].size;
+            score += Math.floor(size);
+            updateScore();
+            createParticles(asteroids[j].x, asteroids[j].y, 20);
+            explosionSound.currentTime = 0;
+            explosionSound.play();
+            asteroids.splice(j, 1);
+            bullets.splice(i, 1);
+            if (size > 20) {
+              createAsteroid(size / 2);
+              createAsteroid(size / 2);
+            }
+            break;
+          }
+        }
+      }
+      for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        let dx = enemyBullets[i].x - player.x;
+        let dy = enemyBullets[i].y - player.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 15 && !player.shieldActive) {
+          gameState = "gameover";
+          gameOverSound.play();
+          updateHighScore();
+          gameOverScreen.innerHTML = `GAME OVER<br>Score: ${score}<br>Level: ${level}<br>High Score: ${highScore}<br><br>Press Space or tap to Restart`;
+          gameOverScreen.style.display = "block";
+        }
+      }
+    }
+    function checkPlayerCollision() {
+      if (player.shieldActive) return;
+      for (let ast of asteroids) {
+        let dx = player.x - ast.x;
+        let dy = player.y - ast.y;
+        if (Math.sqrt(dx * dx + dy * dy) < ast.size / 2 + player.width / 2) {
+          gameState = "gameover";
+          gameOverSound.play();
+          updateHighScore();
+          gameOverScreen.innerHTML = `GAME OVER<br>Score: ${score}<br>Level: ${level}<br>High Score: ${highScore}<br><br>Press Space or tap to Restart`;
+          gameOverScreen.style.display = "block";
+        }
+      }
+    }
+    function checkPowerUpCollision() {
+      for (let i = powerUps.length - 1; i >= 0; i--) {
+        let dx = player.x - powerUps[i].x;
+        let dy = player.y - powerUps[i].y;
+        if (Math.sqrt(dx * dx + dy * dy) < powerUps[i].size / 2 + player.width / 2) {
+          if (powerUps[i].type === "shield") {
+            player.shieldActive = true;
+            player.shieldTimer = 300;
+          }
+          powerUps.splice(i, 1);
+        }
+      }
+    }
+
+    // ----------------------- WRAP AROUND FUNCTION -----------------------
+    function wrapAround(obj) {
+      if (obj.x < 0) obj.x = canvas.width;
+      if (obj.x > canvas.width) obj.x = 0;
+      if (obj.y < 0) obj.y = canvas.height;
+      if (obj.y > canvas.height) obj.y = 0;
+    }
+
+    // ----------------------- SCORE & LEVEL -----------------------
+    function updateScore() {
+      scoreBoard.textContent = "Score: " + score + " | Level: " + level + " | High: " + highScore;
+      if (score >= level * 100) {
+        level++;
+        for (let i = 0; i < level; i++) {
+          createAsteroid();
+        }
+        if (level >= 3 && enemies.length < level - 2) {
+          createEnemy();
+        }
+      }
+    }
+    function updateHighScore() {
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+      }
+    }
+
+    // ----------------------- DRAWING FUNCTIONS -----------------------
+    function drawBackground() {
+      if (bgImg.complete && bgImg.naturalWidth !== 0) {
+        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    function drawHUD() {
+      const margin = 20;
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("Score: " + score, margin, margin);
+      ctx.font = "12px Arial";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("High Score: " + highScore, margin, canvas.height - margin);
+    }
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0f0";
+      ctx.font = "28px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("Astrobrain", canvas.width / 2, canvas.height / 2 - 40);
+      ctx.font = "20px 'Press Start 2P'";
+      ctx.fillText("Press Space or tap to Start", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("Press P to Pause", canvas.width / 2, canvas.height / 2 + 30);
+    }
+
+    // ----------------------- UPDATE FUNCTIONS -----------------------
+    function updateGame() {
+      if (gameState === "playing") {
+        frames++;
+        if (score < 200) {
+          if (frames % 60 === 0) { score++; updateScore(); }
+        } else {
+          if (enemies.length < level - 2) { createEnemy(); }
+          if (frames % 30 === 0) { score++; updateScore(); }
+        }
+        player.update();
+        updateAsteroids();
+        updateBullets();
+        updateEnemyBullets();
+        updateEnemies();
+        updateParticles();
+        checkCollisions();
+        checkBulletEnemyCollisions();
+      }
+    }
+    function gameLoop() {
+      drawBackground();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      if (gameState === "menu") {
+        drawMenu();
+      } else if (gameState === "playing" || gameState === "paused") {
+        updateGame();
+        drawEnemyBullets();
+        drawBullets();
+        player.draw();
+        drawAsteroids();
+        drawEnemies();
+        drawHUD();
+        if (gameState === "paused") {
+          ctx.fillStyle = "rgba(0,0,0,0.3)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "white";
+          ctx.font = "28px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
+        }
+      }
+      updateParticles();
+      drawParticles();
+      requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+
+    // ----------------------- INPUT HANDLING -----------------------
+    function handleStartOrJump() {
+      if (gameState === "menu") {
+        resetGame(); // Spawn initial objects
+        gameState = "playing";
+        gameOverScreen.style.display = "none";
+      } else if (gameState === "playing") {
+        player.thrusting = true;
+      } else if (gameState === "gameover") {
+        resetGame();
+        gameState = "playing";
+        gameOverScreen.style.display = "none";
+      }
+    }
+    shootButton.addEventListener("click", function(e) {
+      e.stopPropagation();
+      shootBullet();
+    });
+    shootButton.addEventListener("touchstart", function(e) {
+      e.stopPropagation();
+      shootBullet();
+    });
+    let joystickCenter = { x: joystick.offsetWidth / 2, y: joystick.offsetHeight / 2 };
+    joystick.addEventListener("touchmove", function(e) {
+      e.preventDefault();
+      let touch = e.touches[0];
+      let rect = joystick.getBoundingClientRect();
+      let x = touch.clientX - rect.left;
+      let y = touch.clientY - rect.top;
+      let angle = Math.atan2(y - joystickCenter.y, x - joystickCenter.x);
+      player.rotation = angle;
+      player.thrusting = true;
+    });
+    joystick.addEventListener("touchend", function(e) {
+      player.thrusting = false;
+    });
+    document.addEventListener("keydown", function(e) {
+      if ((gameState === "menu" || gameState === "gameover") && e.code === "Space") {
+        resetGame();
+        gameState = "playing";
+        gameOverScreen.style.display = "none";
+        return;
+      }
+      if (gameState !== "playing") return;
+      switch (e.key) {
+        case "ArrowLeft":
+          player.rotation -= 0.3;
+          break;
+        case "ArrowRight":
+          player.rotation += 0.3;
+          break;
+        case "ArrowUp":
+          player.thrusting = true;
+          break;
+        case " ":
+          shootBullet();
+          break;
+        case "KeyP":
+          gameState = "paused";
+          break;
+      }
+    });
+    document.addEventListener("keyup", function(e) {
+      if (e.key === "ArrowUp") {
+        player.thrusting = false;
+      }
+      if (e.code === "KeyP" && gameState === "paused") {
+        gameState = "playing";
+      }
+    });
+    canvas.addEventListener("click", handleStartOrJump);
+    canvas.addEventListener("touchstart", function() {
+      handleStartOrJump();
+    });
+    function resetGame() {
+      player.reset();
+      asteroids.length = 0;
+      bullets.length = 0;
+      enemyBullets.length = 0;
+      enemies.length = 0;
+      particles.length = 0;
+      frames = 0;
+      score = 0;
+      level = 1;
+      for (let i = 0; i < level + 2; i++) {
+        createAsteroid();
+      }
+    }
+  </script>
+</body>
+</html>

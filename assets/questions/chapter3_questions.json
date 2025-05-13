@@ -1,0 +1,54 @@
+[
+    {
+        "id": "3Q1",
+        "figure": "3q1.png",
+        "questionText": "A baby at 40 weeks post-menstrual age (PMA) is having some jerky movements. An EEG was done (Fig. 3Q1). You conclude:",
+        "options": [
+            {"value": "a", "text": "This EEG shows frontal sharp waves and is normal."},
+            {"value": "b", "text": "This EEG shows frontal sharp waves which are indicative of a lower seizure threshold."},
+            {"value": "c", "text": "This EEG shows frontal sharp waves which are indicative of frontal cerebral dysfunction."},
+            {"value": "d", "text": "This EEG is discontinuous and is indicative of cerebral dysfunction."}
+        ],
+        "correctAnswerLetter": "A",
+        "explanation": "A This EEG shows a baby in active sleep with frontal sharp waves (box) in the setting of activité moyenne. Frontal sharp waves or encoches frontales occur in isolation or in brief runs and are typically synchronous and symmetric. They are maximal between 35 to 37 weeks PMA and disappear by 44 PMA. Activité moyenne is a continuous pattern that contains both low and medium amplitude components of varying frequencies. It is the predominate pattern in the term infant in wake and active sleep. B and C are incorrect as this is not a pathological finding.D is incorrect as this EEG is continuous."
+    },
+    {
+        "id": "3Q2",
+        "figure": "3q2.png",
+        "questionText": "As you read this EEG (Fig. 3Q2), you realize you have no information on this patient. What two types of patient could this EEG belong to:",
+        "options": [
+            {"value": "a", "text": "A normal 25-year-old man in sleep as well as a normal 29-week-old PMA infant."},
+            {"value": "b", "text": "A 25-year-old man in a medicated coma as well as a normal infant at 38 weeks PMA."},
+            {"value": "c", "text": "A 25-year-old man who is brain dead as well as a normal infant at 29 weeks PMA."},
+            {"value": "d", "text": "A 25-year-old man in a medicated coma as well as a normal infant at 29 weeks PMA."}
+        ],
+        "correctAnswerLetter": "D",
+        "explanation": "D This EEG is discontinuous with an interburst interval lasting for 9 seconds and synchronous bursts. This EEG belongs to a neurologically normal 29-week PMA baby. At this PMA, a discontinuous background (tracé discontinu) is expected, and bursts are synchronous. In a 25 year-old man this pattern would represent severe cerebral dysfunction and it is plausible that a medicated drip (e.g. pentobarbital) could cause this pattern.At 38 weeks PMA, the EEG should be continuous in active sleep and wake and have tracé alternant pattern in quiet sleep. In tracé alternant, the periods of relative discontinuity are shorter (typically 4–6 seconds) and higher in amplitude (>25 µV)."
+    },
+    {
+        "id": "3Q3",
+        "figure": "3q3.png",
+        "questionText": "The development of the neonatal EEG is interesting because interhemispheric synchrony is initially abundant then decreases and then increases again. This EEG (Fig. 3Q3) shows a tracé discontinu pattern with asynchronous bursts (separated by >1.5 seconds). What is the most likely PMA of this infant?",
+        "options": [
+            {"value": "a", "text": "28–29 weeks PMA."},
+            {"value": "b", "text": "31–32 weeks PMA."},
+            {"value": "c", "text": "35–36 weeks PMA."},
+            {"value": "d", "text": "40-42 weeks PMA."}
+        ],
+        "correctAnswerLetter": "B",
+        "explanation": "B Interhemispheric synchrony nadirs at 31–32 weeks PMA with 50–70% of bursts being synchronous. Note, one can only discuss synchrony when the EEG is discontinuous."
+    },
+    {
+        "id": "3Q4",
+        "figure": "3q4.png",
+        "questionText": "A 2-month-old infant is waking frequently at night with a jolt. Which statement of the EEG pictured (Fig. 3Q4) is most true?",
+        "options": [
+            {"value": "a", "text": "This EEG shows well-formed but asymmetric sleep spindles. This is indicative of mild cerebral dysfunction."},
+            {"value": "b", "text": "This EEG shows normal asymmetric sleep spindles."},
+            {"value": "c", "text": "This EEG shows bilateral patting artifact; don't mistake this for a seizure."},
+            {"value": "d", "text": "This EEG shows the emergence of a normal posterior dominant rhythm (PDR) which is often more anterior in this age group."}
+        ],
+        "correctAnswerLetter": "B",
+        "explanation": "B This EEG shows well-formed normal asymmetric sleep spindles. In a normal infant, sleep spindles typically begins to develop at 1.5–3 months. These early sleep spindles are several seconds in duration, in a frontocentral location, in the high alpha or low beta range, and are not synchronous. The lack of synchrony is thought to be due to lack of myelination in the neonatal brain. By 2 years of age, it is considered abnormal if most spindles are still asynchronous. Persistent absence of sleep spindles on one side raises the suspicion for ipsilateral dysfunction. Sleep spindles are part of N2 sleep. Vertex waves and K-complexes should be well developed by 5–6 months of age.Patting artifact tends to be slower and not quite as regular. The PDR typically emerges in the third to fourth month of life. Just like in adults, it is posterior and attenuates with eye opening. By 6 months, the PDR is 5 Hz, at 12 months, the PDR is 6 Hz, and at 36 months, the majority of children will have a PDR of 8 Hz. These guidelines hold true for the majority of children, but in the absence of other worrisome features, a PDR slower than these guidelines can be perfectly normal."
+    }
+]

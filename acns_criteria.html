@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACNS Criteria - EEG Curriculum</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  <!-- Page-specific script -->
+  <script src="assets/js/pages/acns-criteria.js" defer></script> 
+</head>
+<!-- Add class to body to identify page for common.js exclusion -->
+<body class="page-acns_criteria">
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-acns_criteria">
+      <h2 class="page-title">ACNS Criteria</h2>
+
+      <!-- Quick Links -->
+      <div class="quick-links">
+        <!-- Added All button, removed href, added data-category -->
+        <a href="#" id="all-btn" data-category="all">All Content</a> 
+        <a href="#" data-category="reference-charts">Reference Charts</a>
+        <a href="#" data-category="training-module">Training Module</a>
+      </div>
+
+      <!-- Reference Charts Section -->
+      <div class="section" id="reference-charts-section">
+        <!-- Removed onclick and expand icon span -->
+        <div class="section-header">
+          ACNS Nomenclature Reference Charts
+        </div>
+        <div class="section-content">
+          <div id="acns-criteria" class="info-box">
+            <img src="assets/images/ACNS1.png" alt="ACNS Criteria 1" class="step-image" />
+            <img src="assets/images/ACNS2.png" alt="ACNS Criteria 2" class="step-image" />
+            <img src="assets/images/ACNS3.png" alt="ACNS Criteria 3" class="step-image" />
+            <img src="assets/images/ACNS4.png" alt="ACNS Criteria 4" class="step-image" />
+            <p>
+              <strong>ACNS Standardized Critical Care EEG Terminology</strong><br>
+              A standardized approach to describe EEG patterns in critical care patients.
+              <br><br>
+              <a href="assets/documents/ACNSNomenclature2021_ReferenceChart_2020_0725ForPublicComment.pdf" target="_blank">
+                <i class="fa-solid fa-file-pdf"></i> Download Full Reference PDF
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Training Module Section -->
+      <div class="section" id="training-module-section">
+        <!-- Removed onclick and expand icon span -->
+        <div class="section-header">
+          ACNS Training Module
+        </div>
+        <div class="section-content">
+          <div id="acns-training-ppt" class="info-box">
+            <p>View the training presentation below or download the file.</p>
+            <div class="ppt-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #f0f0f0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 1em; margin-bottom: 1em;">
+              <iframe 
+                src="https://view.officeapps.live.com/op/embed.aspx?src=https://mdavitz.github.io/eeg-app/assets/documents/ACNS_Training_Module_2022-01-01_Combined_FINAL.pptx" 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                frameborder="0" 
+                allowfullscreen="true" 
+                allow="autoplay">
+              </iframe>
+            </div>
+            <p style="margin-top: 1em;">
+              <a href="assets/documents/ACNS_Training_Module_2022-01-01_Combined_FINAL.pptx" download>
+                <i class="fa-solid fa-file-powerpoint"></i> Download PowerPoint File
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+    // No longer need inline functions toggleSection, updateQuickLinks, scrollToSection
+    // Their logic is now in common.js and initialized there if elements exist.
+    
+    // Filter logic is now in assets/js/pages/acns-criteria.js
+
+    // --- Keep Existing Search Initialization Logic ---
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if we are actually on the ACNS page before running search init potentially?
+      // Although this search init seems generic enough it might be okay.
+      console.log('ACNS Criteria page specific DOMContentLoaded for search init');
+      
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from acns_criteria.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              if (typeof UniversalSearch.reinitialize === 'function') { UniversalSearch.reinitialize(); } else { UniversalSearch.init(); }
+              console.log('Search initialized successfully');
+            } catch(e) { console.error('Error initializing search:', e); }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      initSearch();
+      
+      // Initialize search dropdown fix 
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized after timeout');
+          initSearch(); // Re-ensure init
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          if (searchTrigger && searchMenuPanel) {
+            // Check if listener already exists to avoid duplicates if common.js also adds it
+            // Simple check: add a data attribute
+            if (!searchTrigger.hasAttribute('data-click-listener-added')) {
+                searchTrigger.addEventListener('click', function(event) {
+                  event.preventDefault(); event.stopPropagation();
+                  searchMenuPanel.classList.toggle('active');
+                  if (searchMenuPanel.classList.contains('active') && searchInput) {
+                    setTimeout(() => {
+                      searchInput.focus();
+                      if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                        UniversalSearch.handleSearchInput({target: searchInput});
+                      }
+                    }, 100);
+                  }
+                });
+                searchTrigger.setAttribute('data-click-listener-added', 'true');
+            }
+          }
+        }
+      }, 500);
+    });
+    
+    // Keep window load event for search initialization fallback
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search as fallback');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+</body>
+</html>

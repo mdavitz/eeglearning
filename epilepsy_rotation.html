@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epilepsy Rotation - EEG Curriculum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from epilepsy_rotation.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+  
+  <!-- Updated JavaScript for the addSlideEntry function -->
+  <script>
+    // Define slideEntriesCount as a global variable
+    window.slideEntriesCount = 1;
+    
+    // Function to add a new slide entry - simplified
+    function addSlideEntry() {
+      const slideEntries = document.getElementById('slideEntries');
+      const newIndex = window.slideEntriesCount;
+      window.slideEntriesCount++;
+      
+      const newEntry = document.createElement('div');
+      newEntry.className = 'slide-entry';
+      newEntry.dataset.index = newIndex;
+      
+      newEntry.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3>Slide ${window.slideEntriesCount}</h3>
+          <button type="button" onclick="removeSlideEntry(${newIndex})" class="remove-btn" style="background: none; border: none; color: #ff3b30; cursor: pointer;">
+            <i class="fa fa-times"></i> Remove
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label for="eegFinding_${newIndex}">EEG Finding:</label>
+          <input type="text" id="eegFinding_${newIndex}" placeholder="Enter the EEG finding" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="oneLiner_${newIndex}">One Liner:</label>
+          <input type="text" id="oneLiner_${newIndex}" placeholder="Enter a one-liner summary/teaching point" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="eegImage_${newIndex}">Upload EEG Screenshot:</label>
+          <input type="file" id="eegImage_${newIndex}" accept="image/*" required>
+        </div>
+      `;
+      
+      slideEntries.appendChild(newEntry);
+      
+      // Focus on the first input of the new slide for better UX
+      setTimeout(() => {
+        const firstInput = document.getElementById(`eegFinding_${newIndex}`);
+        if (firstInput) firstInput.focus();
+        
+        // Scroll to the new entry
+        newEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+    
+    // Function to remove a slide entry - simplified
+    function removeSlideEntry(index) {
+      const slideEntries = document.getElementById('slideEntries');
+      const entryToRemove = document.querySelector(`.slide-entry[data-index="${index}"]`);
+      
+      if (entryToRemove && slideEntries.children.length > 1) {
+        entryToRemove.remove();
+        updateSlideNumbers();
+      } else if (slideEntries.children.length <= 1) {
+        alert("You must have at least one slide entry.");
+      }
+    }
+    
+    // Function to update slide numbers after removal
+    function updateSlideNumbers() {
+      const slideEntries = document.querySelectorAll('.slide-entry');
+      slideEntries.forEach((entry, index) => {
+        const heading = entry.querySelector('h3');
+        if (heading) {
+          heading.textContent = `Slide ${index + 1}`;
+        }
+      });
+    }
+    
+    // Function to generate multiple slides - simplified
+    function generateMultipleSlides() {
+      // Check if PptxGenJS is loaded
+      if (typeof PptxGenJS === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.11.0/dist/pptxgen.bundle.js';
+        script.onload = () => {
+          console.log('PptxGenJS loaded dynamically');
+          processSlides();
+        };
+        document.head.appendChild(script);
+      } else {
+        processSlides();
+      }
+      
+      function processSlides() {
+        const fullName = document.getElementById("fullName").value;
+        const residency = document.getElementById("residency").value;
+        
+        if (!fullName || !residency) {
+          alert("Please enter your full name and residency program.");
+          return;
+        }
+        
+        // Check all slide entries for completeness
+        let allSlidesComplete = true;
+        const slideEntries = document.querySelectorAll('.slide-entry');
+        
+        slideEntries.forEach((entry, index) => {
+          const entryIndex = entry.dataset.index;
+          const eegFinding = document.getElementById(`eegFinding_${entryIndex}`).value;
+          const oneLiner = document.getElementById(`oneLiner_${entryIndex}`).value;
+          const fileInput = document.getElementById(`eegImage_${entryIndex}`);
+          const file = fileInput?.files?.[0];
+          
+          if (!eegFinding || !oneLiner || !file) {
+            allSlidesComplete = false;
+            entry.style.borderColor = "#ff3b30";
+            return;
+          } else {
+            entry.style.borderColor = "var(--border-color)";
+          }
+        });
+        
+        if (!allSlidesComplete) {
+          alert("Please complete all required fields in the highlighted slides.");
+          return;
+        }
+        
+        // Disable form elements during processing
+        document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+          el.disabled = true;
+        });
+        
+        // Show progress message
+        const statusMessage = document.createElement('div');
+        statusMessage.className = 'status-message';
+        statusMessage.textContent = 'Creating your presentation...';
+        statusMessage.style.textAlign = 'center';
+        statusMessage.style.padding = '10px';
+        statusMessage.style.marginTop = '10px';
+        statusMessage.style.backgroundColor = '#f8f9fa';
+        statusMessage.style.borderRadius = '4px';
+        
+        const form = document.getElementById('slideForm');
+        form.appendChild(statusMessage);
+        
+        // Create a new presentation
+        let pptx = new PptxGenJS();
+        let entriesProcessed = 0;
+        let slidePromises = [];
+        
+        slideEntries.forEach((entry, index) => {
+          const entryIndex = entry.dataset.index;
+          const eegFinding = document.getElementById(`eegFinding_${entryIndex}`).value;
+          const oneLiner = document.getElementById(`oneLiner_${entryIndex}`).value;
+          const fileInput = document.getElementById(`eegImage_${entryIndex}`);
+          const file = fileInput.files[0];
+          
+          // Create a promise for each slide
+          const slidePromise = new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              try {
+                let slide = pptx.addSlide();
+                let imageData = e.target.result;
+                
+                // Add image and text to slide
+                slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
+                slide.addText(
+                  `EEG Finding: ${eegFinding}`,
+                  { x: 0, y: 0, w: 3, h: 1.0, fill: { color: 'FFFFFF' }, color: '000000', align: 'left', autoFit: true, fontSize: 20, bold: true }
+                );
+                slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
+                
+                entriesProcessed++;
+                statusMessage.textContent = `Processed ${entriesProcessed} of ${slideEntries.length} slides...`;
+                
+                resolve();
+              } catch (error) {
+                console.error(`Error processing slide ${index + 1}:`, error);
+                reject(error);
+              }
+            };
+            reader.onerror = function(error) {
+              console.error(`Error reading image for slide ${index + 1}:`, error);
+              reject(error);
+            };
+            reader.readAsDataURL(file);
+          });
+          
+          slidePromises.push(slidePromise);
+        });
+        
+        // When all slides are processed, save the presentation
+        Promise.all(slidePromises)
+          .then(() => {
+            pptx.writeFile({ fileName: "EEG_Presentation.pptx" })
+              .then(() => {
+                statusMessage.textContent = `Successfully created presentation with ${entriesProcessed} slides!`;
+                statusMessage.style.backgroundColor = '#d4edda';
+                statusMessage.style.color = '#155724';
+                
+                // Re-enable form elements
+                document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+                  el.disabled = false;
+                });
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                  const modal = document.getElementById("eeg-modal");
+                  if (modal) {
+                    modal.style.display = "none";
+                    document.body.removeChild(modal);
+                  }
+                }, 3000);
+              })
+              .catch(error => {
+                statusMessage.textContent = `Error generating presentation. Please try again.`;
+                statusMessage.style.backgroundColor = '#f8d7da';
+                statusMessage.style.color = '#721c24';
+                console.error("Error generating presentation:", error);
+                
+                // Re-enable form elements
+                document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+                  el.disabled = false;
+                });
+              });
+          })
+          .catch(error => {
+            statusMessage.textContent = `Error processing slides. Please try again.`;
+            statusMessage.style.backgroundColor = '#f8d7da';
+            statusMessage.style.color = '#721c24';
+            console.error("Error processing slides:", error);
+            
+            // Re-enable form elements
+            document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+              el.disabled = false;
+            });
+          });
+      }
+    }
+    
+    // Function to toggle between Residents and Fellows tabs and scroll with header offset
+    function switchToTabAndScroll(tabName, elementId) {
+      showTab(tabName);
+      setTimeout(() => {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+    
+    // EEG Slide Generator Popup function - simplified
+    function openEEGIndexApp(e) {
+      if (e) e.preventDefault();
+      
+      // Create simple modal HTML
+      const modalHTML = `
+        <div id="eeg-modal" class="copyright-modal">
+          <div class="copyright-modal-content">
+            <span class="copyright-close">&times;</span>
+            <h2>EEG Slide Generator</h2>
+            <div class="modal-form-container">
+              <form id="slideForm">
+                <div class="form-group">
+                  <label for="fullName">Full Name</label>
+                  <input type="text" id="fullName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                  <label for="residency">Residency Program</label>
+                  <input type="text" id="residency" placeholder="e.g. PGY-2 Neurology" required>
+                </div>
+                
+                <div id="slideEntries">
+                  <div class="slide-entry" data-index="0">
+                    <h3>Slide 1</h3>
+                    
+                    <div class="form-group">
+                      <label for="eegFinding_0">EEG Finding</label>
+                      <input type="text" id="eegFinding_0" placeholder="Enter the EEG finding" required>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="oneLiner_0">One Liner</label>
+                      <input type="text" id="oneLiner_0" placeholder="Enter a one-liner summary/teaching point" required>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="eegImage_0">Upload EEG Screenshot</label>
+                      <input type="file" id="eegImage_0" accept="image/*" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="button-group">
+                  <button type="button" onclick="addSlideEntry()" class="blue-button">
+                    <i class="fa fa-plus"></i> Add Slide
+                  </button>
+                  <button type="button" onclick="generateMultipleSlides()" class="green-button">
+                    <i class="fa fa-file-powerpoint"></i> Generate Presentation
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add modal to the page
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      
+      // Get modal
+      const modal = document.getElementById("eeg-modal");
+      const span = document.getElementsByClassName("copyright-close")[0];
+      
+      // Display modal
+      modal.style.display = "block";
+      
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+        document.body.removeChild(modal);
+      }
+      
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+          document.body.removeChild(modal);
+        }
+      }
+    }
+    
+    // Function to toggle between Residents and Fellows tabs
+    function showTab(tabName) {
+      // Get tab buttons
+      const residentsBtn = document.getElementById('residents-btn');
+      const fellowsBtn = document.getElementById('fellows-btn');
+      
+      // Get tab containers
+      const residentsTab = document.getElementById('residents-tab');
+      const fellowsTab = document.getElementById('fellows-tab');
+      
+      if (tabName === 'residents') {
+        // Show residents tab, hide fellows tab
+        residentsTab.style.display = 'block';
+        fellowsTab.style.display = 'none';
+        
+        // Update button classes
+        residentsBtn.classList.add('active');
+        fellowsBtn.classList.remove('active');
+      } else {
+        // Show fellows tab, hide residents tab
+        residentsTab.style.display = 'none';
+        fellowsTab.style.display = 'block';
+        
+        // Update button classes
+        fellowsBtn.classList.add('active');
+        residentsBtn.classList.remove('active');
+      }
+    }
+
+    // Function to close modal and restore scroll position
+    function closeModal(scrollY) {
+      // Find and remove the modal overlay
+      const modalOverlay = document.querySelector('.modal-overlay');
+      if (modalOverlay) {
+        // Add a fade-out animation class
+        modalOverlay.classList.add('fade-out');
+        
+        // Remove the modal after animation completes
+        setTimeout(() => {
+          modalOverlay.remove();
+          
+          // Restore body scrolling
+          document.body.classList.remove('modal-open');
+          document.body.style.position = '';
+          document.body.style.width = '';
+          document.body.style.height = '';
+          document.body.style.top = '';
+          document.body.style.overflow = '';
+          
+          // Restore scroll position
+          window.scrollTo(0, scrollY || 0);
+        }, 200);
+      } else {
+        // If no modal found, just restore scrolling
+        document.body.classList.remove('modal-open');
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.top = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY || 0);
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Access Code Validation -->
+  <script>
+    // Check if access code is stored and valid
+    const storedAccessCode = localStorage.getItem('accessCode');
+    const storedTimestamp = localStorage.getItem('accessCodeTimestamp');
+    const currentTime = new Date().getTime();
+    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+    
+    // If no valid access code, redirect back to index
+    if (!storedAccessCode || !storedTimestamp || (currentTime - parseInt(storedTimestamp)) > thirtyDaysInMs) {
+      console.log('No valid access code, redirecting to index');
+      window.location.href = 'index.html';
+    }
+  </script>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-epilepsy_rotation">
+      <div class="container" id="epilepsy-rotation">
+        <h2 class="page-title">Epilepsy Rotation</h2>
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+          <button id="residents-btn" class="active" onclick="showTab('residents')">For Residents</button>
+          <button id="fellows-btn" onclick="showTab('fellows')">For Fellows</button>
+        </div>
+
+        <!-- Residents Tab Content -->
+        <div id="residents-tab">
+          <!-- Quick Links for Residents -->
+          <div class="quick-links">
+            <div>
+              <a href="#residents-rotation" onclick="switchToTabAndScroll('residents', 'residents-rotation'); return false;">Rotation Schedule</a>
+              <a href="#residents-teaching" onclick="switchToTabAndScroll('residents', 'residents-teaching'); return false;">Teaching Rounds</a>
+            </div>
+          </div>
+          <!-- Daily Expectations & Goals Section -->
+          <div class="info-box" id="residents-daily">
+            <h2>Daily Expectations and Goals</h2>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Watch Video</td>
+                  <td>Review the designated EEG video for the day.</td>
+                </tr>
+                <tr>
+                  <td>Complete Quiz</td>
+                  <td>Answer the quiz questions associated with the video.</td>
+                </tr>
+                <tr>
+                  <td>Upload EEG</td>
+                  <td>
+                    Submit one interesting EEG finding per day.
+                    <a href="#" onclick="openEEGIndexApp(event)" class="table-link">
+                      <i class="fa-solid fa-brain"></i> EEG Index
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>EEG Reading</td>
+                  <td>Read both routine and continuous EEGs as described below.</td>
+                </tr>
+                <tr>
+                  <td>Review Milestones</td>
+                  <td>
+                    Review your rotation expectations.
+                    <a href="https://www.acgme.org/globalassets/pdfs/milestones/epilepsymilestones.pdf" target="_blank" class="table-link">
+                      <i class="fa-solid fa-file-pdf"></i> Epilepsy Milestones
+                    </a>
+                    <a href="https://www.acgme.org/globalassets/pdfs/milestones/neurologymilestones.pdf" target="_blank" class="table-link">
+                      <i class="fa-solid fa-file-pdf"></i> Residency Milestones
+                    </a>
+                    <a href="assets/documents/Abridged 2024 The Epilepsy Fellows and Residents' Survival Guide 6.29.2024.docx" target="_blank" class="table-link">
+                      <i class="fa-solid fa-link"></i> Epilepsy Survival Guide
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Rotation Schedule Section -->
+          <div class="info-box" id="residents-rotation">
+            <h2>Rotation Schedule</h2>
+            <h3>Inpatient Rotation (MSH &amp; MSW EMU)</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>7-8 AM</td>
+                  <td>Arrive and preround on EMU/epilepsy consult patients</td>
+                </tr>
+                <tr>
+                  <td>8-9 AM (MSH only)</td>
+                  <td>Attend morning report</td>
+                </tr>
+                <tr>
+                  <td>9-10 AM</td>
+                  <td>Read at least one LTM EEG, draft EEG reports</td>
+                </tr>
+                <tr>
+                  <td>10 AM-12 PM</td>
+                  <td>Round with epilepsy fellow/attending</td>
+                </tr>
+                <tr class="pm-workflow">
+                  <td colspan="2" style="text-align: center;">PM Workflow (~12-5pm)</td>
+                </tr>
+                <tr>
+                  <td>12-1 PM (MSH only)</td>
+                  <td>Neurology noon conference</td>
+                </tr>
+                <tr>
+                  <td>1-5 PM</td>
+                  <td>Elective admission H&amp;Ps, consults, follow-up on LTM EEG, read new inpatient EEGs</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Outpatient Rotation</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>8-9 AM (MSH only)</td>
+                  <td>Morning report</td>
+                </tr>
+                <tr>
+                  <td>AM</td>
+                  <td>Epilepsy clinic or MSH/MSW EMU to review 1 LTM EEG and round with team</td>
+                </tr>
+                <tr>
+                  <td>PM</td>
+                  <td>Resident continuity clinic or faculty clinic, ambulatory EEG readings</td>
+                </tr>
+                <tr>
+                  <td colspan="2">MSW Outpatient (PGY-2): Similar schedule with assigned epilepsy clinics &amp; EEG readings</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Teaching Rounds & Conferences Section -->
+          <div class="info-box" id="residents-teaching">
+            <h2>Teaching Rounds &amp; Conferences</h2>
+            <p>All epilepsy conferences are currently held via Zoom (unless otherwise indicated).</p>
+            <div class="table-container">
+              <table class="custom-table responsive-table">
+                <thead>
+                  <tr>
+                    <th>Seminar</th>
+                    <th>Day/Time</th>
+                    <th>Location</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Seminar">Epilepsy Surgery Conference (mandatory)</td>
+                    <td data-label="Day/Time">Wed 4-5:30 PM</td>
+                    <td data-label="Location">Levy Library (MSH) / Zoom</td>
+                    <td data-label="Notes">Epilepsy surgery cases, comprehensive team</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Seminar">Teaching Rounds / Interesting EEGs (mandatory)</td>
+                    <td data-label="Day/Time">Wed 1-2 PM</td>
+                    <td data-label="Location">Zoom</td>
+                    <td data-label="Notes">
+                      <span class="mobile-notes">
+                      July-Sept: Epilepsy Lecture Series<br/>
+                      Sept-June:<br/>
+                      1st: Journal Club<br/>
+                      2nd: NSICU Conference<br/>
+                      3rd: Interesting EEGs<br/>
+                      4th and 5th: Lecture Series (Other topics)
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Seminar">Grand Rounds</td>
+                    <td data-label="Day/Time">Fri 8-9 AM</td>
+                    <td data-label="Location">Hess Center / Remote Access</td>
+                    <td data-label="Notes">Neurology Grand Rounds (faculty, fellows, residents, students)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fellows Tab Content with Single Info Boxes for Each Category -->
+        <div id="fellows-tab" style="display: none;">
+          <!-- Quick Links for Fellows -->
+          <div class="quick-links">
+            <div>
+              <a href="#fellows-inpatient" onclick="switchToTabAndScroll('fellows', 'fellows-inpatient'); return false;">Inpatient</a>
+              <a href="#fellows-outpatient" onclick="switchToTabAndScroll('fellows', 'fellows-outpatient'); return false;">Outpatient</a>
+              <a href="#fellows-pediatric" onclick="switchToTabAndScroll('fellows', 'fellows-pediatric'); return false;">Pediatric</a>
+            </div>
+          </div>
+
+          <!-- Daily Expectations & Goals Section -->
+          <div class="info-box" id="fellows-daily">
+            <h2>Daily Expectations and Goals</h2>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>EEG Reading</td>
+                  <td>Read both routine and continuous EEGs as described below.</td>
+                </tr>
+                <tr>
+                  <td>MDC Presentation</td>
+                  <td>Review your assigned case and create weekly MDC presentation. All cases must be reviewed with the respective attending prior to case presentation.</td>
+                </tr>
+                <tr>
+                  <td>Journal Club & Interesting EEGs</td>
+                  <td>Once per month: Review 2 articles (from topics attached) and create a brief 10-minute presentation. Prepare 2 interesting EEGs to review during fellows conference.
+                    <a href="https://www.abpn.com/wp-content/uploads/2022/03/ABPN-Epilepsy-Article-Assessment-Program-Articles_3.29.pdf" target="_blank" class="table-link">
+                      <i class="fa-solid fa-file-pdf"></i> Epilepsy Articles
+                    </a>
+                    <a href="#" onclick="openEEGIndexApp(event)" class="table-link">
+                      <i class="fa-solid fa-brain"></i> EEG Index
+                    </a>
+                    <a href="https://connect.aesnet.org/communities/community-home?CommunityKey=9717275e-6822-4a93-a50f-0192906123ca" target="_blank" class="table-link">
+                      <i class="fa-solid fa-comments"></i> Interesting EEG Discussion Forum
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Review Milestones and Survival Guide</td>
+                  <td>
+                    Review your rotation expectations.
+                    <a href="https://www.acgme.org/globalassets/pdfs/milestones/epilepsymilestones.pdf" target="_blank" class="table-link">
+                      <i class="fa-solid fa-file-pdf"></i> Epilepsy Milestones
+                    </a>
+                    <a href="assets/documents/Abridged 2024 The Epilepsy Fellows and Residents' Survival Guide 6.29.2024.docx" target="_blank" class="table-link">
+                      <i class="fa-solid fa-link"></i> Epilepsy Survival Guide
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Inpatient Rotation Info Box -->
+          <div class="info-box" id="fellows-inpatient">
+            <h2>Inpatient Rotation</h2>
+            <!-- Inpatient Rotation Table -->
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MSH</td>
+                  <td>4 adult EMU beds (Guggenheim 8th floor, 8West)</td>
+                </tr>
+                <tr>
+                  <td>MSW</td>
+                  <td>4 adult EMU beds (8th floor, 8B)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- EEG Reporting Table -->
+            <h3>EEG Reporting</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MSH Rotation</td>
+                  <td>Inpatient long term and rEEG at MSH and MSQ</td>
+                </tr>
+                <tr>
+                  <td>MSW Rotation</td>
+                  <td>Inpatient long term, stereo EEG and rEEG at MSW and MSM</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Daily Routines -->
+            <h3>Daily Routines</h3>
+            <h4>AM</h4>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Long Term EEG Reading</td>
+                  <td>Start reading long term EEGs between 7–8 AM; prepare preliminary reports before rounding (~9–10 AM).</td>
+                </tr>
+                <tr>
+                  <td>ICU Studies</td>
+                  <td>Begin with ICU studies. NSICU fellow provides names via EPIC chat for priority readings.</td>
+                </tr>
+                <tr>
+                  <td>Rounding</td>
+                  <td>Round with the attending between 9–10 AM; finalize reports and communicate with the primary team.</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h4>PM</h4>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>EEG Reading</td>
+                  <td>Read inpatient routine & baseline EEGs up to 5 PM (co-signed by the attending) and leave preliminary reports. Review all long-term EEGs (including EMU patients) and add interim progress notes if changes occur. Finalize discontinued EEGs during morning rounds and sign out patients needing follow-up at night.</td>
+                </tr>
+                <tr>
+                  <td>Thursday Clinic</td>
+                  <td>MSH - Gearing / MSW - Fields</td>
+                </tr>
+                <tr>
+                  <td>Friday Clinic</td>
+                  <td>MSH - Muxfeldt / MSW - Marcuse</td>
+                </tr>
+                <tr>
+                  <td>Follow-Up</td>
+                  <td>After clinics, EEGs must be followed up and sign-outs emailed to the on-call attending and fellow. During weekdays, only patients needing close monitoring are signed out; on weekends, all EMU and ICU EEGs are signed out.</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <h3>EMU Elective Admissions & Consults</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Admissions</td>
+                  <td>Write H&P, place orders, and sign out to on-call residents. Assist with H&P if a dedicated resident is assigned. Confirm admissions with Nadia Gabriel; if after 5 PM, pend a preliminary H&P and detailed sign-out.</td>
+                </tr>
+                <tr>
+                  <td>Consults</td>
+                  <td>NSICU and General Neurology teams may request consults. Fellows see patients, write notes, and staff with the attending. When a rotating resident is present, consults are divided at the fellow's discretion.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Outpatient Rotation Info Box -->
+          <div class="info-box" id="fellows-outpatient">
+            <h2>Outpatient Rotation</h2>
+            <!-- Outpatient Rotation Table -->
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MSH</td>
+                  <td>Faculty Practice Office - Annenberg 2nd Floor</td>
+                </tr>
+                <tr>
+                  <td>MSW</td>
+                  <td>Faculty Practice Office - Neurology Suite</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Ambulatory Block Schedule -->
+            <h3>Ambulatory Block Schedule</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>AM Clinic</th>
+                  <th>PM Reading</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Monday</td>
+                  <td>Fields (MSW)</td>
+                  <td rowspan="5">Outpatient REEG and AEEG reading and rounding</td>
+                </tr>
+                <tr>
+                  <td>Tuesday</td>
+                  <td>Dr. Blank (MSH)</td>
+                </tr>
+                <tr>
+                  <td>Wednesday</td>
+                  <td>Independent Reading</td>
+                </tr>
+                <tr>
+                  <td>Thursday</td>
+                  <td>Marcuse (MSW)</td>
+                </tr>
+                <tr>
+                  <td>Friday</td>
+                  <td>Dr. Yoo (MSH)</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- Elective Block -->
+            <h3>Elective Block</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th colspan="2">Faculty Clinics</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Monday AM</td>
+                  <td>Dr. Gearing (MSH)</td>
+                </tr>
+                <tr>
+                  <td>Wednesday AM</td>
+                  <td>Dr. Yoo (MSH)</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- EEG Reading -->
+            <h3>EEG Reading Responsibilities</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Routine Outpatient EEGs</td>
+                  <td>Read all outpatient routine EEGs for MSH and MSW on outpatient rotation days.</td>
+                </tr>
+                <tr>
+                  <td>Ambulatory EEGs</td>
+                  <td>Review all ambulatory EEG studies ordered from outpatient clinics.</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- Daily Schedule -->
+            <h3>Daily Schedule</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>8:30 - 12:00 PM</td>
+                  <td>Clinic (if scheduled) or EEG reading</td>
+                </tr>
+                <tr>
+                  <td>1:00 - 5:00 PM</td>
+                  <td>Clinic (if scheduled) or EEG reading</td>
+                </tr>
+                <tr>
+                  <td>Wednesday PM</td>
+                  <td>Fellows conference and epilepsy surgery conference (takes precedence over clinics/reading)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pediatric Rotation Info Box -->
+          <div class="info-box" id="fellows-pediatric">
+            <h2>Pediatric Rotation</h2>
+            
+            <!-- Rotation Focus -->
+            <h3>Rotation Focus</h3>
+            <p>Focus on neonatal and early childhood EEGs, pediatric epilepsy syndromes, genetics, metabolic disorders, ketogenic diet, and pre-surgical evaluation. Discuss the schedule with the pediatric attending.</p>
+            
+            <!-- AM Schedule -->
+            <h3>AM Schedule</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mon–Fri<br>8:00–11:00 AM</td>
+                  <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                      <li>Pediatric EMU at Kravis (5th floor)</li>
+                      <li>Read inpatient EEGs at Kravis and Neonatal ICU at MSW, elective EMUs, and intracranial EEGs at Kravis</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tues & Thurs<br>9:00 AM</td>
+                  <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                      <li>Pediatric Neurology Clinic (complete non-EMU readings before 9 AM, then round for EMU/intracranial EEGs)</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- PM Schedule -->
+            <h3>PM Schedule</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Monday</td>
+                  <td>Peds Ambulatory EEG reading</td>
+                </tr>
+                <tr>
+                  <td>Tuesday</td>
+                  <td>Dr. La Vega (MSBI) Mount Sinai Beth Israel Clinic<br>(10 Union Square East, 5th floor, Suite 5-G)</td>
+                </tr>
+                <tr>
+                  <td>Wednesday</td>
+                  <td>Attend Lecture and Conference</td>
+                </tr>
+                <tr>
+                  <td>Thursday</td>
+                  <td>Peds Ambulatory EEG reading</td>
+                </tr>
+                <tr>
+                  <td>Friday</td>
+                  <td>Dr. La Vega (MSH)</td>
+                </tr>
+                <tr>
+                  <td>Ongoing</td>
+                  <td>Follow up on long-term EEGs (focusing on ICU studies) with brief EPIC progress notes</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Pediatric Responsibilities -->
+            <h3>Clinical Responsibilities</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pediatric EMU</td>
+                  <td>Participate in the care of pediatric epilepsy monitoring unit patients</td>
+                </tr>
+                <tr>
+                  <td>Pediatric EEG Reading</td>
+                  <td>Read pediatric EEGs under supervision of pediatric epilepsy faculty</td>
+                </tr>
+                <tr>
+                  <td>Outpatient Clinics</td>
+                  <td>Attend pediatric epilepsy clinics 2-3 times per week</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container for the EEG Slide Generator Modal -->
+      <div id="section-content"></div>
+    </main>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+    // Load header and footer using fetch
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load header
+      fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          
+          // Attach any event listeners for header elements if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+          }
+        });
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+          
+          // Footer loaded - most functionality will be handled by includes-loader.js
+          console.log('Footer loaded in epilepsy_rotation.html');
+          
+          // Only adding custom event handlers for game trigger if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger && !secretGameTrigger.getAttribute('data-initialized')) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+            secretGameTrigger.setAttribute('data-initialized', 'true');
+          }
+        });
+      
+      // Initialize epilepsy rotation specific functionality
+      // If you need to run the ILAE cards initialization or similar functionality:
+      if (typeof window.initializeIlaeCards === 'function') {
+        setTimeout(function() {
+          window.initializeIlaeCards();
+        }, 300); // Slightly longer delay to ensure content is loaded
+      }
+    });
+  </script>
+</body>
+</html>

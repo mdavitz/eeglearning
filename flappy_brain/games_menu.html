@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- Force retro 320x480 layout -->
+  <meta name="viewport" content="width=320, initial-scale=1.0">
+  <title>EEG Brain Games</title>
+  <!-- Load San Francisco font equivalent -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .game-menu {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .game-title {
+      text-align: center;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 600;
+      padding: 25px 0 30px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    .game-button {
+      display: block;
+      width: 80%;
+      height: 60px;
+      margin: 15px auto;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 60px;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+    .game-button:hover, .game-button:focus {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .game-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .game-icon {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+    .game-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 12px;
+    }
+    .background-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+    @keyframes floatAnimation {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .floating-brain {
+      position: absolute;
+      bottom: 70px;
+      right: 20px;
+      font-size: 40px;
+      animation: floatAnimation 3s ease-in-out infinite;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    
+    /* Featured game styling */
+    .featured-game {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+    
+    .featured-game::after {
+      content: "♥";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(0, 255, 0, 0.7);
+      font-size: 24px;
+    }
+    
+    /* Coming soon labels */
+    .coming-soon {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .coming-soon::after {
+      content: "Coming Soon";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-menu">
+    <div class="background-effect"></div>
+    <div class="game-title">EEG Brain Games</div>
+    
+    <a href="javascript:void(0)" class="game-button featured-game" id="flappy-brain-btn" data-game="flappy_brain.html">
+      <span class="game-icon">🧠</span> Flappy Brain
+    </a>
+    
+    <a href="javascript:void(0)" class="game-button" id="galactibrain-btn" data-game="galactibrain.html">
+      <span class="game-icon">🚀</span> Galactibrain
+    </a>
+    
+    <a href="javascript:void(0)" class="game-button" id="astrobrain-btn" data-game="astrobrain.html">
+      <span class="game-icon">👾</span> Astrobrain
+    </a>
+    
+    <a href="javascript:void(0)" class="game-button" id="pacbrain-btn" data-game="pacbrain.html">
+      <span class="game-icon">🎮</span> PacBrain
+    </a>
+    
+    <div class="floating-brain">🧠</div>
+    
+    <div class="game-footer">
+      Tap a game to start playing
+    </div>
+  </div>
+
+  <script>
+    // Add click sound effect
+    function playClickSound() {
+      const clickSound = new Audio();
+      clickSound.volume = 0.2;
+      try {
+        clickSound.src = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMD////////////////////////////////////////AAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAQqQ";
+        clickSound.play();
+      } catch (e) {
+        console.log("Audio playback error:", e);
+      }
+    }
+
+    // Improved game button click handler for iframe usage
+    document.querySelectorAll('.game-button').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Play sound effect
+        playClickSound();
+        
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        ripple.style.position = 'absolute';
+        ripple.style.width = '5px';
+        ripple.style.height = '5px';
+        ripple.style.background = 'rgba(255, 255, 255, 0.5)';
+        ripple.style.borderRadius = '50%';
+        ripple.style.transformOrigin = 'center';
+        ripple.style.pointerEvents = 'none';
+        
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        
+        this.appendChild(ripple);
+        
+        // Animate ripple
+        ripple.animate([
+          { transform: 'scale(1)', opacity: 1 },
+          { transform: 'scale(40)', opacity: 0 }
+        ], {
+          duration: 600,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        });
+        
+        // Get game URL from data attribute
+        const gameUrl = this.getAttribute('data-game');
+        
+        // For iframe usage - use parent postMessage to change iframe source
+        if (window.parent && window.parent !== window) {
+          try {
+            window.parent.postMessage({
+              type: 'loadGame',
+              gameUrl: gameUrl
+            }, '*');
+          } catch (err) {
+            console.error('Error sending message to parent:', err);
+          }
+        }
+        
+        // For direct navigation as fallback
+        setTimeout(() => {
+          if (window === window.top) {
+            // Only navigate if we're not in an iframe
+            window.location.href = gameUrl;
+          }
+          ripple.remove();
+        }, 300);
+        
+        return false;
+      });
+    });
+    
+    // Support for direct flappy brain launch via URL parameter
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if URL has autoplay=flappybrain parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('autoplay') === 'flappybrain') {
+        // Trigger Flappy Brain click after a short delay
+        setTimeout(() => {
+          document.getElementById('flappy-brain-btn').click();
+        }, 500);
+      }
+    });
+    
+    // Listen for messages from parent window
+    window.addEventListener('message', (event) => {
+      try {
+        if (event.data && event.data.action === 'playGame') {
+          const gameId = event.data.gameId;
+          
+          if (gameId === 'flappybrain') {
+            document.getElementById('flappy-brain-btn').click();
+          }
+        }
+      } catch (err) {
+        console.error('Error processing message:', err);
+      }
+    });
+  </script>
+</body>
+</html> 

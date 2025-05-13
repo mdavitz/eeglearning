@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Videos - EEG Curriculum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Inline CSS for video-specific styling -->
+  <style>
+    /* EEG Videos Container */
+    #eeg-videos-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Main content layout */
+    #eeg-videos {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+    }
+    
+    /* VIDEO LIST STYLING */
+    .video-list {
+      flex: 0 0 280px;
+      background: var(--info-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .video-list-title {
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .video-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .video-list li {
+      padding: 12px 16px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .video-list li:hover {
+      background-color: var(--hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .video-list li.active {
+      background-color: var(--accent-color);
+      color: white;
+      border-color: var(--accent-color);
+    }
+    
+    /* MAIN CONTENT STYLING */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      transition: all 0.3s ease;
+    }
+    
+    /* Back to videos button */
+    .back-to-videos {
+      margin-bottom: 16px;
+      display: inline-block;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      background-color: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      transition: all 0.2s ease;
+    }
+    
+    .back-to-videos:hover {
+      transform: translateY(-2px);
+      background-color: var(--button-secondary-hover-bg);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* VIDEO SECTION STYLES */
+    .video-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    
+    /* Video wrapper */
+    .video-wrapper {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto;
+    }
+    
+    .video-wrapper h3 {
+      margin-bottom: 16px;
+      text-align: center;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    /* Video element styling */
+    .video-wrapper video,
+    .video-wrapper iframe {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+    
+    /* Navigation buttons */
+    .video-nav {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+      text-align: center;
+    }
+    
+    .video-nav button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 120px;
+    }
+    
+    .btn-prev, .btn-next {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .btn-skip {
+      background-color: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+    }
+    
+    .video-nav button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-prev:hover, .btn-next:hover {
+      background-color: var(--accent-hover);
+    }
+    
+    .btn-skip:hover {
+      background-color: var(--button-secondary-hover-bg);
+    }
+    
+    /* Progress display styling */
+    #progressDisplay {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      padding: 12px;
+      border-radius: 8px;
+      background-color: var(--info-bg);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    
+    /* QUIZ SECTION STYLES */
+    .quiz-section {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--info-bg);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+    
+    .quiz-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .progress-indicator {
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+    
+    .quiz-question p {
+      margin-bottom: 20px;
+      line-height: 1.6;
+      font-size: 1.05rem;
+      color: var(--text-color);
+    }
+    
+    .quiz-question ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .quiz-question button {
+      width: 100%;
+      text-align: left;
+      padding: 14px;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      color: var(--text-color);
+    }
+    
+    .quiz-question button:hover {
+      background: var(--hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .quiz-nav {
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .quiz-nav button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 120px;
+    }
+    
+    /* Feedback messages */
+    #feedbackMessage {
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .correct-msg {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: #388e3c;
+      border: 1px solid #81c784;
+    }
+    
+    .incorrect-msg {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: #d32f2f;
+      border: 1px solid #e57373;
+    }
+    
+    /* Quiz results styling */
+    .quiz-results {
+      padding: 20px;
+      border-radius: 8px;
+      background-color: var(--info-bg);
+      animation: fadeIn 0.5s ease;
+    }
+    
+    /* Kitten overlay */
+    .kitten-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+    
+    /* Dark mode overrides */
+    @media (prefers-color-scheme: dark) {
+      #eeg-videos-container {
+        background: var(--card-bg);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .video-list {
+        background: var(--info-bg);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .quiz-section {
+        background: var(--info-bg);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .video-wrapper video,
+      .video-wrapper iframe {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      #eeg-videos {
+        flex-direction: column;
+      }
+      
+      .video-list {
+        flex: none;
+        width: 100%;
+      }
+      
+      .video-nav {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .video-nav button {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .quiz-nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .quiz-nav button {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .back-to-videos {
+        margin: 0 0 16px;
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <h2 class="page-title">EEG Videos</h2>
+    
+    <div id="eeg-videos-container">
+      <div id="eeg-videos">
+        <!-- SIDEBAR (Video List) -->
+        <div class="video-list" id="videoList">
+          <h3 class="video-list-title">Video Library</h3>
+          <ul>
+            <li onclick="mobileShowVideo(0)" class="active">Introduction to EEG</li>
+            <li onclick="mobileShowVideo(1)">Polarity Rules</li>
+            <li onclick="mobileShowVideo(2)">Montages</li>
+            <li onclick="mobileShowVideo(3)">Eye Movements</li>
+            <li onclick="mobileShowVideo(4)">Technical Issues</li>
+            <li onclick="mobileShowVideo(5)">Normal Awake</li>
+            <li onclick="mobileShowVideo(6)">Normal Sleep</li>
+            <li onclick="mobileShowVideo(7)">Interictal Abnormalities</li>
+            <li onclick="mobileShowVideo(8)">Focal Slowing</li>
+            <li onclick="mobileShowVideo(9)">Diffuse Slow &amp; Periodic Discharges</li>
+          </ul>
+        </div>
+        
+        <!-- MAIN CONTENT (Video/Quiz) -->
+        <div class="main-content" id="videoContent">
+          <button class="back-to-videos" onclick="showMenu()">Back to Video List</button>
+          <div class="content-inner">
+            <!-- VIDEO SECTION -->
+            <div id="videoSection" class="video-section">
+              <!-- Wrap video and nav in a container to keep them together -->
+              <div class="video-wrapper">
+                <h3 id="currentVideoTitle">Introduction to EEG</h3>
+                <video id="videoPlayer" controls>
+                  <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
+                  Your browser does not support HTML5 video.
+                </video>
+                <div class="video-nav">
+                  <button class="btn-prev" onclick="prevVideo()">Previous Video</button>
+                  <button class="btn-skip" onclick="showQuiz()">Skip to Quiz</button>
+                  <button class="btn-next" onclick="nextVideo()">Next Video</button>
+                </div>
+                <!-- Progress Display Container -->
+                <div id="progressDisplay">
+                  No progress yet.
+                </div>
+              </div>
+            </div>
+            
+            <!-- QUIZ SECTION -->
+            <div id="quizSection" class="quiz-section">
+              <div class="quiz-header">
+                <h3 id="quizTitle"></h3>
+                <div class="progress-indicator" id="quizProgress"></div>
+              </div>
+              <div id="questionContainer"></div>
+              <div id="feedbackMessage"></div>
+              <div class="quiz-nav">
+                <button class="btn-prev" id="prevQuestionBtn" onclick="prevQuestion()">Previous Question</button>
+                <button class="btn-next" id="nextQuestionBtn" onclick="nextQuestion()">Next Question</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <!-- CAT OVERLAY SCRIPT -->
+  <script>
+    // Define local cat GIFs - these need to be added to the images/cats folder
+    const localCatGifs = [
+      "assets/images/cats/cat1.gif",
+      "assets/images/cats/cat2.gif", 
+      "assets/images/cats/cat3.gif",
+      "assets/images/cats/cat4.gif",
+      "assets/images/cats/cat5.gif",
+      "assets/images/cats/cat6.gif",
+      "assets/images/cats/cat7.gif",
+      "assets/images/cats/cat8.gif",
+      "assets/images/cats/cat9.gif",
+      "assets/images/cats/cat10.gif",
+      "assets/images/cats/cat11.gif",
+      "assets/images/cats/cat12.gif",
+      "assets/images/cats/cat13.gif",
+      "assets/images/cats/cat14.gif",
+      "assets/images/cats/cat15.gif"
+    ];
+    
+    // Preload cat images for instant display
+    const preloadedCats = [];
+    
+    // Preload images in the background
+    function preloadCatImages() {
+      localCatGifs.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        preloadedCats.push(img);
+      });
+    }
+    
+    // Start preloading images as soon as possible
+    preloadCatImages();
+    
+    function showKittenOverlay() {
+      // Remove any existing kitten overlays first
+      const existingOverlays = document.querySelectorAll('.kitten-overlay');
+      existingOverlays.forEach(overlay => overlay.remove());
+      
+      // Create new overlay
+      const overlay = document.createElement("div");
+      overlay.className = "kitten-overlay";
+      overlay.style.position = "fixed";
+      overlay.style.top = "0";
+      overlay.style.left = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+      overlay.style.display = "flex";
+      overlay.style.justifyContent = "center";
+      overlay.style.alignItems = "center";
+      overlay.style.zIndex = "9999";
+      overlay.style.flexDirection = "column";
+      
+      // Add click event to close
+      overlay.addEventListener("click", () => overlay.remove());
+      
+      // Add to document immediately
+      document.body.appendChild(overlay);
+      
+      // Create the cat image element
+      const catImg = document.createElement("img");
+      
+      // Select a random local cat GIF
+      const randomIndex = Math.floor(Math.random() * localCatGifs.length);
+      const selectedCat = localCatGifs[randomIndex];
+      
+      catImg.alt = "Kitten Celebration!";
+      catImg.style.maxWidth = "90%";
+      catImg.style.maxHeight = "70%";
+      catImg.style.borderRadius = "8px";
+      catImg.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+      
+      // Add the image to the overlay
+      overlay.appendChild(catImg);
+      
+      // Set source after adding to DOM (prevents flicker)
+      catImg.src = selectedCat;
+      
+      // Fallback for image load errors
+      catImg.onerror = function() {
+        // Use a simple embedded base64 cat GIF as ultimate fallback
+        catImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        
+        // Add a text message instead
+        const textNode = document.createElement("p");
+        textNode.textContent = "Meow! Celebration!";
+        textNode.style.color = "white";
+        textNode.style.fontSize = "24px";
+        textNode.style.fontWeight = "bold";
+        overlay.appendChild(textNode);
+      };
+      
+      // Set a timeout to remove the overlay after 3 seconds (reduced from 5)
+      setTimeout(() => {
+        if (document.body.contains(overlay)) {
+          overlay.remove();
+        }
+      }, 3000);
+    }
+  </script>
+
+  <!-- VIDEO & QUIZ FUNCTIONALITY SCRIPT -->
+  <script>
+    // Complete video sections with quizzes
+    const videoSections = [
+      {
+        title: "Introduction to EEG",
+        video: "EEG1.mp4",
+        questions: [
+          {
+            question: "Which of the following landmarks is NOT used for EEG electrode placement?",
+            answers: [
+              { text: "Nasion", feedback: "Incorrect. The nasion is standard." },
+              { text: "Mandibular notch", feedback: "Correct. It's not used." },
+              { text: "Inion", feedback: "Incorrect. The inion is standard." },
+              { text: "Pre-auricular point", feedback: "Incorrect. It's standard." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which term describes a single EEG tracing?",
+            answers: [
+              { text: "Channel", feedback: "Correct!" },
+              { text: "Chain", feedback: "Incorrect." },
+              { text: "Montage", feedback: "Incorrect." },
+              { text: "Electrode", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "Which area is least likely to show an interictal abnormality on scalp EEG?",
+            answers: [
+              { text: "Right frontal convexity", feedback: "Incorrect." },
+              { text: "Left temporal neocortex", feedback: "Incorrect." },
+              { text: "Right parietal lobe", feedback: "Incorrect." },
+              { text: "Mesial temporal lobe", feedback: "Correct! Mesial structures are deep." }
+            ],
+            correct: 3
+          }
+        ]
+      },
+      {
+        title: "Polarity Rules",
+        video: "EEG2.mp4",
+        questions: [
+          {
+            question: "Which term indicates the quality of a differential amplifier?",
+            answers: [
+              { text: "Low-pass filter", feedback: "Incorrect." },
+              { text: "Common mode rejection ratio", feedback: "Correct." },
+              { text: "High-pass filter", feedback: "Incorrect." },
+              { text: "Time base", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "An upward deflection indicates which scenario?",
+            answers: [
+              { text: "Input 1 positive vs. Input 2", feedback: "Incorrect." },
+              { text: "Input 2 negative vs. Input 1", feedback: "Incorrect." },
+              { text: "Input 1 negative vs. Input 2", feedback: "Correct." },
+              { text: "Input 1 positive vs. ground", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What does a phase reversal on EEG indicate?",
+            answers: [
+              { text: "Maximal negativity", feedback: "Correct." },
+              { text: "Polarity change (neg to pos)", feedback: "Incorrect." },
+              { text: "Polarity change (pos to neg)", feedback: "Incorrect." },
+              { text: "Frequency change", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Montages",
+        video: "EEG3.mp4",
+        questions: [
+          {
+            question: "Which montage is bipolar?",
+            answers: [
+              { text: "Laplacian", feedback: "Incorrect." },
+              { text: "Transverse", feedback: "Correct." },
+              { text: "Ipsilateral mastoid", feedback: "Incorrect." },
+              { text: "Contralateral mastoid", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which montage is most susceptible to reference contamination?",
+            answers: [
+              { text: "Anterior-posterior bipolar", feedback: "Incorrect." },
+              { text: "Laplacian", feedback: "Incorrect." },
+              { text: "Ipsilateral mastoid", feedback: "Incorrect." },
+              { text: "Common average reference", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "What is a disadvantage of the Laplacian montage?",
+            answers: [
+              { text: "Poor for focal waveforms", feedback: "Incorrect." },
+              { text: "Poor for broadly-distributed waveforms", feedback: "Correct." },
+              { text: "Susceptible to eye movement artifact", feedback: "Incorrect." },
+              { text: "Susceptible to reference contamination", feedback: "Incorrect." }
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        title: "Eye Movements",
+        video: "EEG4.mp4",
+        questions: [
+          {
+            question: "What is the polarity of the eye?",
+            answers: [
+              { text: "Cornea electronegative, retina electropositive", feedback: "Incorrect." },
+              { text: "Cornea electropositive, retina electronegative", feedback: "Correct." },
+              { text: "Cornea neutral, retina electronegative", feedback: "Incorrect." },
+              { text: "Cornea electronegative, retina neutral", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is Bell's phenomenon?",
+            answers: [
+              { text: "Slow lateral eye movements", feedback: "Incorrect." },
+              { text: "Downward deviation with eye closure", feedback: "Incorrect." },
+              { text: "Upward deviation with eye closure", feedback: "Correct." },
+              { text: "Rapid eye movements in deep sleep", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "In which region are lateral eye movements best seen?",
+            answers: [
+              { text: "Anterior temporal", feedback: "Correct." },
+              { text: "Frontal", feedback: "Incorrect." },
+              { text: "Central", feedback: "Incorrect." },
+              { text: "Occipital", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Technical Issues",
+        video: "EEG5.mp4",
+        questions: [
+          {
+            question: "What is the frequency range of theta activity in EEG?",
+            answers: [
+              { text: "Less than 4 Hz", feedback: "Incorrect." },
+              { text: "4-7 Hz", feedback: "Correct." },
+              { text: "8-13 Hz", feedback: "Incorrect." },
+              { text: "More than 13 Hz", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What does a 1 Hz low-frequency filter remove?",
+            answers: [
+              { text: "All activity below 1 Hz", feedback: "Incorrect." },
+              { text: "Most activity below 1 Hz", feedback: "Correct." },
+              { text: "All activity above 1 Hz", feedback: "Incorrect." },
+              { text: "Most activity above 1 Hz", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is the significance of a 60 Hz artifact?",
+            answers: [
+              { text: "High impedance (poor connection)", feedback: "Correct. A 60 Hz artifact often indicates poor electrode contact or grounding issues." },
+              { text: "Low impedance (good connection)", feedback: "Incorrect." },
+              { text: "Excessive digital interference", feedback: "Incorrect." },
+              { text: "Excessive muscle activity", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Normal Awake",
+        video: "EEG6.mp4",
+        questions: [
+          {
+            question: "What is the relationship of the alpha rhythm to eye closure?",
+            answers: [
+              { text: "Higher-voltage with eye opening", feedback: "Incorrect." },
+              { text: "Lower-voltage with eye opening, higher-voltage with closure", feedback: "Correct." },
+              { text: "No change", feedback: "Incorrect." },
+              { text: "Higher-frequency with eye opening", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is an acceptable difference in alpha amplitude between hemispheres?",
+            answers: [
+              { text: "Left up to 50% higher than right", feedback: "Incorrect." },
+              { text: "Right up to 50% higher than left", feedback: "Correct." },
+              { text: "Left up to 75% higher than right", feedback: "Incorrect." },
+              { text: "Right up to 75% higher than left", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Where is the mu rhythm best seen?",
+            answers: [
+              { text: "Fp2", feedback: "Incorrect." },
+              { text: "F8", feedback: "Incorrect." },
+              { text: "C4", feedback: "Correct." },
+              { text: "O4", feedback: "Incorrect." }
+            ],
+            correct: 2
+          }
+        ]
+      },
+      {
+        title: "Normal Sleep",
+        video: "EEG7.mp4",
+        questions: [
+          {
+            question: "Which is a component of Stage I sleep?",
+            answers: [
+              { text: "POSTS", feedback: "Correct." },
+              { text: "Sleep spindles", feedback: "Incorrect." },
+              { text: "K-complexes", feedback: "Incorrect." },
+              { text: "High-voltage polymorphic delta", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "Which is defining for Stage II sleep?",
+            answers: [
+              { text: "POSTS", feedback: "Incorrect." },
+              { text: "Sleep spindles", feedback: "Correct." },
+              { text: "High-voltage polymorphic delta", feedback: "Incorrect." },
+              { text: "Slow rolling eye movements", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which awake EEG finding is most similar to POSTS?",
+            answers: [
+              { text: "Mu rhythm", feedback: "Incorrect." },
+              { text: "Alpha rhythm", feedback: "Incorrect." },
+              { text: "Eye blinks", feedback: "Incorrect." },
+              { text: "Lambda waves", feedback: "Correct." }
+            ],
+            correct: 3
+          }
+        ]
+      },
+      {
+        title: "Interictal Abnormalities",
+        video: "EEG8.mp4",
+        questions: [
+          {
+            question: "Why might some patients not show interictal abnormalities?",
+            answers: [
+              { text: "Superficial cortical region", feedback: "Incorrect." },
+              { text: "Large area of cortex", feedback: "Incorrect." },
+              { text: "Very small area of cortex", feedback: "Correct." },
+              { text: "Generalized activity", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What is characteristic of focal epileptiform discharges?",
+            answers: [
+              { text: "No disruption of background", feedback: "Incorrect." },
+              { text: "Duration > 200 ms", feedback: "Incorrect." },
+              { text: "Only one phase", feedback: "Incorrect." },
+              { text: "After-coming slow wave", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "How can artifacts be distinguished from true epileptiform discharges?",
+            answers: [
+              { text: "Artifacts are isolated to one electrode", feedback: "Correct. Artifacts typically lack a consistent field." },
+              { text: "Artifacts are always slower in frequency", feedback: "Incorrect." },
+              { text: "Artifacts do not follow a consistent morphology", feedback: "Incorrect." },
+              { text: "Artifacts occur only during sleep", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Focal Slowing",
+        video: "EEG9.mp4",
+        questions: [
+          {
+            question: "When is focal polymorphic delta most likely observed?",
+            answers: [
+              { text: "During an absence seizure", feedback: "Incorrect." },
+              { text: "After an absence seizure", feedback: "Incorrect." },
+              { text: "During a complex partial seizure", feedback: "Incorrect." },
+              { text: "After a complex partial seizure", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "What is the difference between focal rhythmic and polymorphic delta?",
+            answers: [
+              { text: "Rhythmic delta is more epileptogenic", feedback: "Correct." },
+              { text: "Polymorphic delta is more epileptogenic", feedback: "Incorrect." },
+              { text: "There is no difference", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "What is a breach rhythm?",
+            answers: [
+              { text: "An increase in high-frequency activity over a skull defect", feedback: "Correct." },
+              { text: "A decrease in low-frequency activity", feedback: "Incorrect." },
+              { text: "A decrease in high-frequency activity", feedback: "Incorrect." },
+              { text: "An increase in low-frequency activity", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Diffuse Slow & Periodic Discharges",
+        video: "EEG10.mp4",
+        questions: [
+          {
+            question: "Which finding indicates diffuse cerebral dysfunction?",
+            answers: [
+              { text: "Anterior-posterior gradient", feedback: "Incorrect." },
+              { text: "Continuous background", feedback: "Incorrect." },
+              { text: "Predominantly alpha waveforms", feedback: "Incorrect." },
+              { text: "Unreactive background", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "Which pattern indicates the most severe dysfunction?",
+            answers: [
+              { text: "Diffuse polymorphic theta", feedback: "Incorrect." },
+              { text: "Diffuse polymorphic delta", feedback: "Incorrect." },
+              { text: "Diffuse attenuation", feedback: "Correct." },
+              { text: "Burst-suppression", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What is the significance of lateralized periodic discharges?",
+            answers: [
+              { text: "They indicate a focal seizure", feedback: "Incorrect." },
+              { text: "They indicate increased seizure risk", feedback: "Correct." },
+              { text: "They are not associated with risk", feedback: "Incorrect." },
+              { text: "They are only seen in HSV encephalitis", feedback: "Incorrect." }
+            ],
+            correct: 1
+          }
+        ]
+      }
+    ];
+    
+    // Track video progress
+    let videoProgress = [];
+    let currentVideo = 0;
+    let currentQuestion = 0;
+    let userAnswers = {};
+    
+    // Initialize the progress tracking
+    function initializeProgress() {
+      // Check if we have saved progress
+      const savedProgress = localStorage.getItem('eegVideoProgress');
+      if (savedProgress) {
+        videoProgress = JSON.parse(savedProgress);
+      } else {
+        // Initialize empty progress for each video
+        videoProgress = videoSections.map(() => ({
+          watched: false,
+          quizCompleted: false,
+          quizScore: 0,
+          totalQuestions: 0
+        }));
+      }
+      
+      // Update the progress display
+      updateProgressDisplay();
+    }
+    
+    // Function to save progress
+    function saveProgress() {
+      localStorage.setItem('eegVideoProgress', JSON.stringify(videoProgress));
+      updateProgressDisplay();
+    }
+    
+    // Update the progress indicator
+    function updateProgressDisplay() {
+      const progressDisplay = document.getElementById('progressDisplay');
+      
+      if (!videoProgress[currentVideo]) {
+        progressDisplay.textContent = "No progress yet.";
+        return;
+      }
+      
+      const progress = videoProgress[currentVideo];
+      let message = '';
+      
+      if (progress.watched) {
+        message += 'Video watched. ';
+      }
+      
+      if (progress.quizCompleted) {
+        message += `Quiz completed with score: ${progress.quizScore}/${progress.totalQuestions}.`;
+      } else if (progress.watched) {
+        message += 'Quiz not yet completed.';
+      } else {
+        message = 'No progress yet.';
+      }
+      
+      progressDisplay.textContent = message;
+    }
+    
+    // Function to mark current video as watched
+    function markVideoAsWatched() {
+      if (!videoProgress[currentVideo]) {
+        videoProgress[currentVideo] = {
+          watched: true,
+          quizCompleted: false,
+          quizScore: 0,
+          totalQuestions: videoSections[currentVideo].questions.length
+        };
+      } else {
+        videoProgress[currentVideo].watched = true;
+        videoProgress[currentVideo].totalQuestions = videoSections[currentVideo].questions.length;
+      }
+      saveProgress();
+    }
+    
+    // Handle video ended event
+    function handleVideoEnded() {
+      markVideoAsWatched();
+      // Optionally automatically show quiz
+      // showQuiz();
+    }
+    
+    // Load the current video
+    function loadVideo() {
+      const videoSource = document.getElementById('videoSource');
+      const videoPlayer = document.getElementById('videoPlayer');
+      
+      // Set the video source
+      videoSource.src = `assets/videos/${videoSections[currentVideo].video}`;
+      
+      // Set the video title
+      document.getElementById('currentVideoTitle').textContent = videoSections[currentVideo].title;
+      
+      // Reload the video
+      videoPlayer.load();
+      
+      // Add event listener for video ended
+      videoPlayer.addEventListener('ended', handleVideoEnded);
+      
+      // Highlight the current video in the list
+      updateActiveVideoInList();
+      
+      // Update progress display
+      updateProgressDisplay();
+    }
+    
+    // Update the active video in the list
+    function updateActiveVideoInList() {
+      // Remove active class from all list items
+      const videoItems = document.querySelectorAll('.video-list ul li');
+      videoItems.forEach(item => item.classList.remove('active'));
+      
+      // Add active class to current video
+      if (videoItems[currentVideo]) {
+        videoItems[currentVideo].classList.add('active');
+      }
+    }
+    
+    // Show the video menu (for mobile)
+    function showMenu() {
+      document.getElementById('videoList').style.display = 'block';
+      document.getElementById('videoContent').style.display = 'none';
+    }
+    
+    // Show a specific video (for mobile)
+    function mobileShowVideo(index) {
+      currentVideo = index;
+      document.getElementById('videoList').style.display = 'block';
+      document.getElementById('videoContent').style.display = 'block';
+      document.getElementById('videoSection').style.display = 'flex';
+      document.getElementById('quizSection').style.display = 'none';
+      loadVideo();
+      
+      // Scroll to the top of the page for better UX
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Navigate to the previous video
+    function prevVideo() {
+      if (currentVideo > 0) {
+        currentVideo--;
+        loadVideo();
+        // Reset the quiz state
+        currentQuestion = 0;
+        userAnswers = {};
+        
+        // Scroll to the top of the page
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }
+    
+    // Navigate to the next video
+    function nextVideo() {
+      if (currentVideo < videoSections.length - 1) {
+        currentVideo++;
+        loadVideo();
+        // Reset the quiz state
+        currentQuestion = 0;
+        userAnswers = {};
+        
+        // Scroll to the top of the page
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }
+    
+    // Show the quiz for the current video
+    function showQuiz() {
+      // Mark video as watched when user goes to quiz
+      markVideoAsWatched();
+      
+      document.getElementById('videoSection').style.display = 'none';
+      document.getElementById('quizSection').style.display = 'block';
+      
+      // Set the quiz title
+      document.getElementById('quizTitle').textContent = videoSections[currentVideo].title + " Quiz";
+      
+      // Make sure navigation buttons are visible
+      document.getElementById('prevQuestionBtn').style.display = 'block';
+      document.getElementById('nextQuestionBtn').style.display = 'block';
+      
+      // Reset and load the first question
+      currentQuestion = 0;
+      userAnswers = {};
+      loadQuestion();
+      
+      // Scroll to the top of the quiz section
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Load the current question
+    function loadQuestion() {
+      const questions = videoSections[currentVideo].questions;
+      const questionContainer = document.getElementById('questionContainer');
+      
+      // Clear previous content
+      questionContainer.innerHTML = '';
+      document.getElementById('feedbackMessage').innerHTML = '';
+      
+      if (currentQuestion >= questions.length) {
+        // Quiz completed
+        showQuizResults();
+        return;
+      }
+      
+      // Update the progress indicator
+      document.getElementById('quizProgress').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      
+      // Create the question element
+      const questionElement = document.createElement('div');
+      questionElement.className = 'quiz-question';
+      
+      const questionText = document.createElement('p');
+      questionText.textContent = questions[currentQuestion].question;
+      questionElement.appendChild(questionText);
+      
+      // Create answer list
+      const answerList = document.createElement('ul');
+      
+      // Add answer options
+      questions[currentQuestion].answers.forEach((answer, index) => {
+        const answerItem = document.createElement('li');
+        const answerButton = document.createElement('button');
+        answerButton.textContent = answer.text;
+        answerButton.onclick = () => selectAnswer(index);
+        
+        // If user has already answered this question, show the selection
+        if (userAnswers[currentQuestion] !== undefined) {
+          if (userAnswers[currentQuestion] === index) {
+            answerButton.style.backgroundColor = '#e3f2fd';
+            answerButton.style.borderColor = '#2196f3';
+          }
+          answerButton.disabled = true;
+        }
+        
+        answerItem.appendChild(answerButton);
+        answerList.appendChild(answerItem);
+      });
+      
+      questionElement.appendChild(answerList);
+      questionContainer.appendChild(questionElement);
+      
+      // Update the navigation button states
+      document.getElementById('prevQuestionBtn').disabled = currentQuestion === 0;
+      document.getElementById('nextQuestionBtn').disabled = userAnswers[currentQuestion] === undefined;
+    }
+    
+    // Handle answer selection
+    function selectAnswer(answerIndex) {
+      const questions = videoSections[currentVideo].questions;
+      
+      // Save the user's answer
+      userAnswers[currentQuestion] = answerIndex;
+      
+      // Show feedback
+      const feedbackElement = document.getElementById('feedbackMessage');
+      const correctIndex = questions[currentQuestion].correct;
+      const feedbackText = questions[currentQuestion].answers[answerIndex].feedback;
+      
+      if (answerIndex === correctIndex) {
+        // Correct answer
+        feedbackElement.className = 'correct-msg';
+        feedbackElement.textContent = '✓ ' + feedbackText;
+        
+        // Show the celebratory kitten overlay for correct answers
+        setTimeout(showKittenOverlay, 500);
+      } else {
+        // Wrong answer
+        feedbackElement.className = 'incorrect-msg';
+        feedbackElement.innerHTML = '✗ ' + feedbackText + 
+          '<div style="margin-top: 10px;">' +
+          '<button class="btn" style="background-color: #ff5722 !important; margin-right: 10px;" onclick="retryQuestion()">Retry Question</button>' +
+          '<button class="btn" onclick="showCorrectAnswer()">Show Correct Answer</button>' +
+          '</div>';
+      }
+      
+      // Disable all answer buttons and highlight the selected one
+      updateAnswerButtons(answerIndex);
+      
+      // Enable the next button if the answer is correct
+      document.getElementById('nextQuestionBtn').disabled = answerIndex !== correctIndex;
+    }
+    
+    // Update answer buttons state
+    function updateAnswerButtons(selectedIndex) {
+      const answerButtons = document.querySelectorAll('.quiz-question button');
+      answerButtons.forEach((button, index) => {
+        button.disabled = true;
+        if (index === selectedIndex) {
+          button.style.backgroundColor = '#e3f2fd';
+          button.style.borderColor = '#2196f3';
+        }
+      });
+    }
+    
+    // Reset the current question for retry
+    function retryQuestion() {
+      // Clear the user's answer for this question
+      delete userAnswers[currentQuestion];
+      
+      // Clear feedback
+      document.getElementById('feedbackMessage').innerHTML = '';
+      
+      // Re-enable all answer buttons
+      const answerButtons = document.querySelectorAll('.quiz-question button');
+      answerButtons.forEach(button => {
+        button.disabled = false;
+        button.style.backgroundColor = '';
+        button.style.borderColor = '';
+      });
+      
+      // Disable the next button until a correct answer is selected
+      document.getElementById('nextQuestionBtn').disabled = true;
+    }
+    
+    // Show the correct answer
+    function showCorrectAnswer() {
+      const questions = videoSections[currentVideo].questions;
+      const correctIndex = questions[currentQuestion].correct;
+      const correctText = questions[currentQuestion].answers[correctIndex].text;
+      const correctFeedback = questions[currentQuestion].answers[correctIndex].feedback;
+      
+      const feedbackElement = document.getElementById('feedbackMessage');
+      feedbackElement.className = 'correct-msg';
+      feedbackElement.innerHTML = `The correct answer is: <strong>${correctText}</strong><br>${correctFeedback}`;
+      
+      // Highlight the correct answer button
+      const answerButtons = document.querySelectorAll('.quiz-question button');
+      answerButtons.forEach((button, index) => {
+        if (index === correctIndex) {
+          button.style.backgroundColor = '#c8e6c9';
+          button.style.borderColor = '#4caf50';
+        }
+      });
+      
+      // Enable the next button
+      document.getElementById('nextQuestionBtn').disabled = false;
+    }
+    
+    // Navigate to the previous question
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    }
+    
+    // Navigate to the next question
+    function nextQuestion() {
+      if (userAnswers[currentQuestion] !== undefined) {
+        currentQuestion++;
+        loadQuestion();
+      }
+    }
+    
+    // Show the quiz results
+    function showQuizResults() {
+      const questions = videoSections[currentVideo].questions;
+      const questionContainer = document.getElementById('questionContainer');
+      
+      // Calculate the score
+      let score = 0;
+      Object.keys(userAnswers).forEach(question => {
+        if (userAnswers[question] === questions[question].correct) {
+          score++;
+        }
+      });
+      
+      // Update progress
+      if (!videoProgress[currentVideo]) {
+        videoProgress[currentVideo] = {
+          watched: true,
+          quizCompleted: true,
+          quizScore: score,
+          totalQuestions: questions.length
+        };
+      } else {
+        videoProgress[currentVideo].quizCompleted = true;
+        videoProgress[currentVideo].quizScore = score;
+        videoProgress[currentVideo].totalQuestions = questions.length;
+      }
+      saveProgress();
+      
+      // Clear the quiz container
+      questionContainer.innerHTML = '';
+      document.getElementById('feedbackMessage').innerHTML = '';
+      
+      // Hide the question navigation buttons
+      document.getElementById('prevQuestionBtn').style.display = 'none';
+      document.getElementById('nextQuestionBtn').style.display = 'none';
+      
+      // Create results element
+      const resultsElement = document.createElement('div');
+      resultsElement.className = 'quiz-results';
+      
+      // Show the score
+      const scoreElement = document.createElement('h3');
+      scoreElement.style.textAlign = 'center';
+      scoreElement.style.marginBottom = '1rem';
+      
+      if (score === questions.length) {
+        scoreElement.textContent = `Perfect Score! ${score}/${questions.length}`;
+        // Show celebratory kitten for perfect scores
+        setTimeout(showKittenOverlay, 500);
+      } else if (score >= questions.length * 0.7) {
+        scoreElement.textContent = `Great Job! ${score}/${questions.length}`;
+      } else {
+        scoreElement.textContent = `Score: ${score}/${questions.length}`;
+      }
+      resultsElement.appendChild(scoreElement);
+      
+      // Add a review summary
+      const reviewElement = document.createElement('div');
+      reviewElement.style.marginBottom = '1.5rem';
+      reviewElement.style.padding = '1rem';
+      reviewElement.style.borderRadius = '8px';
+      reviewElement.style.backgroundColor = 'var(--info-bg)';
+      
+      questions.forEach((question, index) => {
+        const questionReview = document.createElement('div');
+        questionReview.style.marginBottom = '1rem';
+        
+        const questionText = document.createElement('p');
+        questionText.style.fontWeight = 'bold';
+        questionText.style.marginBottom = '0.5rem';
+        questionText.textContent = `${index + 1}. ${question.question}`;
+        questionReview.appendChild(questionText);
+        
+        const userAnswer = document.createElement('p');
+        if (userAnswers[index] === question.correct) {
+          userAnswer.style.color = '#388e3c';
+          userAnswer.textContent = `✓ Correct: ${question.answers[question.correct].text}`;
+        } else {
+          userAnswer.style.color = '#d32f2f';
+          userAnswer.innerHTML = `✗ Your answer: ${question.answers[userAnswers[index]].text}<br>
+            <span style="color: #388e3c">Correct answer: ${question.answers[question.correct].text}</span>`;
+        }
+        questionReview.appendChild(userAnswer);
+        
+        reviewElement.appendChild(questionReview);
+      });
+      
+      resultsElement.appendChild(reviewElement);
+      
+      // Add navigation buttons
+      const navElement = document.createElement('div');
+      navElement.className = 'quiz-nav';
+      navElement.style.justifyContent = 'center';
+      navElement.style.gap = '2rem';
+      navElement.style.marginTop = '1.5rem';
+      
+      const returnButton = document.createElement('button');
+      returnButton.className = 'btn';
+      returnButton.textContent = 'Return to Video';
+      returnButton.style.fontSize = '1.1rem';
+      returnButton.style.padding = '12px 24px !important';
+      returnButton.onclick = () => {
+        document.getElementById('videoSection').style.display = 'flex';
+        document.getElementById('quizSection').style.display = 'none';
+        updateProgressDisplay();
+        
+        // Scroll to the top when returning to video
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      };
+      
+      const nextVideoButton = document.createElement('button');
+      nextVideoButton.className = 'btn';
+      nextVideoButton.textContent = 'Next Video';
+      nextVideoButton.style.fontSize = '1.1rem';
+      nextVideoButton.style.padding = '12px 24px !important';
+      nextVideoButton.onclick = () => {
+        if (currentVideo < videoSections.length - 1) {
+          currentVideo++;
+          loadVideo();
+          document.getElementById('videoSection').style.display = 'flex';
+          document.getElementById('quizSection').style.display = 'none';
+          
+          // Scroll to the top when moving to next video
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }
+      };
+      
+      if (currentVideo >= videoSections.length - 1) {
+        nextVideoButton.disabled = true;
+      }
+      
+      navElement.appendChild(returnButton);
+      navElement.appendChild(nextVideoButton);
+      resultsElement.appendChild(navElement);
+      
+      questionContainer.appendChild(resultsElement);
+      
+      // Update the quiz header
+      document.getElementById('quizTitle').textContent = videoSections[currentVideo].title + " - Results";
+      document.getElementById('quizProgress').textContent = "";
+    }
+    
+    // INITIALIZE HEADER AND FOOTER
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load header
+      fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          
+          // Attach any event listeners for header elements if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+          }
+        });
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+          
+          // Footer loaded - most functionality will be handled by includes-loader.js
+          console.log('Footer loaded in eeg_videos.html');
+          
+          // Only adding custom dark mode handling here if needed
+          const darkModeBtn = document.getElementById('dark-mode-btn');
+          if (darkModeBtn) {
+            // Check if already initialized
+            if (!darkModeBtn.getAttribute('data-initialized')) {
+              darkModeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+              });
+              darkModeBtn.setAttribute('data-initialized', 'true');
+            }
+          }
+        });
+        
+      // Hide the quiz section initially
+      document.getElementById('quizSection').style.display = 'none';
+      
+      // Initialize progress tracking
+      initializeProgress();
+      
+      // Load the initial video
+      loadVideo();
+      
+      // On mobile, show the video list by default
+      if (window.innerWidth <= 768) {
+        document.getElementById('videoContent').style.display = 'none';
+      }
+    });
+  </script>
+  
+  <!-- Moeller Reference at the bottom -->
+  <div class="curriculum-reference" style="margin-top:2em; text-align:center;">
+    <p>
+      <strong>Curriculum Reference:</strong> Moeller JJ, Farooque P, Leydon G, Dominguez M, Schwartz ML, Sadler RM. A video-based introductory EEG curriculum for neurology residents. <em>MedEdPORTAL</em>. 2017;13:10570.
+      <a href="https://doi.org/10.15766/mep_2374-8265.10570" target="_blank">
+        <i class="fa-solid fa-link"></i> Link
+      </a>
+    </p>
+  </div>
+  
+  <!-- Global Search Functionality -->
+  <!-- <script src="assets/js/search.js"></script> -->
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_videos.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+</body>
+</html>

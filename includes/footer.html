@@ -1,0 +1,50 @@
+<!-- Copyright Modal -->
+<div id="copyright-modal">
+  <div class="modal-content copyright-content">
+    <span class="close-btn" id="copyright-close-btn">×</span>
+    <h2><strong>Copyright</strong></h2>
+    <p>
+      Unless otherwise noted, all intellectual property, including, but not limited to, copyrights to the web site and its contents 
+      are the property of the Matthew S. Davitz MD. Except when indicated, 
+      permission is hereby granted to reproduce, distribute, and display copies 
+      of content material for nonprofit educational and nonprofit library purposes, 
+      provided that: (i) copies are distributed at or below costs; (ii) author and 
+      source are acknowledged; and (iii) a copyright notice is attached to the copies, 
+      such notice being in the form of "Matthew S. Davitz MD. 2025".
+    </p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-btns">
+    <!-- Font size toggle button -->
+    <button id="font-size-btn" class="footer-btn font-toggle-btn" aria-label="Toggle Font Size">
+      <span class="text-large">A</span>/<span class="text-small">a</span>
+    </button>
+    <button id="dark-mode-btn" aria-label="Toggle Dark Mode">Dark Mode</button>
+    <!-- Disclaimer trigger -->
+    <button id="disclaimer-trigger" aria-label="View Disclaimer" class="footer-btn disclaimer-btn">Disclaimer</button>
+  </div>
+  <div class="footer-copy" id="copyright-trigger">
+    © 2025 Matthew S. Davitz, MD.
+  </div>
+</footer> 
+
+<!-- One-time refresh script for the footer fix -->
+<script>
+  // Check if this is the first load after the footer fix
+  if (!localStorage.getItem('footerFixApplied')) {
+    // Set flag to prevent future refreshes
+    localStorage.setItem('footerFixApplied', 'true');
+    
+    // Only reload if we're not on the index page (index already works)
+    if (window.location.pathname !== '/' && 
+        window.location.pathname !== '/index.html' && 
+        !window.location.pathname.endsWith('/index.html')) {
+      console.log('Applying footer fix - one time refresh');
+      // Use a slight delay to ensure everything is loaded first
+      setTimeout(() => window.location.reload(), 500);
+    }
+  }
+</script> 

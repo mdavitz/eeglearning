@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Learning Resources - EEG Training</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from faq.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+
+  <style>
+    .resource-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .resource-card {
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+    .resource-card h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .resource-card h2 i {
+      font-size: 1.5em;
+    }
+    .resource-card p {
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .resource-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .resource-list li {
+      margin-bottom: 15px;
+      padding: 15px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .resource-list li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+    .resource-list a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .resource-list a:hover {
+      text-decoration: underline;
+    }
+    .resource-description {
+      font-size: 0.95em;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+    .credit-section {
+      text-align: center;
+      padding: 20px;
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .credit-section p {
+      margin: 0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <!-- Main Content -->
+  <main>
+    <div class="resource-container">
+      <h2 class="page-title">EEG Learning Resources</h2>
+      
+      <div class="resource-card">
+        <h2><i class="fa-solid fa-book"></i> Essential Textbooks</h2>
+        <ul class="resource-list">
+          <li>
+            <a href="https://icahn-mssm.primo.exlibrisgroup.com/permalink/01MSSM_INST/1outckb/alma991001835673206206" target="_blank">Rowan's Primer of EEG, 2nd Edition</a>
+            <div class="resource-description">A comprehensive introduction to EEG interpretation and clinical applications.</div>
+          </li>
+          <li>
+            <a href="https://www.learningeeg.com" target="_blank">Learning EEG - David Valentine MD</a>
+            <div class="resource-description">Free online resource covering basic EEG physiology, terminology, and interpretation.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="resource-card">
+        <h2><i class="fa-solid fa-video"></i> AES EEG Essentials</h2>
+        <ul class="resource-list">
+          <li>
+            <a href="https://connect.aesnet.org/communities/community-home?CommunityKey=9717275e-6822-4a93-a50f-0192906123ca" target="_blank">Interesting EEG Discussion Forum</a>
+            <div class="resource-description">American Epilepsy Society's online community platform for epilepsy professionals. Access discussions, resources, and connect with peers in the epilepsy field.</div>
+          </li>
+          <li>
+            <a href="https://learn.aesnet.org/Listing/EEG-Essentials-Fundamental-Curriculum-10793" target="_blank">EEG Essentials: Fundamental Curriculum</a>
+            <div class="resource-description">Comprehensive 18-module curriculum covering basic EEG principles, physiology, terminology, normal patterns, and common abnormalities. Includes didactic presentations, self-assessment questions, and structured EEG interpretation tools.</div>
+          </li>
+          <li>
+            <a href="https://learn.aesnet.org/Listing/EEG-Essentials-Advanced-Curriculum-10798" target="_blank">EEG Essentials: Advanced Curriculum</a>
+            <div class="resource-description">Advanced modules covering quantitative EEG, intraoperative monitoring, and surgical case evaluation. Designed for fellows and practicing neurologists.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="resource-card">
+        <h2><i class="fa-solid fa-newspaper"></i> Journal Articles & Guidelines</h2>
+        <ul class="resource-list">
+          <li>
+            <a href="https://www.ilae.org/guidelines" target="_blank">ILAE Guidelines</a>
+            <div class="resource-description">Official guidelines for EEG interpretation and epilepsy classification.</div>
+          </li>
+          <li>
+            <a href="https://www.acns.org/practice/guidelines" target="_blank">ACNS Guidelines</a>
+            <div class="resource-description">American Clinical Neurophysiology Society guidelines and standards.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
+</body>
+</html>

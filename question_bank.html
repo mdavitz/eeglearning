@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EEG Question Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Question Bank specific styles -->
+  <style>
+    :root {
+      --primary: var(--accent-color);
+      --primary-hover: var(--accent-hover);
+      --light-bg: var(--bg-color);
+      --card-bg: var(--info-bg);
+      --danger: #f8d7da;
+      --success: #d4edda;
+      --text-danger: #721c24;
+      --text-success: #155724;
+      --flag-bg: #ffe082;
+      --flag-active-bg: #ffca28;
+      --highlight-bg: #fff59d;
+      --min-answer-height: 3.5rem;
+      --option-bg: #ffffff;
+      --explanation-bg: #ffffff;
+      --acknowledgment-bg: #fff3cd;
+      --acknowledgment-color: #856404;
+      --acknowledgment-border: #ffeeba;
+    }
+    
+    /* Dark mode overrides - use body.dark to match global site styling */
+    body.dark {
+      --danger: #2c1215;
+      --success: #0f2b16;
+      --text-danger: #f8d7da;
+      --text-success: #d4edda;
+      --flag-bg: #5e4200;
+      --flag-active-bg: #815600;
+      --highlight-bg: #5c5a30;
+      --option-bg: #2c2c2e;
+      --explanation-bg: #2c2c2e;
+      --acknowledgment-bg: #3a3000;
+      --acknowledgment-color: #ffe066;
+      --acknowledgment-border: #7c6910;
+    }
+    
+    /* Override global styles for question bank page to ensure dark mode works correctly */
+    body.dark main {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    
+    body.dark .page-container, 
+    body.dark .question-card,
+    body.dark .chapter-container {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+    }
+    
+    body.dark .chapter-container h2 {
+      color: var(--text-color);
+      border-bottom-color: var(--border-color);
+    }
+    
+    body.dark .page-title {
+      color: var(--text-color);
+    }
+    
+    body.dark #chapterFilter {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-color: var(--border-color);
+    }
+    
+    /* Fix select options in dark mode */
+    body.dark #chapterFilter option {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+    }
+    
+    body.dark .controls-section button {
+      background-color: var(--accent-color);
+      color: #fff;
+    }
+    
+    body.dark .controls-section button:hover {
+      background-color: var(--accent-hover);
+    }
+    
+    body.dark .controls-section span {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-color: var(--border-color);
+    }
+    
+    body.dark .options button {
+      background-color: var(--option-bg);
+      color: var(--text-color);
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+    
+    body.dark .explanation {
+      background-color: var(--explanation-bg);
+      color: var(--text-color);
+      border-left-color: var(--accent-color);
+    }
+    
+    body.dark .feedback-message.correct {
+      background-color: var(--success);
+      color: var(--text-success);
+    }
+    
+    body.dark .feedback-message.incorrect {
+      background-color: var(--danger);
+      color: var(--text-danger);
+    }
+    
+    body.dark .acknowledgment {
+      background-color: var(--acknowledgment-bg);
+      color: var(--acknowledgment-color);
+      border-left-color: var(--acknowledgment-border);
+    }
+    
+    body.dark .acknowledgment a {
+      color: var(--acknowledgment-color);
+    }
+    
+    body.dark #drillControls {
+      background-color: var(--card-bg);
+    }
+    
+    body.dark #drillControls button:disabled {
+      background-color: var(--text-secondary);
+    }
+    
+    body.dark #progressBar {
+      background-color: var(--border-color);
+    }
+    
+    body.dark #barLabel {
+      color: var(--text-color);
+    }
+    
+    /* Add specific dark mode styles for certain components */
+    body.dark .options button.selected.correct {
+      background-color: var(--success) !important;
+      color: var(--text-success) !important;
+    }
+    
+    body.dark .options button.selected.incorrect {
+      background-color: var(--danger) !important;
+      color: var(--text-danger) !important;
+    }
+    
+    body.dark .options button.highlight {
+      background-color: var(--highlight-bg) !important;
+      color: #fff !important;
+    }
+    
+    /* Main structure */
+    .question-bank-container {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 1rem;
+    }
+    
+    /* Override page container styles for question bank */
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .page-title {
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+      font-size: 2rem;
+      text-align: center;
+    }
+    
+    /* Header */
+    .page-section-header {
+      background: var(--accent-color);
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px var(--shadow-color);
+    }
+    
+    /* Filter + Controls */
+    .filter-container {
+      max-width: 900px;
+      margin: 1.5rem auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    
+    .filter-section, .controls-section {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .filter-section label {
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    #chapterFilter {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      background: var(--option-bg);
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 1em;
+      padding-right: 2.5rem;
+    }
+    
+    .controls-section button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--accent-color);
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--transition-duration);
+    }
+    
+    .controls-section button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    
+    .controls-section span {
+      padding: 0.5rem 0.75rem;
+      background: var(--option-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    
+    /* Drill Controls */
+    #drillControls {
+      display: none;
+      max-width: 900px;
+      margin: 1rem auto;
+      text-align: center;
+      gap: 1rem;
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    
+    #drillControls button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: var(--accent-color);
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all var(--transition-duration);
+    }
+    
+    #drillControls button:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    
+    #drillControls button:disabled {
+      background: var(--text-secondary);
+      cursor: default;
+    }
+    
+    #drillIndicator {
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+    
+    /* Floating progress bar */
+    #progressWrapper {
+      position: fixed;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      width: 40px;
+      text-align: center;
+      z-index: 1000;
+      transition: opacity 0.3s;
+    }
+    
+    #progressWrapper.hidden {
+      display: none !important;
+    }
+    
+    #progressBar {
+      width: 100%;
+      height: 200px;
+      background: var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column-reverse;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    
+    #correctBar {
+      background: var(--success);
+      height: 0;
+      transition: height 0.3s;
+    }
+    
+    #incorrectBar {
+      background: var(--danger);
+      height: 0;
+      transition: height 0.3s;
+    }
+    
+    #barLabel {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+    
+    /* Acknowledgment */
+    .acknowledgment {
+      background-color: var(--acknowledgment-bg);
+      color: var(--acknowledgment-color);
+      padding: 1rem 1.25rem;
+      border-left: 4px solid var(--acknowledgment-border);
+      text-align: center;
+      margin: 1.5rem auto 2rem;
+      max-width: 900px;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+    
+    .acknowledgment a {
+      color: var(--acknowledgment-color);
+      text-decoration: underline;
+    }
+    
+    /* Override any browser-specific select styling */
+    #chapterFilter {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 1em;
+      padding-right: 2.5rem;
+    }
+    
+    body.dark #chapterFilter {
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    }
+    
+    /* Make sure filters are visible in dark mode */
+    body.dark .filter-container {
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+    }
+    
+    body.dark .filter-section label {
+      color: var(--text-color);
+    }
+    
+    /* Ensure dark mode transitions are smooth */
+    .chapter-container, .question-card, #chapterFilter, .options button, .controls-section span,
+    .explanation, .feedback-message, .acknowledgment, #progressBar, #barLabel {
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    /* Ensure proper scrollbar styling in dark mode */
+    body.dark {
+      scrollbar-color: var(--border-color) var(--bg-color);
+    }
+    
+    body.dark::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    /* Question Bank */
+    .chapter-container {
+      background: var(--card-bg);
+      margin-bottom: 2.5rem;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      transition: transform var(--transition-duration);
+    }
+    
+    .chapter-container h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: var(--text-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+    
+    .question-card {
+      position: relative;
+      background: var(--light-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      transition: transform var(--transition-duration), box-shadow var(--transition-duration);
+    }
+    
+    .question-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px var(--shadow-color);
+    }
+    
+    .question-card p {
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+    
+    .question-img {
+      width: 100%;
+      border-radius: 4px;
+      margin: 1rem 0;
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+    
+    .flag-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--flag-bg);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .flag-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .question-card.flagged .flag-btn {
+      background: var(--flag-active-bg);
+    }
+    
+    /* Answer options */
+    .options {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .options li {
+      width: 100%;
+    }
+    
+    .options button {
+      width: 100%;
+      min-height: var(--min-answer-height);
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: var(--option-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px var(--shadow-color);
+      box-sizing: border-box;
+      text-align: left;
+      white-space: normal;
+      word-wrap: break-word;
+      word-break: break-word;
+      font-size: 1.1rem;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
+      display: flex;
+      align-items: flex-start;
+      color: var(--text-color);
+    }
+    
+    .options button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    
+    .options button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    
+    .options button.selected.incorrect {
+      background: var(--danger);
+      color: var(--text-danger);
+    }
+    
+    .options button.selected.correct {
+      background: var(--success) !important;
+      color: var(--text-success) !important;
+    }
+    
+    .options button.highlight {
+      background: var(--highlight-bg) !important;
+    }
+    
+    .options button.crossed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    
+    .feedback-message {
+      opacity: 0;
+      margin-top: 0.75rem;
+      font-size: 1rem;
+      transition: opacity 0.25s;
+    }
+    
+    .feedback-message.correct, .feedback-message.incorrect {
+      opacity: 1;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+    
+    .feedback-message.correct {
+      background: var(--success);
+      color: var(--text-success);
+    }
+    
+    .feedback-message.incorrect {
+      background: var(--danger);
+      color: var(--text-danger);
+    }
+    
+    .explanation {
+      display: none;
+      background: var(--explanation-bg);
+      padding: 0.75rem 1.25rem;
+      border-left: 3px solid var(--accent-color);
+      margin-top: 0.75rem;
+      font-size: 1rem;
+      border-radius: 0 4px 4px 0;
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
+    }
+    
+    .explanation:not(.hidden) {
+      display: block;
+    }
+    
+    /* Cat meme styles */
+    .cat-meme {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .cat-meme.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .cat-meme-inner {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      overflow: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .cat-meme.visible .cat-meme-inner {
+      transform: scale(1);
+    }
+    
+    .cat-meme img {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    
+    /* Close button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+    
+    .close-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .cat-meme-title {
+      color: #333;
+      margin: 0;
+      font-size: 1.5rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      font-weight: 700;
+    }
+    
+    .double-cats {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    .double-cats img {
+      max-width: 45%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: contain;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .double-cats img:hover {
+      transform: scale(1.05);
+    }
+    
+    .extra-celebration {
+      color: #ff6b6b;
+      font-size: 1.2rem;
+      margin: 10px 0 0;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .filter-container, .controls-section, .filter-section {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .filter-section, .controls-section {
+        gap: 0.75rem;
+      }
+      
+      .filter-section label {
+        align-self: flex-start;
+      }
+      
+      #chapterFilter {
+        width: 100%;
+      }
+      
+      .controls-section button, .controls-section span {
+        width: 100%;
+      }
+      
+      .page-container {
+        padding: 1.5rem 1rem;
+      }
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Fix scroll bars in dark mode */
+    body.dark::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+    
+    body.dark::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+    }
+
+    /* Force dark mode styling for select elements */
+    body.dark select {
+      background-color: #2c2c2e !important;
+      color: #f5f5f7 !important;
+      border-color: #424245 !important;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    
+    body.dark select option {
+      background-color: #2c2c2e !important;
+      color: #f5f5f7 !important;
+    }
+    
+    /* Fix Firefox select styling in dark mode */
+    @-moz-document url-prefix() {
+      body.dark select {
+        background-color: #2c2c2e !important;
+        color: #f5f5f7 !important;
+      }
+      
+      body.dark select option {
+        background-color: #2c2c2e !important;
+        color: #f5f5f7 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Immediate Dark Mode Fix -->
+  <script>
+    (function() {
+      // Force immediate dark mode check and application
+      function forceDarkModeStyles() {
+        const isDarkMode = document.body.classList.contains('dark');
+        
+        // Elements to update
+        const containers = document.querySelectorAll('.chapter-container, .question-card, .page-container, .filter-container, #drillControls');
+        const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, .question-title, .chapter-title');
+        const selects = document.querySelectorAll('select, option');
+        const buttons = document.querySelectorAll('button:not(.btn-primary):not(.btn-success), .btn:not(.btn-primary):not(.btn-success)');
+        const acknowledgments = document.querySelectorAll('.acknowledgment');
+        const indicators = document.querySelectorAll('.correct-indicator, .incorrect-indicator');
+        const catMemeInner = document.querySelectorAll('.cat-meme-inner');
+        const catMemeTitle = document.querySelectorAll('.cat-meme-title');
+        const extraCelebration = document.querySelectorAll('.extra-celebration');
+        const closeBtn = document.querySelectorAll('.close-btn');
+        
+        if (isDarkMode) {
+          // Dark mode styles
+          containers.forEach(el => {
+            el.style.backgroundColor = '#2c2c2e';
+            el.style.color = '#f5f5f7';
+            el.style.borderColor = '#424245';
+          });
+          
+          headings.forEach(el => {
+            el.style.color = '#f5f5f7';
+          });
+          
+          selects.forEach(el => {
+            el.style.backgroundColor = '#2c2c2e';
+            el.style.color = '#f5f5f7';
+            el.style.borderColor = '#424245';
+          });
+          
+          buttons.forEach(el => {
+            el.style.backgroundColor = '#3a3a3c';
+            el.style.color = '#f5f5f7';
+            el.style.borderColor = '#424245';
+          });
+          
+          acknowledgments.forEach(el => {
+            el.style.backgroundColor = '#3a3000';
+            el.style.color = '#ffe066';
+            el.style.borderColor = '#7c6910';
+          });
+          
+          indicators.forEach(el => {
+            el.style.backgroundColor = '#2c2c2e';
+          });
+          
+          catMemeInner.forEach(el => {
+            el.style.backgroundColor = 'rgba(20, 20, 22, 0.95)';
+            el.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.8)';
+          });
+          
+          catMemeTitle.forEach(el => {
+            el.style.color = 'white';
+            el.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.7)';
+          });
+          
+          extraCelebration.forEach(el => {
+            el.style.color = '#ffeb3b';
+            el.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.7)';
+          });
+          
+          closeBtn.forEach(el => {
+            el.style.color = 'white';
+            el.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+          });
+        } else {
+          // Light mode - reset inline styles to default
+          containers.forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.color = '';
+            el.style.borderColor = '';
+          });
+          
+          headings.forEach(el => {
+            el.style.color = '';
+          });
+          
+          selects.forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.color = '';
+            el.style.borderColor = '';
+          });
+          
+          buttons.forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.color = '';
+            el.style.borderColor = '';
+          });
+          
+          acknowledgments.forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.color = '';
+            el.style.borderColor = '';
+          });
+          
+          indicators.forEach(el => {
+            el.style.backgroundColor = '';
+          });
+          
+          catMemeInner.forEach(el => {
+            el.style.backgroundColor = 'white';
+            el.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.5)';
+          });
+          
+          catMemeTitle.forEach(el => {
+            el.style.color = '#333';
+            el.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
+          });
+          
+          extraCelebration.forEach(el => {
+            el.style.color = '#ff6b6b';
+            el.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
+          });
+          
+          closeBtn.forEach(el => {
+            el.style.color = 'white';
+            el.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+          });
+        }
+      }
+      
+      // Run immediately
+      forceDarkModeStyles();
+      
+      // Also run when DOM content is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        forceDarkModeStyles();
+        
+        // And run again after a delay to catch any lazy-loaded elements
+        setTimeout(forceDarkModeStyles, 500);
+        setTimeout(forceDarkModeStyles, 1000);
+        
+        // Set up observer to detect dark mode changes
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class' && 
+                mutation.target === document.body) {
+              forceDarkModeStyles();
+            }
+          });
+        });
+        
+        observer.observe(document.body, { attributes: true });
+      });
+      
+      // Final fallback - use window.onload 
+      window.addEventListener('load', function() {
+        forceDarkModeStyles();
+        
+        // Re-apply dark mode to the entire document by forcing a class change and back if needed
+        if (document.body.classList.contains('dark')) {
+          document.body.classList.remove('dark');
+          setTimeout(() => {
+            document.body.classList.add('dark');
+            forceDarkModeStyles();
+          }, 50);
+        }
+      });
+    })();
+  </script>
+  
+  <!-- Direct style overrides for dark mode -->
+  <style id="dark-mode-overrides">
+    /* This style will be active only when the browser has loaded AND dark mode is enabled */
+    body.dark,
+    body.dark main {
+      background-color: #1d1d1f !important;
+      color: #f5f5f7 !important;
+    }
+    
+    body.dark .chapter-container,
+    body.dark .question-card,
+    body.dark .page-container,
+    body.dark .filter-container,
+    body.dark #drillControls {
+      background-color: #2c2c2e !important;
+      color: #f5f5f7 !important;
+      border-color: #424245 !important;
+    }
+    
+    body.dark h1, 
+    body.dark h2, 
+    body.dark h3, 
+    body.dark h4, 
+    body.dark h5, 
+    body.dark h6, 
+    body.dark .question-title, 
+    body.dark .chapter-title,
+    body.dark p,
+    body.dark label {
+      color: #f5f5f7 !important;
+    }
+    
+    body.dark select,
+    body.dark option {
+      background-color: #2c2c2e !important;
+      color: #f5f5f7 !important;
+      border-color: #424245 !important;
+    }
+    
+    body.dark button:not(.btn-primary):not(.btn-success):not(.close-btn),
+    body.dark .btn:not(.btn-primary):not(.btn-success) {
+      background-color: #3a3a3c !important;
+      color: #f5f5f7 !important;
+      border-color: #424245 !important;
+    }
+    
+    body.dark .acknowledgment {
+      background-color: #3a3000 !important;
+      color: #ffe066 !important;
+    }
+    
+    /* Fix the cat meme in dark mode */
+    body.dark .cat-meme {
+      background-color: rgba(0, 0, 0, 0.85) !important;
+    }
+    
+    body.dark .cat-meme-inner {
+      background-color: rgba(20, 20, 22, 0.95) !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8) !important;
+    }
+    
+    body.dark .cat-meme-title {
+      color: white !important;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    body.dark .extra-celebration {
+      color: #ffeb3b !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    body.dark .close-btn {
+      color: white !important;
+      background-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    body.dark .close-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    body.dark .double-cats img {
+      border: 3px solid rgba(255, 255, 255, 0.2) !important;
+    }
+  </style>
+  
+  <!-- Light mode styles to revert when dark mode is toggled off -->
+  <style id="light-mode-defaults">
+    /* Default light mode styles */
+    body:not(.dark) .chapter-container,
+    body:not(.dark) .question-card,
+    body:not(.dark) .page-container,
+    body:not(.dark) .filter-container,
+    body:not(.dark) #drillControls {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-color: var(--border-color);
+    }
+    
+    body:not(.dark) .cat-meme-inner {
+      background-color: white;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    body:not(.dark) .cat-meme-title {
+      color: #333;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark) .extra-celebration {
+      color: #ff6b6b;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark) .close-btn {
+      color: white;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark) .double-cats img {
+      border: 3px solid rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  
+  <!-- Global style to force transition after load -->
+  <style>
+    * {
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s !important;
+    }
+  </style>
+  
+  <!-- Access Code Validation -->
+  <script>
+    // Check if access code is stored and valid
+    const storedAccessCode = localStorage.getItem('accessCode');
+    const storedTimestamp = localStorage.getItem('accessCodeTimestamp');
+    const currentTime = new Date().getTime();
+    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+    
+    // If no valid access code, redirect back to index
+    if (!storedAccessCode || !storedTimestamp || (currentTime - parseInt(storedTimestamp)) > thirtyDaysInMs) {
+      console.log('No valid access code, redirecting to index');
+      window.location.href = 'index.html';
+    }
+  </script>
+  
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="page-container">
+      <h1 class="page-title">EEG Question Bank</h1>
+
+      <div class="filter-container">
+        <div class="filter-section">
+          <label for="chapterFilter">Filter by:</label>
+          <select id="chapterFilter">
+            <option value="all">All Chapters</option>
+            <option value="chapter1" selected>1. Origin and technical aspects of the EEG</option>
+            <option value="chapter2">2. The normal adult EEG</option>
+            <option value="chapter3">3. The normal EEG from neonates to adolescents</option>
+            <option value="chapter4">4. The abnormal EEG</option>
+            <option value="chapter5">5. The EEG and epilepsy</option>
+            <option value="chapter6">6. Intracranial EEG</option>
+            <option value="chapter7">7. The EEG in other neurological and medical conditions and in status epilepticus</option>
+            <option value="chapter8">8. Quantitative EEG in the ICU</option>
+            <option value="chapter9">9. The EEG: Tips on indications, reading, and reporting</option>
+            <option value="review">Review Missed/Flagged</option>
+          </select>
+        </div>
+        <div class="controls-section">
+          <button id="resetBtn"><i class="fas fa-redo-alt"></i> Reset</button>
+          <button id="drillToggle"><i class="fas fa-tasks"></i> Enter Drill Mode</button>
+          <span id="streakCounter"><i class="fas fa-fire"></i> Streak: 0</span>
+          <button id="toggleProgressBtn"><i class="fas fa-chart-bar"></i> Hide Progress Bar</button>
+        </div>
+      </div>
+
+      <div id="drillControls">
+        <button id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <span id="drillIndicator">0/0</span>
+        <button id="nextBtn" disabled>Next <i class="fas fa-arrow-right"></i></button>
+        <button id="exitDrillBtn"><i class="fas fa-times"></i> Exit Drill Mode</button>
+      </div>
+
+      <!-- Floating progress bar -->
+      <div id="progressWrapper">
+        <div id="progressBar">
+          <div id="correctBar"></div>
+          <div id="incorrectBar"></div>
+        </div>
+        <div id="barLabel">0%</div>
+      </div>
+
+      <div class="acknowledgment">
+        <strong>All questions sourced from:</strong>
+        <a href="https://www.us.elsevierhealth.com/rowans-primer-of-eeg-9780323757133.html" target="_blank">
+          Rowan's Primer of EEG (Elsevier, 2023)
+        </a>
+      </div>
+
+      <div id="questionBank"></div>
+
+      <div id="catMeme" class="cat-meme">
+        <div class="cat-meme-inner">
+          <button class="close-btn" onclick="closeCatMeme()">&times;</button>
+          <div class="cat-meme-content">
+            <h3 class="cat-meme-title">You got it right! 🎉</h3>
+            <img id="catMemeImg" alt="Cute cat meme" loading="eager">
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+  
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+  
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
+
+  <script>
+    // cookies & shuffle
+    function setCookie(n,v,d){const e=new Date(Date.now()+d*864e5).toUTCString();document.cookie=`${n}=${encodeURIComponent(v)}; expires=${e}; path=/`;}
+    function getCookie(n){return document.cookie.split('; ').reduce((r,v)=>{const [k,val]=v.split('=');return k===n?decodeURIComponent(val):r;},'');}
+    function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+
+    let streak=0;
+    function updateStreak(){document.getElementById('streakCounter').innerHTML=`<i class="fas fa-fire"></i> Streak: ${streak}`;}
+    function incrementScore(){let c=+getCookie('correctCount')||0;setCookie('correctCount',++c,365);}
+    function incrementTotal(){let t=+getCookie('totalCount')||0;setCookie('totalCount',++t,365);}
+    function updateProgressBar(){
+      const c=+getCookie('correctCount')||0, t=+getCookie('totalCount')||0;
+      const pct = t?Math.round(c/t*100):0;
+      document.getElementById('barLabel').textContent=`${pct}%`;
+      document.getElementById('correctBar').style.height=(t?c/t*100:0)+'%';
+      document.getElementById('incorrectBar').style.height=(t?100-(c/t*100):100)+'%';
+    }
+
+    // chapter config
+    const chaptersOrder=['chapter1','chapter2','chapter3','chapter4','chapter5','chapter6','chapter7','chapter8','chapter9'];
+    const chapterFiles={
+      chapter1:'assets/questions/chapter1_questions.json',
+      chapter2:'assets/questions/chapter2_questions.json',
+      chapter3:'assets/questions/chapter3_questions.json',
+      chapter4:'assets/questions/chapter4_questions.json',
+      chapter5:'assets/questions/chapter5_questions.json',
+      chapter6:'assets/questions/chapter6_questions.json',
+      chapter7:'assets/questions/chapter7_questions.json',
+      chapter8:'assets/questions/chapter8_questions.json',
+      chapter9:'assets/questions/chapter9_questions.json'
+    };
+    const chapterTitles={
+      chapter1:'1. Origin and technical aspects of the EEG',
+      chapter2:'2. The normal adult EEG',
+      chapter3:'3. The normal EEG from neonates to adolescents',
+      chapter4:'4. The abnormal EEG',
+      chapter5:'5. The EEG and epilepsy',
+      chapter6:'6. Intracranial EEG',
+      chapter7:'7. The EEG in other neurological and medical conditions and in status epilepticus',
+      chapter8:'8. Quantitative EEG in the ICU',
+      chapter9:'9. The EEG: Tips on indications, reading, and reporting'
+    };
+
+    let drillCards=[], drillIndex=0;
+
+    function loadQuestions(){
+      const bank=document.getElementById('questionBank');
+      bank.innerHTML='';
+      chaptersOrder.forEach(ch=>{
+        fetch(chapterFiles[ch]).then(r=>r.json()).then(data=>{
+          const qs=Array.isArray(data)?data:data.questions;
+          const cont=document.createElement('div');
+          cont.className='chapter-container';
+          cont.dataset.chapter=ch;
+          if (ch !== 'chapter1') {
+            cont.style.display = 'none';
+          }
+          cont.innerHTML=`<h2>${chapterTitles[ch]}</h2>`;
+          qs.forEach((q,i)=>{
+            const card=document.createElement('div');
+            card.className='question-card';
+            const flag=document.createElement('button');
+            flag.className='flag-btn'; flag.textContent='🚩';
+            flag.onclick=()=>card.classList.toggle('flagged');
+            card.appendChild(flag);
+            const p=document.createElement('p');
+            p.textContent=`${i+1}. ${q.questionText}`;
+            card.appendChild(p);
+            if(q.figure){
+              const img=document.createElement('img');
+              img.src=`assets/questions/${q.figure}`; 
+              img.alt=`Fig ${i+1}`; 
+              img.className='question-img';
+              card.appendChild(img);
+            }
+            const ul=document.createElement('ul');
+            ul.className='options';
+            const fb=document.createElement('div'); fb.className='feedback-message';
+            const ex=document.createElement('div'); ex.className='explanation hidden';
+            ex.textContent=q.explanation||'';
+            const corr=(q.correctAnswerLetter||'').trim().toUpperCase();
+            q.options.forEach(opt=>{
+              const li=document.createElement('li');
+              const btn=document.createElement('button');
+              btn.textContent=`${opt.value}. ${opt.text}`;
+              btn.onclick=e=>{
+                if(e.ctrlKey){btn.classList.toggle('highlight');return;}
+                if(e.altKey){btn.classList.toggle('crossed');return;}
+                const sel=opt.value.trim().toUpperCase();
+                incrementTotal();
+                if(sel===corr){
+                  btn.classList.add('selected','correct');
+                  [...ul.querySelectorAll('button')].forEach(b=>b.disabled=true);
+                  streak++; updateStreak(); incrementScore(); showCatMeme();
+                  fb.textContent='Correct!'; fb.className='feedback-message correct';
+                } else {
+                  btn.classList.add('selected','incorrect');
+                  btn.disabled=true; card.classList.add('missed');
+                  streak=0; updateStreak();
+                  fb.textContent='Incorrect.'; fb.className='feedback-message incorrect';
+                }
+                ex.classList.remove('hidden');
+                updateProgressBar();
+              };
+              li.appendChild(btn); ul.appendChild(li);
+            });
+            card.appendChild(ul); card.appendChild(fb); card.appendChild(ex);
+            cont.appendChild(card);
+          });
+          bank.appendChild(cont);
+        }).catch(err => {
+          console.error(`Error loading chapter ${ch}:`, err);
+          const cont = document.createElement('div');
+          cont.className = 'chapter-container';
+          cont.dataset.chapter = ch;
+          cont.innerHTML = `
+            <h2>${chapterTitles[ch]}</h2>
+            <div class="error-message" style="padding: 1rem; color: var(--text-danger); background: var(--danger); border-radius: 4px;">
+              <p><i class="fas fa-exclamation-triangle"></i> Could not load questions for this chapter. Please ensure the question files are available.</p>
+            </div>
+          `;
+          bank.appendChild(cont);
+        });
+      });
+    }
+
+    // Cat meme functionality with local cat images
+    const localCats = [];
+    // Original 15 cat GIFs
+    for (let i = 1; i <= 15; i++) {
+      localCats.push(`assets/images/cats/cat${i}.gif`);
+    }
+    
+    // Additional 15 cat GIFs with a different naming pattern
+    // These will be created by duplicating the existing ones with new names
+    for (let i = 1; i <= 15; i++) {
+      localCats.push(`assets/images/cats/new_cat${i}.gif`);
+    }
+    
+    // Start preloading immediately - outside any functions for earliest loading
+    preloadLocalCatImages();
+    
+    // Preload all cat images for immediate display
+    function preloadLocalCatImages() {
+      localCats.forEach(catPath => {
+        const img = new Image();
+        img.src = catPath;
+      });
+    }
+
+    function showCatMeme() {
+      const div = document.getElementById('catMeme');
+      const img = document.getElementById('catMemeImg');
+      const title = document.querySelector('.cat-meme-title');
+      const content = document.querySelector('.cat-meme-content');
+      
+      // Array of congratulatory messages
+      const messages = [
+        "You got it right! 🎉",
+        "Great job! 🌟",
+        "Correct! 👏",
+        "Excellent work! 🧠",
+        "Purr-fect answer! 😺",
+        "You're on fire! 🔥",
+        "Brilliant! 💡",
+        "Well done! 👍",
+        "Spot on! 🎯",
+        "That's correct! 🏆"
+      ];
+      
+      // Select a random message
+      title.textContent = messages[Math.floor(Math.random() * messages.length)];
+      
+      // First show the loading container
+      div.classList.add('visible');
+      
+      // Occasionally show two cats side by side (20% chance)
+      const showDoubleCats = Math.random() < 0.2;
+      
+      if (showDoubleCats) {
+        // Create a container for two images side by side
+        content.innerHTML = `
+          <h3 class="cat-meme-title">${title.textContent}</h3>
+          <div class="double-cats">
+            <img src="${localCats[Math.floor(Math.random() * localCats.length)]}" alt="Cute cat meme 1" loading="eager">
+            <img src="${localCats[Math.floor(Math.random() * localCats.length)]}" alt="Cute cat meme 2" loading="eager">
+          </div>
+        `;
+        
+        // Add extra celebratory text
+        const extraText = document.createElement('p');
+        extraText.className = 'extra-celebration';
+        extraText.textContent = 'Double celebration! 🎊';
+        content.appendChild(extraText);
+      } else {
+        // Select a random cat from local cats
+        const randomIndex = Math.floor(Math.random() * localCats.length);
+        img.src = localCats[randomIndex];
+      }
+      
+      // Apply theme styles based on current mode - with a delay to allow content to update
+      setTimeout(() => {
+        applyCurrentThemeToMeme();
+      }, 10);
+    }
+    
+    // Helper function to apply the current theme to the meme
+    function applyCurrentThemeToMeme() {
+      const isDarkMode = document.body.classList.contains('dark');
+      
+      // Get all cat meme elements
+      const catMemeInner = document.querySelector('.cat-meme-inner');
+      const catMemeTitle = document.querySelector('.cat-meme-title');
+      const extraCelebration = document.querySelector('.extra-celebration');
+      const closeBtn = document.querySelector('.close-btn');
+      const doubleImgs = document.querySelectorAll('.double-cats img');
+      
+      if (isDarkMode) {
+        // Apply dark mode styles
+        if (catMemeInner) {
+          catMemeInner.style.backgroundColor = 'rgba(20, 20, 22, 0.95)';
+          catMemeInner.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.8)';
+        }
+        
+        if (catMemeTitle) {
+          catMemeTitle.style.color = 'white';
+          catMemeTitle.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.7)';
+        }
+        
+        if (extraCelebration) {
+          extraCelebration.style.color = '#ffeb3b';
+          extraCelebration.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.7)';
+        }
+        
+        if (closeBtn) {
+          closeBtn.style.color = 'white';
+          closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+        }
+        
+        doubleImgs.forEach(img => {
+          img.style.border = '3px solid rgba(255, 255, 255, 0.2)';
+        });
+      } else {
+        // Apply light mode styles
+        if (catMemeInner) {
+          catMemeInner.style.backgroundColor = 'white';
+          catMemeInner.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.5)';
+        }
+        
+        if (catMemeTitle) {
+          catMemeTitle.style.color = '#333';
+          catMemeTitle.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
+        }
+        
+        if (extraCelebration) {
+          extraCelebration.style.color = '#ff6b6b';
+          extraCelebration.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
+        }
+        
+        if (closeBtn) {
+          closeBtn.style.color = 'white';
+          closeBtn.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        }
+        
+        doubleImgs.forEach(img => {
+          img.style.border = '3px solid rgba(0, 0, 0, 0.1)';
+        });
+      }
+    }
+    
+    function closeCatMeme() {
+      const catMeme = document.getElementById('catMeme');
+      if (catMeme) {
+        catMeme.classList.remove('visible');
+      }
+    }
+
+    // Click outside to close the cat meme
+    document.addEventListener('DOMContentLoaded', function() {
+      const catMeme = document.getElementById('catMeme');
+      const catMemeInner = document.querySelector('.cat-meme-inner');
+      
+      if (catMeme && catMemeInner) {
+        catMeme.addEventListener('click', function(e) {
+          // If the click is directly on the background (not on the inner content)
+          if (e.target === catMeme) {
+            closeCatMeme();
+          }
+        });
+      }
+    });
+
+    function resetQuestions(){
+      setCookie('correctCount',0,365);
+      setCookie('totalCount',0,365);
+      streak=0; updateStreak(); updateProgressBar();
+      document.getElementById('drillToggle').innerHTML='<i class="fas fa-tasks"></i> Enter Drill Mode';
+      document.getElementById('drillControls').style.display='none';
+      document.querySelector('.filter-container').style.display='flex';
+      loadQuestions(); initFilter();
+      
+      // Set the chapter filter to Chapter 1 after reset
+      const chapterFilter = document.getElementById('chapterFilter');
+      if (chapterFilter) {
+        chapterFilter.value = 'chapter1';
+        // Trigger the change event to filter the questions
+        const event = new Event('change');
+        chapterFilter.dispatchEvent(event);
+      }
+    }
+
+    function initFilter(){
+      const chapterFilter = document.getElementById('chapterFilter');
+      
+      // Apply initial filtering (Chapter 1)
+      document.querySelectorAll('.chapter-container').forEach(ctn => {
+        const show = ctn.dataset.chapter === 'chapter1';
+        ctn.style.display = show ? 'block' : 'none';
+      });
+      
+      chapterFilter.onchange=function(){
+        if(document.getElementById('drillControls').style.display==='flex') return;
+        document.querySelectorAll('.chapter-container').forEach(ctn=>{
+          const sel=this.value;
+          if(sel==='review'){
+            let any=false;
+            ctn.querySelectorAll('.question-card').forEach(q=>{
+              const ok=q.classList.contains('missed')||q.classList.contains('flagged');
+              q.style.display=ok?'block':'none'; any=any||ok;
+            });
+            ctn.style.display=any?'block':'none';
+          } else {
+            const show=sel==='all'||ctn.dataset.chapter===sel;
+            ctn.style.display=show?'block':'none';
+            if(show) ctn.querySelectorAll('.question-card').forEach(q=>q.style.display='block');
+          }
+        });
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      // Wait for includes to load before initializing the question bank
+      setTimeout(() => {
+        loadQuestions(); 
+        initFilter();
+        updateProgressBar();
+        
+        // Set the chapter filter to Chapter 1 by default and apply filtering immediately
+        const chapterFilter = document.getElementById('chapterFilter');
+        if (chapterFilter) {
+          chapterFilter.value = 'chapter1';
+          // Trigger the change event to filter the questions
+          const event = new Event('change');
+          chapterFilter.dispatchEvent(event);
+          
+          // Apply filtering directly - this ensures it works even if the event doesn't trigger properly
+          document.querySelectorAll('.chapter-container').forEach(ctn => {
+            const show = ctn.dataset.chapter === 'chapter1';
+            ctn.style.display = show ? 'block' : 'none';
+          });
+        }
+        
+        document.getElementById('resetBtn').onclick=resetQuestions;
+        document.getElementById('drillToggle').onclick=()=>{
+          const dc=document.getElementById('drillControls'),
+                fc=document.querySelector('.filter-container');
+          if(dc.style.display==='flex'){
+            resetQuestions();
+          } else {
+            document.getElementById('drillToggle').innerHTML='<i class="fas fa-times"></i> Exit Drill Mode';
+            fc.style.display='none';
+            const cards=Array.from(document.querySelectorAll('.question-card'));
+            shuffle(cards);
+            const bank=document.getElementById('questionBank');
+            bank.innerHTML='';
+            cards.forEach(c=>{ bank.appendChild(c); c.style.display='none'; });
+            drillCards=cards; drillIndex=0;
+            if (cards.length > 0) {
+              cards[0].style.display='block';
+            }
+            dc.style.display='flex';
+            document.getElementById('prevBtn').disabled=true;
+            document.getElementById('nextBtn').disabled=cards.length<=1;
+            document.getElementById('drillIndicator').textContent=`1/${cards.length}`;
+          }
+        };
+        document.getElementById('prevBtn').onclick=()=>{
+          if(drillIndex>0){
+            drillCards[drillIndex].style.display='none';
+            drillIndex--; drillCards[drillIndex].style.display='block';
+            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
+            document.getElementById('prevBtn').disabled=drillIndex===0;
+            document.getElementById('nextBtn').disabled=false;
+          }
+        };
+        document.getElementById('nextBtn').onclick=()=>{
+          if(drillIndex<drillCards.length-1){
+            drillCards[drillIndex].style.display='none';
+            drillIndex++; drillCards[drillIndex].style.display='block';
+            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
+            document.getElementById('nextBtn').disabled=drillIndex===drillCards.length-1;
+            document.getElementById('prevBtn').disabled=false;
+          }
+        };
+        document.getElementById('exitDrillBtn').onclick=resetQuestions;
+        document.getElementById('toggleProgressBtn').onclick=function(){
+          const pw=document.getElementById('progressWrapper');
+          pw.classList.toggle('hidden');
+          this.innerHTML=pw.classList.contains('hidden')?'<i class="fas fa-chart-bar"></i> Show Progress Bar':'<i class="fas fa-chart-bar"></i> Hide Progress Bar';
+        };
+        
+        // Start preloading cat images
+        setTimeout(preloadLocalCatImages, 1500); // Delay initial preload to prioritize page content
+      }, 800);
+    });
+
+    // Event listener for Escape key to close cat meme
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeCatMeme();
+      }
+    });
+
+    // JavaScript to force dark mode compatibility with selects
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if dark mode is active and apply custom handling for select elements
+      function applyDarkModeToSelects() {
+        const isDarkMode = document.body.classList.contains('dark');
+        const selects = document.querySelectorAll('select');
+        
+        selects.forEach(select => {
+          if (isDarkMode) {
+            select.style.backgroundColor = '#2c2c2e';
+            select.style.color = '#f5f5f7';
+            select.style.borderColor = '#424245';
+          } else {
+            select.style.backgroundColor = '';
+            select.style.color = '';
+            select.style.borderColor = '';
+          }
+        });
+      }
+      
+      // Apply initially
+      setTimeout(applyDarkModeToSelects, 500);
+      
+      // Watch for dark mode toggle
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.attributeName === 'class' && 
+              mutation.target === document.body) {
+            applyDarkModeToSelects();
+            
+            // Also update cat meme if it's visible
+            if (document.getElementById('catMeme').classList.contains('visible')) {
+              applyCurrentThemeToMeme();
+            }
+          }
+        });
+      });
+      
+      observer.observe(document.body, { attributes: true });
+      
+      // Also apply when select element is focused
+      document.querySelectorAll('select').forEach(select => {
+        select.addEventListener('focus', applyDarkModeToSelects);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,446 @@
+/*-----------------------------------------------
+  NATUS & PERSYST INSTRUCTIONS STYLING
+-----------------------------------------------*/
+.natus-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--info-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: padding 0.3s ease, margin 0.3s ease;
+}
+
+/* Page title styling to match other pages */
+.page-natus_instructions .page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark .page-natus_instructions .page-title {
+  color: var(--text-color);
+}
+
+.natus-container h3.tab-title {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+.natus-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: gap 0.3s ease;
+}
+
+.natus-step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 16px;
+  background: var(--bg-color);
+  transition: transform 0.3s, box-shadow 0.3s, padding 0.3s ease, gap 0.3s ease;
+}
+
+.natus-step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.natus-step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
+}
+
+.natus-step-content {
+  flex: 1;
+}
+
+.natus-step-content h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.8rem;
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+.natus-step-content p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+  transition: font-size 0.3s ease, margin 0.3s ease, line-height 0.3s ease;
+}
+
+.natus-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: margin 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Special styling for the inline layout in step 1 */
+#natus-tab .natus-step:first-of-type .natus-step-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  transition: gap 0.3s ease;
+}
+
+#natus-tab .natus-step:first-of-type .natus-step-content .step1-text-container {
+  flex: 1;
+}
+
+#natus-tab .step1-image {
+  max-width: 40%;
+  height: auto;
+  align-self: center;
+  margin-top: 0;
+  transition: max-width 0.3s ease;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+/* Tab buttons - Apple style */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2em;
+  transition: gap 0.3s ease, margin 0.3s ease;
+}
+
+.tab-buttons button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background-color 0.3s, transform 0.3s, font-size 0.3s ease, min-width 0.3s ease, padding 0.3s ease;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.tab-buttons button:hover {
+  transform: scale(1.02);
+  background-color: var(--accent-hover);
+}
+
+.tab-buttons button.active {
+  background-color: var(--accent-color);
+}
+
+.tab-buttons button:not(.active) {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+}
+
+/* Dark mode overrides */
+body.dark .natus-container {
+  background: var(--info-bg);
+}
+
+body.dark .natus-step {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.dark .natus-container h3.tab-title,
+body.dark .natus-step-content h3 {
+  color: var(--header-text);
+}
+
+body.dark .natus-step-content p {
+  color: var(--text-secondary);
+}
+
+body.dark .tab-buttons button:not(.active) {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
+}
+
+/* Enhanced Responsive styles */
+/* Medium screens */
+@media (max-width: 992px) {
+  .page-natus_instructions .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .natus-container {
+    margin: 1.75rem auto;
+    padding: 1.75rem;
+  }
+  
+  .natus-container h3.tab-title {
+    font-size: 1.6rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .natus-steps {
+    gap: 1.75rem;
+  }
+  
+  .natus-step {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+  
+  .natus-step-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .tab-buttons button {
+    min-width: 130px;
+  }
+}
+
+/* Tablets and small laptops */
+@media (max-width: 768px) {
+  .page-natus_instructions .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .natus-container {
+    margin: 1.25rem auto;
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .natus-container h3.tab-title {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .natus-steps {
+    gap: 1.5rem;
+  }
+  
+  .natus-step {
+    padding: 1rem;
+    gap: 1rem;
+    border-radius: 12px;
+  }
+  
+  .natus-step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .natus-step-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .natus-step-content p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+  
+  .natus-image {
+    border-radius: 10px;
+    margin-top: 0.8rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  #natus-tab .natus-step:first-of-type .natus-step-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  #natus-tab .step1-image {
+    max-width: 100% !important;
+    height: auto !important;
+    margin-top: 0.8rem;
+    max-height: 250px !important;
+    object-fit: contain !important;
+  }
+  
+  .tab-buttons {
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tab-buttons button {
+    font-size: 0.9rem;
+    padding: 7px 14px;
+    min-width: 120px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .page-natus_instructions .page-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  .natus-container {
+    margin: 1rem auto;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .natus-container h3.tab-title {
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .natus-steps {
+    gap: 1.2rem;
+  }
+  
+  .natus-step {
+    padding: 0.9rem;
+    gap: 0.8rem;
+    border-radius: 10px;
+  }
+  
+  .natus-step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+  
+  .natus-step-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .natus-step-content p {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
+  }
+  
+  .natus-image {
+    border-radius: 8px;
+    margin-top: 0.7rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  
+  .tab-buttons {
+    gap: 10px;
+    margin-bottom: 1.2rem;
+  }
+  
+  .tab-buttons button {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    min-width: 100px;
+  }
+  
+  #natus-tab .step1-image {
+    max-width: 100% !important;
+    height: auto !important;
+    margin-top: 0.7rem;
+    object-fit: contain !important;
+    max-height: 180px !important; /* Control maximum height on mobile */
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .page-natus_instructions .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  .natus-container {
+    margin: 0.8rem auto;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .natus-container h3.tab-title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .natus-steps {
+    gap: 1rem;
+  }
+  
+  .natus-step {
+    padding: 0.8rem;
+    gap: 0.6rem;
+    border-radius: 8px;
+  }
+  
+  .natus-step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+  
+  .natus-step-content h3 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  
+  .natus-step-content p {
+    font-size: 0.8rem;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
+  }
+  
+  .natus-image {
+    border-radius: 6px;
+    margin-top: 0.6rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+  
+  .tab-buttons {
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .tab-buttons button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    min-width: 90px;
+  }
+  
+  #natus-tab .step1-image {
+    max-width: 100% !important;
+    height: auto !important;
+    margin-top: 0.6rem;
+    object-fit: contain !important;
+    max-height: 150px !important; /* Even smaller for very small devices */
+  }
+} 

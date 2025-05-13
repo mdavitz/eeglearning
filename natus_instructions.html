@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Natus & Persyst Instructions - EEG Curriculum</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-natus_instructions">
+      <h2 class="page-title">Natus & Persyst Instructions</h2>
+      <div id="natus-persyst" class="instructions-container">
+        <!-- Tab Buttons -->
+        <div class="tab-buttons">
+          <button id="natus-btn" class="active" onclick="showInstructionTab('natus')">Natus</button>
+          <button id="persyst-btn" onclick="showInstructionTab('persyst')">Persyst</button>
+        </div>
+        
+        <!-- Natus Instructions Tab -->
+        <div id="natus-tab">
+          <div class="natus-container">
+            <h3 class="tab-title">Natus Instructions</h3>
+            <div class="natus-steps">
+              <div class="natus-step">
+                <div class="natus-step-number">1</div>
+                <div class="natus-step-content">
+                  <div class="step1-text-container">
+                    <h3>Launch &amp; Log In</h3>
+                    <p>Power on the workstation, launch the Natus NeuroWorks app, and log in with your secure credentials.</p>
+                  </div>
+                  <img src="assets/images/Step1.png" alt="Launch and Log In" class="natus-image step1-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">2</div>
+                <div class="natus-step-content">
+                  <h3>Open Patient Study</h3>
+                  <p>Navigate to the Patient Studies list or use the search function to locate a record. Then select the desired EEG study.</p>
+                  <img src="assets/images/Step2.png" alt="Open a Patient Study" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">3</div>
+                <div class="natus-step-content">
+                  <h3>Configure Display</h3>
+                  <p>Select the bipolar montage <em>Bipolar LT over RT</em> and adjust display settings: Sensitivity 7 μV, Time base 30 mm/sec, and Filters (High 70 Hz, Low 1 Hz).</p>
+                  <img src="assets/images/Step3.png" alt="Configure the Display" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">4</div>
+                <div class="natus-step-content">
+                  <h3>Analyze the EEG</h3>
+                  <p>Scroll through the recording to inspect waveforms. Use built-in tools to assess amplitude, frequency, and add annotations.</p>
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">5</div>
+                <div class="natus-step-content">
+                  <h3>Annotate Events</h3>
+                  <p>Place event markers by clicking the designated buttons at the top of the screen.</p>
+                  <img src="assets/images/Step5.png" alt="Annotate Events" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">6</div>
+                <div class="natus-step-content">
+                  <h3>Create EEG Report</h3>
+                  <p>After review, open Epic's reporting interface, generate a new report, and pend the note for review.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Persyst Instructions Tab -->
+        <div id="persyst-tab" style="display: none;">
+          <div class="natus-container">
+            <h3 class="tab-title">Persyst Instructions</h3>
+            <div class="natus-steps">
+              <div class="natus-step">
+                <div class="natus-step-number">1</div>
+                <div class="natus-step-content">
+                  <h3>Launch Persyst</h3>
+                  <p>Once your EEG study is open go to Analysis and ensure Persyst (toolbar) is checked</p>
+                  <img src="assets/images/PersystStep1.png" alt="Launch and Log In" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">2</div>
+                <div class="natus-step-content">
+                  <h3>Persyst (toolbar)</h3>
+                  <p>Locate the Persyst toolbar as pictured below. If using two screens, grab the toolbar and drag it to the second screen.</p>
+                  <img src="assets/images/PersystStep2.png" alt="Open Patient Study" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">3</div>
+                <div class="natus-step-content">
+                  <h3>Configure Panel Size</h3>
+                  <p>Check that "Comprehensive" is selected. Adjust display size by grabbing the bottom right corner to expand the panel.</p>
+                  <img src="assets/images/PersystStep3.png" alt="Configure Display" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">4</div>
+                <div class="natus-step-content">
+                  <h3>Rhythmicity Spectrogram</h3>
+                  <p>The rhythmicity spectrogram in Persyst shows rhythmic bursts and variations across frequency bands, helping us quickly spot rhythmic activity linked to seizures.</p>
+                  <img src="assets/images/PersystStep4.png" alt="Configure Display" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">5</div>
+                <div class="natus-step-content">
+                  <h3>FFT Spectrogram</h3>
+                  <p>The FFT spectrogram in Persyst breaks the EEG signal into its frequency components over time, revealing transient power shifts where warm colors like red and orange highlight high power bursts—often linked to epileptic activity—while cool blues and greens indicate lower power levels.</p>
+                  <img src="assets/images/PersystStep5.png" alt="Annotate Events" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">6</div>
+                <div class="natus-step-content">
+                  <h3>Asymmetry and aEEG</h3>
+                  <p>The Asymmetry panel in Persyst uses color contrasts (left blue and right red) to reveal lateral differences in EEG power between hemispheres sorted from delta to gamma frequency on the Y axis. The aEEG panel compresses long-term amplitude trends into a waveform, together providing a quick visual summary of focal imbalances and overall brain activity.</p>
+                  <img src="assets/images/PersystStep6.png" alt="Annotate Events" class="natus-image">
+                </div>
+              </div>
+              <div class="natus-step">
+                <div class="natus-step-number">7</div>
+                <div class="natus-step-content">
+                  <h3>ADR</h3>
+                  <p>The ADR panel quantifies the balance between alpha and delta waves, offering a visual metric where higher ratios indicate normal cortical function and lower ratios suggest pathological slowing; in subarachnoid hemorrhage, it serves to detect early signs of delayed ischemia.</p>
+                  <img src="assets/images/PersystStep7.png" alt="Launch and Log In" class="natus-image">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from natus_instructions.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+
+    // Tab switching functionality
+    function showInstructionTab(tabName) {
+      // Hide all tabs
+      document.getElementById('natus-tab').style.display = 'none';
+      document.getElementById('persyst-tab').style.display = 'none';
+      
+      // Show selected tab
+      document.getElementById(tabName + '-tab').style.display = 'block';
+      
+      // Update button states
+      document.getElementById('natus-btn').classList.remove('active');
+      document.getElementById('persyst-btn').classList.remove('active');
+      document.getElementById(tabName + '-btn').classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Simulator - EEG Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <!-- Page-specific CSS for EEG Waveforms -->
+  <link rel="stylesheet" href="assets/css/pages/eeg-waveforms.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  <script src="assets/js/eeg-findings.js" defer></script>
+  <script src="assets/js/eeg-waveform.js" defer></script>
+  <script src="assets/js/eeg-sleep.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_waveforms.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+
+  <style>
+    /* Override any styles as needed for the EEG waveform page */
+    .waveform-container {
+      background: var(--info-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .waveform-controls button {
+      display: inline-block;
+      background: var(--info-bg);
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 5px;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      text-align: center;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .waveform-controls button:hover {
+      background: var(--hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
+    .wave-btn.active, .waveform-controls button.active {
+      background: var(--accent-color) !important;
+      color: white !important;
+      border-color: var(--accent-color) !important;
+    }
+
+    .waveform-canvas {
+      width: 100%;
+      height: 400px;
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    .waveform-info, .instructions {
+      margin: 2rem 0;
+    }
+
+    .waveform-info h3, .instructions h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      margin: 1.5rem 0 1rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 2px solid var(--accent-color);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--primary-color);
+      transition: color var(--transition-duration);
+    }
+
+    .instructions {
+      background: var(--info-bg);
+      padding: 1.2em;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 1.5em;
+      transition: background var(--transition-duration);
+    }
+
+    .instructions ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .instructions li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+      color: var(--text-color);
+    }
+
+    .instructions li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-color);
+    }
+
+    .instructions li strong {
+      color: var(--accent-color);
+    }
+
+    /* Override table styles to match site's table component */
+    .waveform-info table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--info-bg);
+      font-size: 1rem;
+      color: var(--text-color);
+      border-radius: 8px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 2px 6px var(--shadow-color);
+      margin: 1.5rem 0;
+      transition: background var(--transition-duration), box-shadow var(--transition-duration);
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .waveform-info thead tr {
+      background-color: var(--accent-color);
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-info thead th {
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+      border: none;
+    }
+
+    .waveform-info tbody tr {
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-info tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .waveform-info td,
+    .waveform-info th {
+      padding: 16px;
+      text-align: left;
+      border: none;
+    }
+
+    .waveform-info td + td,
+    .waveform-info th + th {
+      border-left: 1px solid var(--border-color);
+    }
+
+    .waveform-info tr:hover td {
+      background-color: var(--hover-bg);
+    }
+
+    .waveform-info tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .measurement-container {
+      margin-bottom: 20px;
+    }
+
+    .measurement-result {
+      background: var(--info-bg);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    select {
+      background: var(--info-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 0.7rem 1rem;
+      border-radius: 5px;
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+
+    /* Waveform control panels styling */
+    .waveform-control-panels {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    
+    .waveform-control-panels > div {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .waveform-control-panels > div:last-child {
+      margin-bottom: 0;
+    }
+    
+    .waveform-control-panels h4 {
+      color: var(--accent-color);
+      margin: 0 0 10px 0;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+    
+    .slider-container {
+      margin-bottom: 10px;
+      position: relative;
+    }
+    
+    .slider-container:last-child {
+      margin-bottom: 0;
+    }
+    
+    .slider-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .slider-container input[type="range"] {
+      width: 100%;
+      margin: 0;
+      background: var(--info-bg);
+    }
+    
+    .slider-label-min, .slider-label-max {
+      display: inline-block;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+    
+    .slider-label-min {
+      float: left;
+    }
+    
+    .slider-label-max {
+      float: right;
+    }
+    
+    /* Multi-panel layout for larger screens */
+    @media (min-width: 768px) {
+      .waveform-control-panels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      
+      .waveform-control-panels > div {
+        flex: 1 0 calc(50% - 15px);
+        margin-bottom: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .waveform-controls {
+        flex-direction: column;
+      }
+      
+      .waveform-controls button {
+        width: 100%;
+      }
+
+      .waveform-canvas {
+        height: 300px;
+      }
+
+      .waveform-info table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 0.9rem;
+      }
+      
+      .waveform-info th,
+      .waveform-info td {
+        padding: 12px;
+      }
+    }
+
+    .waveform-controls h4 {
+      width: 100%;
+      text-align: left;
+      margin: 5px 0;
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+    }
+
+    /* Findings display styling */
+    .findings-display {
+      margin: 15px 0;
+      padding: 15px;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
+    }
+    
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    
+    .finding-header h4 {
+      color: var(--accent-color);
+      margin: 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .finding-header button {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 5px;
+      opacity: 0.7;
+    }
+    
+    .finding-header button:hover {
+      opacity: 1;
+    }
+    
+    .finding-content {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .finding-content p {
+      margin: 8px 0;
+    }
+    
+    .finding-content .highlight {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <!-- Main Content -->
+  <main id="page-content">
+    <h1 class="page-title">EEG Simulator</h1>
+    
+    <div class="container">
+      <!-- Tab Buttons for Waveform Simulator and Lead Practice -->
+      <div class="tab-buttons">
+        <button id="waveform-btn" class="active">EEG Waveform Simulator</button>
+        <a href="eeg_lead_practice.html" id="lead-practice-btn">EEG Lead Practice</a>
+      </div>
+      
+      <h2 class="page-subtitle">Waveform Simulator</h2>
+      
+      <!-- Waveform Simulator Tab -->
+      <div id="waveform-tab" style="display: block;">
+        <div class="waveform-container">
+          <div class="waveform-controls">
+            <button onclick="demo.play()"><i class="fa-solid fa-play"></i> Play</button>
+            <button onclick="demo.pause()"><i class="fa-solid fa-pause"></i> Pause</button>
+            <button onclick="demo.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          </div>
+
+          <div class="waveform-controls">
+            <h4>Normal Features:</h4>
+            <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
+            <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
+            <button id="sleepToggle" onclick="toggleSleepMode()"><i class="fa-solid fa-moon"></i> Sleep EEG</button>
+            <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
+            <button id="movementToggle"><i class="fa-solid fa-person-running"></i> Movement Artifact</button>
+            <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
+            <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
+            <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
+            <button id="pulseArtifactToggle" onclick="demo.togglePulseArtifact()"><i class="fa-solid fa-heart-pulse"></i> Pulse Artifact</button>
+          </div>
+
+          <div class="waveform-controls">
+            <h4>Slowing Patterns:</h4>
+            <button id="mildSlowingToggle" onclick="demo.toggleMildSlowing()"><i class="fa-solid fa-temperature-low"></i> Mild Slowing</button>
+            <button id="moderateSlowingToggle" onclick="demo.toggleModerateSlowing()"><i class="fa-solid fa-temperature-arrow-down"></i> Moderate Slowing</button>
+            <button id="severeSlowingToggle" onclick="demo.toggleSevereSlowing()"><i class="fa-solid fa-temperature-empty"></i> Severe Slowing</button>
+            <button id="burstSuppressionToggle" onclick="demo.toggleBurstSuppression()"><i class="fa-solid fa-wave-pulse"></i> Burst Suppression</button>
+            <button id="generalizedSlowingToggle" onclick="demo.toggleGeneralizedSlowing()"><i class="fa-solid fa-brain"></i> GRDA</button>
+          </div>
+
+          <div class="waveform-controls">
+            <h4>Epileptiform Patterns:</h4>
+            <button class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
+            <button class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
+            <button class="wave-btn" data-wave="spikeAndWaves"><i class="fa-solid fa-bolt-lightning"></i> Spike & Wave</button>
+            <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> LRDA</button>
+            <button id="seizureToggle"><i class="fa-solid fa-fire"></i> Seizure</button>
+          </div>
+
+          <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+          <!-- Findings Display Area -->
+          <div id="findings-display" class="findings-display">
+            <div class="findings-header">
+              <h4><i class="fa-solid fa-circle-info"></i> <span>Pattern Information</span></h4>
+              <button class="findings-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="findings-content">
+              <!-- Content will be updated dynamically -->
+            </div>
+          </div>
+
+          <!-- Add a sleep stage controls section after the findings display -->
+          <div id="sleep-controls" class="waveform-control-panels" style="display: none;">
+            <div>
+              <h4><i class="fa-solid fa-moon"></i> Sleep Stage Settings</h4>
+              <div class="sleep-stage-selector">
+                <label for="sleep-stage">Sleep Stage:</label>
+                <select id="sleep-stage" onchange="changeSleepStage(this.value)" class="form-control">
+                  <option value="wakefulness">Wakefulness</option>
+                  <option value="n1">N1 Sleep (Light)</option>
+                  <option value="n2">N2 Sleep (Spindles & K-complexes)</option>
+                  <option value="n3">N3 Sleep (Slow Wave)</option>
+                  <option value="rem">REM Sleep</option>
+                </select>
+              </div>
+              
+              <div class="montage-info" style="margin: 10px 0; padding: 5px; background-color: #f8f9fa; border-radius: 5px;">
+                <p style="margin: 0;"><i class="fa-solid fa-info-circle"></i> <strong>Sleep Montage:</strong> In sleep mode, central leads (C3, C4) replace temporal leads (T3, T4) to better visualize sleep features.</p>
+              </div>
+              
+              <div class="sleep-pattern-toggles">
+                <h5>Sleep Patterns:</h5>
+                <div class="sleep-pattern-buttons">
+                  <button id="sleepSpindlesToggle" onclick="toggleSleepPattern('sleepSpindles')"><i class="fa-solid fa-wave-square"></i> Sleep Spindles</button>
+                  <button id="kComplexesToggle" onclick="toggleSleepPattern('kComplexes')"><i class="fa-solid fa-bolt"></i> K-Complexes</button>
+                  <button id="vertexWavesToggle" onclick="toggleSleepPattern('vertexWaves')"><i class="fa-solid fa-chevron-up"></i> Vertex Waves</button>
+                  <button id="sawtoothWavesToggle" onclick="toggleSleepPattern('sawtoothWaves')"><i class="fa-solid fa-angles-up"></i> Sawtooth Waves</button>
+                </div>
+              </div>
+              
+              <div class="sleep-info">
+                <h5>Current Stage: <span id="current-sleep-stage-display">Wakefulness</span></h5>
+                <p id="sleep-stage-description">Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Waveform Control Panels -->
+          <div class="waveform-control-panels">
+            <!-- Spike Adjusters -->
+            <div id="spike-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Spike Settings</h4>
+              <div class="slider-container">
+                <label for="spike-frequency">Frequency: <span id="spike-frequency-value">Occasional</span></label>
+                <input type="range" id="spike-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSpikeFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="spike-periodicity">Periodicity: <span id="spike-periodicity-value">0.5</span> Hz</label>
+                <input type="range" id="spike-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                        oninput="updateSpikePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">3 Hz</span>
+              </div>
+            </div>
+            
+            <!-- Sharp Wave Adjusters -->
+            <div id="sharp-wave-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Sharp Wave Settings</h4>
+              <div class="slider-container">
+                <label for="sharp-wave-frequency">Frequency: <span id="sharp-wave-frequency-value">Occasional</span></label>
+                <input type="range" id="sharp-wave-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSharpWaveFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="sharp-wave-periodicity">Periodicity: <span id="sharp-wave-periodicity-value">0.5</span> Hz</label>
+                <input type="range" id="sharp-wave-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                        oninput="updateSharpWavePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">3 Hz</span>
+              </div>
+            </div>
+            
+            <!-- Spike and Wave Adjusters -->
+            <div id="spike-and-wave-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Spike & Wave Settings</h4>
+              <div class="slider-container">
+                <label for="spike-and-wave-frequency">Frequency: <span id="spike-and-wave-frequency-value">Occasional</span></label>
+                <input type="range" id="spike-and-wave-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSpikeAndWaveFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="spike-and-wave-periodicity">Periodicity: <span id="spike-and-wave-periodicity-value">2</span> Hz</label>
+                <input type="range" id="spike-and-wave-periodicity" min="0" max="3" step="1" value="1" 
+                        oninput="updateSpikeAndWavePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">5 Hz</span>
+              </div>
+            </div>
+            
+            <!-- LRDA Adjusters -->
+            <div id="lrda-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> LRDA Settings</h4>
+              <div class="slider-container">
+                <label for="lrda-frequency">Frequency: <span id="lrda-frequency-value">Occasional</span></label>
+                <input type="range" id="lrda-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateLRDAFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="lrda-periodicity">Periodicity: <span id="lrda-periodicity-value">1</span> Hz</label>
+                <input type="range" id="lrda-periodicity" min="0" max="2" step="0.5" value="1" 
+                        oninput="updateLRDAPeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">2 Hz</span>
+              </div>
+            </div>
+            
+            <!-- GRDA Adjusters -->
+            <div id="grda-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> GRDA Settings</h4>
+              <div class="slider-container">
+                <label for="grda-frequency">Frequency: <span id="grda-frequency-value">Occasional</span></label>
+                <input type="range" id="grda-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateGRDAFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="grda-periodicity">Periodicity: <span id="grda-periodicity-value">1</span> Hz</label>
+                <input type="range" id="grda-periodicity" min="0" max="2" step="0.5" value="1" 
+                        oninput="updateGRDAPeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">2 Hz</span>
+              </div>
+            </div>
+            
+            <!-- Seizure Adjusters -->
+            <div id="seizure-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Seizure Settings</h4>
+              <div class="slider-container">
+                <label for="seizure-speed">Evolution Speed: <span id="seizure-speed-value">Normal</span></label>
+                <input type="range" id="seizure-speed" min="1" max="3" step="1" value="2" 
+                        oninput="updateSeizureSpeed(this.value)">
+                <span class="slider-label-min">Slow</span>
+                <span class="slider-label-max">Fast</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="seizure-intensity">Intensity: <span id="seizure-intensity-value">Moderate</span></label>
+                <input type="range" id="seizure-intensity" min="1" max="3" step="1" value="2" 
+                        oninput="updateSeizureIntensity(this.value)">
+                <span class="slider-label-min">Mild</span>
+                <span class="slider-label-max">Severe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="waveform-info">
+            <h3><i class="fa-solid fa-brain"></i> Normal EEG Patterns</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rhythm</th>
+                    <th>Frequency</th>
+                    <th>Location</th>
+                    <th>Clinical Significance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Alpha</td>
+                    <td>8-13 Hz</td>
+                    <td>Posterior dominant (occipital)</td>
+                    <td>Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</td>
+                  </tr>
+                  <tr>
+                    <td>Beta</td>
+                    <td>13-30 Hz</td>
+                    <td>Frontal predominant</td>
+                    <td>Normal during alertness, cognitive activity; enhanced by benzodiazepines and barbiturates</td>
+                  </tr>
+                  <tr>
+                    <td>Theta</td>
+                    <td>4-8 Hz</td>
+                    <td>Diffuse, temporal</td>
+                    <td>Normal in drowsiness and young adults; excessive in awake adults may indicate abnormality</td>
+                  </tr>
+                  <tr>
+                    <td>Delta</td>
+                    <td>0.5-4 Hz</td>
+                    <td>Diffuse</td>
+                    <td>Normal in deep sleep (N3) and infants; abnormal when awake except in anterior head regions</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Artifacts</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Artifact</th>
+                    <th>Appearance</th>
+                    <th>Location</th>
+                    <th>Identification Tips</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Eye Blinks</td>
+                    <td>Large amplitude downward deflections</td>
+                    <td>Frontal (Fp1/Fp2), attenuating posteriorly</td>
+                    <td>Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</td>
+                  </tr>
+                  <tr>
+                    <td>Chewing</td>
+                    <td>Rhythmic EMG bursts at ~1Hz with high-frequency spikes</td>
+                    <td>Temporal leads (T3/T4)</td>
+                    <td>Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</td>
+                  </tr>
+                  <tr>
+                    <td>Sweat</td>
+                    <td>Slow, undulating baseline shifts (0.1-0.7 Hz)</td>
+                    <td>Often frontal/temporal</td>
+                    <td>Appears as slow baseline wander; often in anxious patients or warm environments</td>
+                  </tr>
+                  <tr>
+                    <td>60Hz</td>
+                    <td>Regular, fast oscillations superimposed on EEG</td>
+                    <td>Often one electrode or side</td>
+                    <td>Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</td>
+                  </tr>
+                  <tr>
+                    <td>ECG</td>
+                    <td>Regular QRS complexes seen as sharp upward deflections across channels</td>
+                    <td>All channels; strongest in temporal leads (T3/T4) closest to neck/heart</td>
+                    <td>Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references (e.g., ear/mastoid)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3><i class="fa-solid fa-bolt"></i> Abnormal EEG Patterns</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Morphology</th>
+                    <th>Clinical Association</th>
+                    <th>Key Features</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Spikes</td>
+                    <td>Brief (&lt;70ms) pointed transients</td>
+                    <td>Epilepsy, irritative zone</td>
+                    <td>Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</td>
+                  </tr>
+                  <tr>
+                    <td>Sharp Waves</td>
+                    <td>70-200ms pointed transients</td>
+                    <td>Epilepsy, cerebral injury</td>
+                    <td>Longer duration than spikes but similar morphology; often with slow wave following</td>
+                  </tr>
+                  <tr>
+                    <td>LRDA</td>
+                    <td>Lateralized rhythmic delta (1-4Hz)</td>
+                    <td>Focal cerebral dysfunction</td>
+                    <td>Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</td>
+                  </tr>
+                  <tr>
+                    <td>GRDA</td>
+                    <td>Generalized rhythmic delta (1-4Hz)</td>
+                    <td>Diffuse cerebral dysfunction</td>
+                    <td>Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add tab switching JavaScript -->
+    <script>
+      // No longer need tab switching function as we're using direct links
+    </script>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
+
+  <script>
+    // Initialize the waveform demo when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("Document ready, initializing EEG waveform demo");
+      
+      // Initialize main demo object
+      window.demo = new EEGWaveformDemo('waveformCanvas');
+      
+      // Start animation immediately to ensure canvas is rendered
+      window.demo.play();
+      
+      // Explicitly ensure PDR is turned on
+      if (window.demo && window.demo.waveforms && window.demo.waveforms.alpha) {
+        window.demo.waveforms.alpha.modulationPattern = true;
+        window.demo.startPatternTransition('pdr');
+      }
+      
+      console.log("EEG demo initialized with active waveforms:", Array.from(window.demo.activeWaveforms));
+
+      // Sleep mode toggle
+      const sleepToggle = document.getElementById('sleepToggle');
+      if (sleepToggle) {
+        sleepToggle.addEventListener('click', function() {
+          const isActive = this.classList.toggle('active');
+          toggleSleepMode(isActive);
+        });
+      }
+
+      // Handle chewing artifact toggle directly
+      const chewingToggle = document.getElementById('chewingToggle');
+      if (chewingToggle) {
+        console.log("Adding event listener to chewing toggle");
+        chewingToggle.addEventListener('click', function() {
+          console.log("Chewing button clicked");
+          if (window.demo && typeof window.demo.toggleChewing === 'function') {
+            window.demo.toggleChewing();
+            if (this.classList.contains('active')) showPatternInfo('Chewing');
+          } else {
+            console.error("toggleChewing function not available");
+          }
+        });
+      } else {
+        console.error("Chewing toggle button not found");
+      }
+      
+      // Handle movement artifact toggle
+      const movementToggle = document.getElementById('movementToggle');
+      if (movementToggle) {
+        console.log("Adding event listener to movement toggle");
+        movementToggle.addEventListener('click', function() {
+          console.log("Movement button clicked");
+          if (window.demo && typeof window.demo.toggleMovement === 'function') {
+            window.demo.toggleMovement();
+            if (this.classList.contains('active')) showPatternInfo('Movement');
+          } else {
+            console.error("toggleMovement function not available");
+          }
+        });
+      } else {
+        console.error("Movement toggle button not found");
+      }
+      
+      // Handle wave button clicks with specific handlers for each type
+      const waveButtons = document.querySelectorAll('.wave-btn');
+      waveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const type = this.dataset.wave;
+          const isActive = this.classList.toggle('active');
+          
+          // Call the appropriate function based on the wave type
+          if (type && window.demo) {
+            console.log(`Setting waveform: ${type}, active: ${isActive}`);
+            window.demo.setWaveform(type, isActive);
+            
+            // Show/hide adjusters based on button type
+            if (type === 'spikes') {
+              document.getElementById('spike-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('spikes');
+            } else if (type === 'sharpWaves') {
+              document.getElementById('sharp-wave-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('sharpWaves');
+            } else if (type === 'spikeAndWaves') {
+              document.getElementById('spike-and-wave-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('spikeWave3Hz');
+            }
+          }
+        });
+      });
+      
+      // Add event listeners for toggle buttons that need adjusters
+      const focalSlowingToggle = document.getElementById('focalSlowingToggle');
+      if (focalSlowingToggle) {
+        focalSlowingToggle.addEventListener('click', function() {
+          const isActive = this.classList.contains('active');
+          document.getElementById('lrda-adjusters').style.display = isActive ? 'block' : 'none';
+          if (isActive) showPatternInfo('focalSlowing');
+        });
+      }
+      
+      // Add event listener for GRDA toggle
+      const generalizedSlowingToggle = document.getElementById('generalizedSlowingToggle');
+      if (generalizedSlowingToggle) {
+        generalizedSlowingToggle.addEventListener('click', function() {
+          const isActive = this.classList.contains('active');
+          document.getElementById('grda-adjusters').style.display = isActive ? 'block' : 'none';
+          if (isActive) showPatternInfo('generalizedSlowing');
+        });
+      }
+      
+      // Add listeners for other buttons to show pattern info
+      document.getElementById('eyeBlinkToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('eyeBlinks');
+      });
+      
+      document.getElementById('pdrToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('pdr');
+      });
+      
+      document.getElementById('sweatArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('sweatArtifact');
+      });
+      
+      document.getElementById('sixtyHzArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('sixtyHzArtifact');
+      });
+      
+      document.getElementById('ecgArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('ecgArtifact');
+      });
+      
+      document.getElementById('pulseArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('pulseArtifact');
+      });
+      
+      document.getElementById('mildSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('mildSlowing');
+      });
+      
+      document.getElementById('moderateSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('moderateSlowing');
+      });
+      
+      document.getElementById('severeSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('severeSlowing');
+      });
+      
+      document.getElementById('burstSuppressionToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('burstSuppression');
+      });
+      
+      // Make sure seizure toggle properly shows/hides adjusters
+      const seizureToggle = document.getElementById('seizureToggle');
+      if (seizureToggle) {
+        seizureToggle.addEventListener('click', function() {
+          console.log("Seizure toggle clicked, active:", this.classList.contains('active'));
+          
+          // Direct call to demo.toggleSeizure() to ensure it's triggered
+          if (window.demo && typeof window.demo.toggleSeizure === 'function') {
+            window.demo.toggleSeizure();
+            console.log("Called demo.toggleSeizure() directly");
+            if (this.classList.contains('active')) showPatternInfo('seizure');
+          } else {
+            console.error("demo.toggleSeizure is not available!");
+          }
+          
+          // The adjusters are now handled inside toggleSeizure()
+        });
+      }
+      
+      // Initialize the adjusters with default values
+      if (document.getElementById('seizure-speed')) {
+        updateSeizureSpeed(document.getElementById('seizure-speed').value);
+      }
+      
+      if (document.getElementById('seizure-intensity')) {
+        updateSeizureIntensity(document.getElementById('seizure-intensity').value);
+      }
+      
+      // Initialize the findings display
+      const findingsDisplay = document.getElementById('findings-display');
+      if (findingsDisplay && typeof initializeFindingsDisplay === 'function') {
+        initializeFindingsDisplay(findingsDisplay);
+      } else {
+        console.error("Findings display initialization failed");
+      }
+    });
+    
+    // Function to show pattern information in the findings display
+    function showPatternInfo(patternKey) {
+      const findingsDisplay = document.getElementById('findings-display');
+      if (findingsDisplay && typeof showFindingsForPattern === 'function') {
+        showFindingsForPattern(findingsDisplay, patternKey);
+      } else {
+        console.error("Failed to show pattern info: Module functions not available");
+      }
+    }
+    
+    // Spike frequency adjuster
+    function updateSpikeFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('spike-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSpikeFrequency(parseInt(value));
+      }
+    }
+    
+    // Spike periodicity adjuster
+    function updateSpikePeriodicity(value) {
+      document.getElementById('spike-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setSpikePeriodicity(parseFloat(value));
+      }
+    }
+    
+    // Sharp wave frequency adjuster
+    function updateSharpWaveFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('sharp-wave-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSharpWaveFrequency(parseInt(value));
+      }
+    }
+    
+    // Sharp wave periodicity adjuster
+    function updateSharpWavePeriodicity(value) {
+      document.getElementById('sharp-wave-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setSharpWavePeriodicity(parseFloat(value));
+      }
+    }
+    
+    // Spike and wave periodicity adjuster
+    function updateSpikeAndWavePeriodicity(value) {
+      // Map slider value to the desired Hz values (0, 2, 3, 5)
+      let periodicityHz;
+      switch(parseInt(value)) {
+        case 0:
+          periodicityHz = 0;
+          break;
+        case 1:
+          periodicityHz = 2;
+          break;
+        case 2:
+          periodicityHz = 3;
+          break;
+        case 3:
+          periodicityHz = 5;
+          break;
+        default:
+          periodicityHz = 2;
+      }
+      
+      document.getElementById('spike-and-wave-periodicity-value').textContent = periodicityHz;
+      if (window.demo) {
+        window.demo.setSpikeAndWavePeriodicity(periodicityHz);
+      }
+    }
+    
+    // LRDA frequency adjuster
+    function updateLRDAFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('lrda-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setLRDAFrequency(parseInt(value));
+      }
+    }
+    
+    // LRDA periodicity adjuster
+    function updateLRDAPeriodicity(value) {
+      document.getElementById('lrda-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setLRDAPeriodicity(parseFloat(value));
+      }
+    }
+
+    // GRDA frequency adjuster
+    function updateGRDAFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('grda-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setGRDAFrequency(parseInt(value));
+      }
+    }
+    
+    // GRDA periodicity adjuster
+    function updateGRDAPeriodicity(value) {
+      document.getElementById('grda-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setGRDAPeriodicity(parseFloat(value));
+      }
+    }
+
+    // Spike and Wave frequency adjuster
+    function updateSpikeAndWaveFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('spike-and-wave-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSpikeAndWaveFrequency(parseInt(value));
+      }
+    }
+
+    // Seizure speed adjuster
+    function updateSeizureSpeed(value) {
+      let speedText;
+      switch(parseInt(value)) {
+        case 1:
+          speedText = "Slow";
+          break;
+        case 2:
+          speedText = "Normal";
+          break;
+        case 3:
+          speedText = "Fast";
+          break;
+        default:
+          speedText = "Normal";
+      }
+      
+      document.getElementById('seizure-speed-value').textContent = speedText;
+      if (window.demo) {
+        console.log("Setting seizure speed to:", value);
+        window.demo.setSeizureSpeed(parseInt(value));
+      }
+    }
+    
+    // Seizure intensity adjuster
+    function updateSeizureIntensity(value) {
+      let intensityText;
+      switch(parseInt(value)) {
+        case 1:
+          intensityText = "Mild";
+          break;
+        case 2:
+          intensityText = "Moderate";
+          break;
+        case 3:
+          intensityText = "Severe";
+          break;
+        default:
+          intensityText = "Moderate";
+      }
+      
+      document.getElementById('seizure-intensity-value').textContent = intensityText;
+      if (window.demo) {
+        console.log("Setting seizure intensity to:", value);
+        window.demo.setSeizureIntensity(parseInt(value));
+      }
+    }
+    
+    // Sleep mode toggle function
+    function toggleSleepMode(isActive) {
+      if (isActive === undefined) {
+        const sleepToggle = document.getElementById('sleepToggle');
+        isActive = sleepToggle.classList.contains('active');
+      }
+      
+      const sleepControls = document.getElementById('sleep-controls');
+      
+      if (isActive) {
+        // Show sleep controls and initialize sleep mode
+        sleepControls.style.display = 'block';
+        if (window.sleepDemo) {
+          window.sleepDemo.initializeSleepMode();
+          changeSleepStage('wakefulness');
+        } else {
+          console.error("Sleep demo not initialized. Make sure eeg-sleep.js is loaded properly.");
+        }
+        
+        // Update pattern info
+        showPatternInfo('sleep');
+      } else {
+        // Hide sleep controls and return to normal mode
+        sleepControls.style.display = 'none';
+        if (window.sleepDemo) {
+          window.sleepDemo.exitSleepMode();
+        }
+        
+        // Reset EEG to normal state
+        window.demo.reset();
+      }
+    }
+    
+    // Change sleep stage function
+    function changeSleepStage(stage) {
+      if (!window.sleepDemo) {
+        console.error("Sleep demo not initialized");
+        return;
+      }
+      
+      // Update the sleep stage display
+      document.getElementById('current-sleep-stage-display').textContent = 
+        document.querySelector(`#sleep-stage option[value="${stage}"]`).textContent;
+      
+      // Update the sleep description
+      const descriptions = {
+        'wakefulness': 'Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.',
+        'n1': 'Light sleep characterized by theta waves and vertex sharp waves (best seen in central leads) with decreased alpha activity.',
+        'n2': 'Defined by sleep spindles (12-14 Hz bursts, maximal in central regions) and K-complexes with predominant theta activity.',
+        'n3': 'Slow wave sleep with high-amplitude delta waves (0.5-4 Hz), prominent in all leads including central derivations.',
+        'rem': 'Low-amplitude mixed frequency activity with sawtooth waves (visible in frontal-central leads) and rapid eye movements.'
+      };
+      
+      document.getElementById('sleep-stage-description').textContent = descriptions[stage] || '';
+      
+      // Set the sleep stage in the sleep demo
+      window.sleepDemo.setSleepStage(stage);
+      
+      // Show pattern info
+      showPatternInfo(`sleep-${stage}`);
+      
+      // Update button states
+      updateSleepPatternButtons(stage);
+    }
+    
+    // Toggle individual sleep patterns
+    function toggleSleepPattern(pattern) {
+      if (!window.sleepDemo) {
+        console.error("Sleep demo not initialized");
+        return;
+      }
+      
+      const button = document.getElementById(`${pattern}Toggle`);
+      const isActive = button.classList.toggle('active');
+      
+      window.sleepDemo.toggleSleepPattern(pattern, isActive);
+    }
+    
+    // Update sleep pattern buttons based on stage
+    function updateSleepPatternButtons(stage) {
+      // Reset all buttons
+      document.querySelectorAll('.sleep-pattern-buttons button').forEach(button => {
+        button.classList.remove('active');
+      });
+      
+      // Activate relevant buttons based on sleep stage
+      switch(stage) {
+        case 'n1':
+          document.getElementById('vertexWavesToggle').classList.add('active');
+          break;
+        case 'n2':
+          document.getElementById('sleepSpindlesToggle').classList.add('active');
+          document.getElementById('kComplexesToggle').classList.add('active');
+          break;
+        case 'n3':
+          // No specific patterns activated by default
+          break;
+        case 'rem':
+          document.getElementById('sawtoothWavesToggle').classList.add('active');
+          break;
+      }
+    }
+  </script>
+</body>
+</html> 

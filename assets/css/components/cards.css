@@ -1,0 +1,99 @@
+/*-----------------------------------------------
+  CARDS
+-----------------------------------------------*/
+.cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.cards-container h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+  color: var(--primary-color);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  grid-auto-rows: minmax(300px, auto);
+}
+
+/* General card styling - these are overridden by specific pages */
+.card {
+  background: var(--card-bg, var(--info-bg));
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px var(--shadow-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.card i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--card-icon-color, var(--accent-color));
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.card i:hover {
+  transform: scale(1.1);
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  transition: color var(--transition-duration);
+}
+
+.card p {
+  font-size: 1rem;
+  color: var(--text-secondary, var(--text-color));
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.card a:not(.card-link) {
+  display: inline-block;
+  background: var(--accent-color);
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card a:not(.card-link):hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode */
+body.dark .cards-container h2,
+body.dark .card h3 {
+  color: var(--header-text);
+}
+
+body.dark .card {
+  background: var(--card-bg, var(--info-bg));
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+} 

@@ -1,0 +1,98 @@
+[
+  {
+    "questionText": "A 13-year-old boy comes to you with an episode in the last month of a scintillating scotoma for 20 minutes followed by a headache. You obtain a routine EEG (Fig. 5Q1). You are struck by the waves in the horizontal box. Combining this EEG with the history you are now fairly certain that the diagnosis is:",
+    "options": [
+      { "value": "A", "text": "Malingering." },
+      { "value": "B", "text": "Childhood occipital visual epilepsy (COVE)." },
+      { "value": "C", "text": "Classic migraine." },
+      { "value": "D", "text": "Self-limited epilepsy with autonomic seizures (SeLEAS)." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "This is a normal EEG of N1 sleep. The EEG shows slow roving eye movements (first vertical box: eyes to the left, second vertical box: eyes to the right), appearance of a vertex wave (arrow), and positive sharp transients of sleep (POSTs) (horizontal boxes). POSTs are triangular shaped waves, positive in the occipital electrodes and negative at adjacent leads. There is no after-going slow wave. A scintillating scotoma lasting ~20 minutes is most consistent with a classic migraine aura. In late-onset COVE, visual hallucinations are very brief (seconds), followed by headache. In SeLEAS, seizures are autonomic and nocturnal with eye deviation and occipital spikes. There is no evidence of malingering.",
+    "figure": "5q1.png"
+  },
+  {
+    "questionText": "This EEG (Fig. 5Q2) depicts a nocturnal seizure in a 54-year-old man with developmental delay. During this seizure he opens his eyes and raises his arms. This is most consistent with:",
+    "options": [
+      { "value": "A", "text": "A generalized tonic–clonic seizure." },
+      { "value": "B", "text": "An absence seizure." },
+      { "value": "C", "text": "A tonic seizure." },
+      { "value": "D", "text": "A normal arousal from sleep." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "This EEG shows diffuse beta activity with admixed EMG artifacts lasting ~8 seconds. The clinical semiology—eye closure and sustained arm extension—is classic for a tonic seizure. GTC seizures would evolve to clonic jerking; absence seizures show 3 Hz spike–wave; normal arousals may show hypersynchrony in delta/theta, not diffuse beta.",
+    "figure": "5q2.png"
+  },
+  {
+    "questionText": "This EEG depicts a focal seizure (Fig. 5Q3). The young woman experiencing this seizure would most likely describe:",
+    "options": [
+      { "value": "A", "text": "A strong sensation of being pursued by a predator on her left lasting seconds to minutes." },
+      { "value": "B", "text": "A rainbow on the right." },
+      { "value": "C", "text": "A tingling feeling in her right leg." },
+      { "value": "D", "text": "A prolonged feeling of shortness of breath with fear of dying." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This EEG is from a patient with left-hemispheric Sturge–Weber syndrome and shows an occipital seizure that begins with rhythmic alpha waves evolving to theta with spikes. Occipital seizures commonly produce visual phenomena such as seeing a rainbow in the contralateral field.",
+    "figure": "5q3.png"
+  },
+  {
+    "questionText": "A healthy, developmentally normal 4-month-old baby boy is brought to your office with new clusters of head drops in the evening and morning. You do an EEG in the office (Fig. 5Q4). The panel on the left is waking; on the right at the arrow you capture a head drop. Your next move is to:",
+    "options": [
+      { "value": "A", "text": "Reassure the parents; babies sometimes have head drops falling asleep." },
+      { "value": "B", "text": "Diagnose myoclonic epilepsy of infancy; start medication, prognosis is good." },
+      { "value": "C", "text": "Treat as infantile spasms with levetiracetam 10 mg/kg daily." },
+      { "value": "D", "text": "Admit for evaluation and treatment of infantile spasms." }
+    ],
+    "correctAnswerLetter": "D",
+    "explanation": "This EEG shows hypsarrhythmia with synchronous slow waves correlating to the clinical spasms and electrodecrement—diagnostic of infantile epileptic spasms syndrome (IESS). Given its poor prognosis, admission for work-up and initiation of ACTH or prednisolone is indicated.",
+    "figure": "5q4.png"
+  },
+  {
+    "questionText": "Please match each epilepsy syndrome to its characteristic features:",
+    "options": [
+      { "value": "A", "text": "Heat-sensitive seizures, hemi-convulsions, myoclonic seizures, atypical absence, ataxia, neurologic regression." },
+      { "value": "B", "text": "Language regression, electrical status epilepticus in sleep." },
+      { "value": "C", "text": "Hypsarrhythmia, infantile spasms, developmental regression." },
+      { "value": "D", "text": "Myoclonic jerks, absence seizures, generalized tonic–clonic seizures." },
+      { "value": "E", "text": "Occipitally predominant generalized rhythmic delta activity." },
+      { "value": "F", "text": "LGI1 antibody (ADEAF)." },
+      { "value": "G", "text": "Slow spike–wave, multiple seizure types, cognitive impairment." },
+      { "value": "H", "text": "Tonic seizures, burst suppression, abnormal brain imaging." }
+    ],
+    "correctAnswerMapping": {
+      "1": "E",
+      "2": "G",
+      "3": "B",
+      "4": "H",
+      "5": "A",
+      "6": "D",
+      "7": "F",
+      "8": "C"
+    },
+    "explanation": "1E, 2G, 3B, 4H, 5A, 6D, 7F, 8C."
+  },
+  {
+    "questionText": "You are reading a continuous EEG on a 25-year-old woman with known epilepsy, admitted after a convulsive seizure in the setting of non-compliance. She is not back to baseline and the team worries about ongoing events. You want to know what she is doing when the EEG activity shown is occurring, but the video is not playing. What is the likely clinical semiology?",
+    "options": [
+      { "value": "A", "text": "Psychogenic non-epileptic spells." },
+      { "value": "B", "text": "Subclinical (nonconvulsive) seizures." },
+      { "value": "C", "text": "Simple partial seizures." },
+      { "value": "D", "text": "Syncope with postictal confusion." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This EEG shows rhythmic beta activity emerging in the right frontal region evolving in frequency and morphology without clinical signs—classic for subclinical (nonconvulsive) seizures.",
+    "figure": "5q6.png"
+  },
+  {
+    "questionText": "A 7-year-old boy was referred for possible ADHD because of inattention at school and home. You obtain a routine EEG in the clinic (Fig. 5Q7). Your clinical impression and treatment plan are:",
+    "options": [
+      { "value": "A", "text": "3 Hz generalized spike–wave: childhood absence epilepsy—treat with carbamazepine." },
+      { "value": "B", "text": "3 Hz generalized spike–wave: childhood absence epilepsy—treat with ethosuximide." },
+      { "value": "C", "text": "4 Hz generalized spike–wave: juvenile absence—treat with ethosuximide." },
+      { "value": "D", "text": "4 Hz generalized spike–wave: juvenile myoclonic epilepsy—treat with valproic acid." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This EEG shows 3 Hz generalized spike–wave bursts lasting several seconds, diagnostic of childhood absence epilepsy. Ethosuximide is first-line; carbamazepine can worsen absence seizures.",
+    "figure": "5q7.png"
+  }
+]

@@ -1,0 +1,280 @@
+/*-----------------------------------------------
+  THEME VARIABLES & TRANSITIONS
+-----------------------------------------------*/
+:root {
+  --primary-color: #1d1d1f;
+  --secondary-color: #424245;
+  --accent-color: #0066cc;
+  --accent-hover: #0055b3;
+  --accent-active: #004499;
+  --accent-rgb: 0, 102, 204;
+  --border-rgb: 210, 210, 215;
+  --bg-color: #f5f5f7;
+  --text-color: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --info-bg: #ffffff;
+  --border-color: #d2d2d7;
+  --header-text: #ffffff;
+  --hover-bg: #f2f2f2;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --transition-duration: 0.3s;
+  --footer-bg: rgba(245, 245, 247, 0.8);
+  --card-icon-color: #0066cc;
+}
+
+.dark {
+  --primary-color: #f5f5f7;
+  --secondary-color: #a1a1a6;
+  --accent-color: #2997ff;
+  --accent-hover: #0077ed;
+  --accent-active: #0068d6;
+  --accent-rgb: 41, 151, 255;
+  --border-rgb: 66, 66, 69;
+  --bg-color: #1d1d1f;
+  --text-color: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --info-bg: #2c2c2e;
+  --border-color: #424245;
+  --header-text: #ffffff;
+  --hover-bg: #3a3a3c;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --footer-bg: rgba(29, 29, 31, 0.8);
+  --card-icon-color: #2997ff;
+}
+
+/*-----------------------------------------------
+  GLOBAL RESET & BASE STYLES
+-----------------------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+  transition: background var(--transition-duration),
+    color var(--transition-duration);
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#page-content {
+  flex: 1;
+}
+
+/*-----------------------------------------------
+  TITLES (Page & Section)
+-----------------------------------------------*/
+.page-title,
+.section-title {
+  text-align: center;
+  margin: 2rem 0;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--primary-color);
+  transition: color var(--transition-duration);
+}
+
+body.dark .page-title,
+body.dark .section-title {
+  color: var(--header-text);
+}
+
+.section-header {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 1.5rem 0 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--accent-color);
+  transition: color var(--transition-duration);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/*-----------------------------------------------
+  INFO-BOX
+-----------------------------------------------*/
+.info-box {
+  background: var(--info-bg);
+  padding: 1.2em;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  margin-bottom: 1.5em;
+  transition: background var(--transition-duration);
+}
+
+/*-----------------------------------------------
+  RESPONSIVE IMAGES AND IMAGE CONTAINERS
+-----------------------------------------------*/
+.responsive-image {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px var(--shadow-color);
+  display: block;
+}
+
+.image-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.image-container h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.image-container p {
+  margin: 0.5rem auto 1rem;
+  max-width: 90%;
+  color: var(--text-secondary);
+}
+
+body.dark .image-container h3 {
+  color: var(--text-color);
+}
+
+.reference {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  color: var(--text-secondary);
+}
+
+.reference a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.reference a:hover {
+  text-decoration: underline;
+}
+
+/*-----------------------------------------------
+  CONTAINER
+-----------------------------------------------*/
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
+/* Font sizing */
+body.large-font { 
+  font-size: 130% !important; 
+}
+
+/* Ensure large font affects specific elements that might have fixed font sizes */
+body.large-font p,
+body.large-font li,
+body.large-font td,
+body.large-font th,
+body.large-font input,
+body.large-font label,
+body.large-font button,
+body.large-font .info-box,
+body.large-font .card p,
+body.large-font .custom-table,
+body.large-font .footer-copy,
+body.large-font .footer-btns button {
+  font-size: 1.1em !important;
+}
+
+body.large-font h1 { font-size: 2.6rem !important; }
+body.large-font h2 { font-size: 2.2rem !important; }
+body.large-font h3 { font-size: 1.8rem !important; }
+body.large-font h4 { font-size: 1.5rem !important; }
+body.large-font h5 { font-size: 1.3rem !important; }
+body.large-font h6 { font-size: 1.1rem !important; }
+
+body.large-font .page-title,
+body.large-font .section-title {
+  font-size: 2.8rem !important;
+}
+
+body.large-font .section-header {
+  font-size: 1.8rem !important;
+}
+
+/* Ensure tables are readable with large font */
+body.large-font .custom-table {
+  line-height: 1.6 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  transition: color var(--transition-duration);
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+  color: var(--text-color);
+}
+
+/*-----------------------------------------------
+  ACCESSIBILITY & PRINT STYLES
+-----------------------------------------------*/
+@media print {
+  header, footer, .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .container, .cards-container, .info-box {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  a {
+    text-decoration: underline;
+    color: #0066cc !important;
+  }
+  
+  .page-title, .section-title {
+    margin: 20px 0 !important;
+  }
+}
+
+/* Media queries for responsive images */
+@media (max-width: 768px) {
+  .image-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .image-container h3 {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .image-container p {
+    font-size: 0.9rem;
+  }
+} 

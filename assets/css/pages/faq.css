@@ -1,0 +1,474 @@
+/*-----------------------------------------------
+  DISCUSSION FORUM / FAQ PAGE STYLES
+-----------------------------------------------*/
+/* Page title styling to match other pages */
+.page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark .page-title {
+  color: var(--text-color);
+}
+
+.description {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.description a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.description a:hover {
+  text-decoration: underline;
+  color: var(--accent-hover);
+}
+
+.disclaimer {
+  background: rgba(255, 92, 92, 0.1) !important;
+  border: 1px solid rgba(255, 92, 92, 0.5) !important;
+  color: #a94442 !important;
+  font-weight: 500 !important;
+  padding: 1rem !important;
+  margin: 1rem 0 !important;
+  text-align: center !important;
+  border-radius: 8px !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+body.dark .disclaimer {
+  background: rgba(255, 92, 92, 0.08) !important;
+  border-color: rgba(255, 92, 92, 0.4) !important;
+  color: #e88e8b !important;
+}
+
+#disqus_thread {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--info-bg);
+  transition: background-color 0.3s ease;
+}
+
+/* Resource Cards Styles */
+.resource-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  transition: padding 0.3s ease;
+}
+
+.resource-card {
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 6px var(--shadow-color);
+  transition: padding 0.3s ease, margin 0.3s ease, border-radius 0.3s ease;
+}
+
+.resource-card h2 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  transition: font-size 0.3s ease, margin 0.3s ease, gap 0.3s ease;
+}
+
+.resource-card h2 i {
+  font-size: 1.5em;
+  transition: font-size 0.3s ease;
+}
+
+.resource-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resource-list li {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, box-shadow 0.2s, padding 0.3s ease, margin 0.3s ease;
+}
+
+.resource-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.resource-list a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  transition: font-size 0.3s ease;
+}
+
+.resource-list a:hover {
+  text-decoration: underline;
+}
+
+.resource-description {
+  font-size: 0.95em;
+  color: var(--text-muted);
+  margin-top: 5px;
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+/* FAQ Accordion Styles */
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  background-color: var(--info-bg);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease, margin 0.3s ease, border-radius 0.3s ease;
+}
+
+.faq-question {
+  padding: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--primary-color);
+  transition: background-color 0.3s ease, color 0.3s ease, padding 0.3s ease, font-size 0.3s ease;
+}
+
+.faq-question::after {
+  content: '+';
+  font-size: 1.2rem;
+  transition: transform 0.3s ease, font-size 0.3s ease;
+}
+
+.faq-question.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.faq-question.active::after {
+  content: '−';
+  transform: rotate(0deg);
+}
+
+.faq-answer {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-answer.show {
+  padding: 1rem;
+  max-height: 500px;
+}
+
+.faq-answer p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-color);
+  transition: font-size 0.3s ease, line-height 0.3s ease;
+}
+
+/* Enhanced Responsive Styles */
+/* Medium screens */
+@media (max-width: 992px) {
+  .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .resource-container {
+    padding: 15px;
+  }
+  
+  .resource-card {
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+  }
+  
+  .resource-card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+    gap: 8px;
+  }
+  
+  .resource-card h2 i {
+    font-size: 1.4em;
+  }
+  
+  .resource-list li {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .faq-container {
+    max-width: 700px;
+  }
+}
+
+/* Tablets and small laptops */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.8rem !important;
+    margin-bottom: 1.2rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .description {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .resource-container {
+    padding: 12px;
+  }
+  
+  .resource-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  
+  .resource-card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    gap: 8px;
+  }
+  
+  .resource-card h2 i {
+    font-size: 1.3em;
+  }
+  
+  .resource-list li {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+  
+  .resource-list a {
+    font-size: 0.95rem;
+  }
+  
+  .resource-description {
+    font-size: 0.9em;
+  }
+  
+  .disclaimer {
+    font-size: 0.9rem;
+    padding: 0.8rem !important;
+    border-radius: 6px !important;
+  }
+  
+  #disqus_thread {
+    padding: 0.8rem;
+    margin-top: 1.5rem;
+  }
+  
+  .faq-question {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+  
+  .faq-answer.show {
+    padding: 0.8rem;
+  }
+  
+  .faq-answer p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  .description {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  
+  .resource-container {
+    padding: 10px;
+  }
+  
+  .resource-card {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  .resource-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    gap: 6px;
+  }
+  
+  .resource-card h2 i {
+    font-size: 1.2em;
+  }
+  
+  .resource-list li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+  }
+  
+  .resource-list a {
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+  }
+  
+  .resource-description {
+    font-size: 0.85em;
+    margin-top: 3px;
+  }
+  
+  .disclaimer {
+    font-size: 0.85rem;
+    padding: 0.7rem !important;
+    margin: 0.8rem 0 !important;
+    border-radius: 6px !important;
+  }
+  
+  #disqus_thread {
+    padding: 0.7rem;
+    margin-top: 1.2rem;
+    border-radius: 6px;
+  }
+  
+  .faq-item {
+    margin-bottom: 0.8rem;
+    border-radius: 6px;
+  }
+  
+  .faq-question {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
+  
+  .faq-question::after {
+    font-size: 1.1rem;
+  }
+  
+  .faq-answer.show {
+    padding: 0.7rem;
+  }
+  
+  .faq-answer p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  .description {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+  }
+  
+  .resource-container {
+    padding: 8px;
+  }
+  
+  .resource-card {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+  }
+  
+  .resource-card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    gap: 5px;
+  }
+  
+  .resource-card h2 i {
+    font-size: 1.1em;
+  }
+  
+  .resource-list li {
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+  }
+  
+  .resource-list a {
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+  }
+  
+  .resource-description {
+    font-size: 0.8em;
+    margin-top: 2px;
+  }
+  
+  .disclaimer {
+    font-size: 0.8rem;
+    padding: 0.6rem !important;
+    margin: 0.7rem 0 !important;
+    border-radius: 5px !important;
+  }
+  
+  .faq-item {
+    margin-bottom: 0.7rem;
+    border-radius: 5px;
+  }
+  
+  .faq-question {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  
+  .faq-question::after {
+    font-size: 1rem;
+  }
+  
+  .faq-answer.show {
+    padding: 0.6rem;
+  }
+  
+  .faq-answer p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+} 

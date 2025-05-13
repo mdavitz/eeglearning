@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ILAE Classification of the Epilepsies - EEG Explorer</title>
+  <meta name="description" content="Explore the ILAE (International League Against Epilepsy) classification system, including seizure types, epilepsies, and epilepsy syndromes." />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/pages/ilae-classification.css">
+  
+  <!-- Core Scripts -->
+  <script src="assets/js/theme-switcher.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  <script src="carousel.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+
+        UniversalSearch.init();
+      }
+    });
+  </script>
+  
+  <style>
+    /* ILAE Classification Specific Styles - Modern Design */
+    .page-ilae_classification {
+      display: flex;
+      flex-direction: column;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Intro text styling */
+    .intro-text {
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto 2rem;
+      color: var(--text-color);
+      line-height: 1.6;
+      font-size: 1rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: var(--card-bg);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    .intro-heading {
+      color: var(--primary-color);
+      margin-bottom: 1.2rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 12px;
+    }
+    
+    .intro-heading:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--accent-color);
+      border-radius: 2px;
+    }
+    
+    .intro-text p {
+      margin-bottom: 1.2rem;
+    }
+    
+    .intro-highlights {
+      text-align: left;
+      display: inline-block;
+      margin: 0.5rem auto 1.2rem;
+      padding-left: 1.5rem;
+    }
+    
+    .intro-highlights li {
+      margin-bottom: 0.5rem;
+      position: relative;
+      padding-left: 8px;
+    }
+    
+    .intro-highlights li:before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 9px;
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+    }
+    
+    .intro-pdf-link {
+      margin-top: 1.5rem;
+    }
+    
+    .pdf-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 102, 204, 0.2);
+    }
+    
+    .pdf-button:hover {
+      background: var(--accent-hover, #005fa3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3);
+    }
+    
+    .pdf-button i {
+      font-size: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .intro-text {
+        padding: 1.2rem;
+        text-align: left;
+      }
+      
+      .intro-heading {
+        text-align: center;
+        font-size: 1.3rem;
+      }
+      
+      .intro-highlights {
+        width: 100%;
+      }
+      
+      .pdf-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    
+    #ilae-classification-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Search and filter section */
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 42px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .search-icon i {
+      color: var(--accent-color);
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    
+    .search-box input {
+      width: 100%;
+      height: 44px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      background-color: var(--info-bg);
+      color: var(--text-color);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 1px 6px rgba(0,102,204,0.15);
+    }
+    
+    /* Filter container styling */
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 700px;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      min-width: 180px;
+      flex: 1;
+    }
+    
+    .filter-container label {
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--primary-color);
+      font-size: 13px;
+    }
+    
+    .filter-dropdown {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--info-bg);
+      color: var(--text-color);
+      font-size: 14px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 10px) center;
+      padding-right: 28px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-dropdown:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.1);
+    }
+    
+    .reset-filters {
+      margin: 1rem auto 0;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent-color);
+      color: white;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .reset-filters:hover {
+      background: var(--accent-hover, #005fa3);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* No results message */
+    .no-results {
+      padding: 2rem;
+      text-align: center;
+      background: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      margin: 1.5rem 0;
+    }
+    
+    .no-results h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .no-results p {
+      color: var(--text-color);
+      max-width: 400px;
+      margin: 0 auto;
+      font-size: 0.95rem;
+    }
+    
+    /* Section headers styling */
+    .section-header {
+      background: var(--info-bg);
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      margin: 1.5rem 0 1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .section-header:hover {
+      background: rgba(0,102,204,0.05);
+      color: var(--accent-color);
+    }
+    
+    .section-header::after {
+      content: "\f078";
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.8rem;
+      transition: transform 0.2s ease;
+    }
+    
+    details[open] > summary.section-header::after {
+      transform: rotate(180deg);
+    }
+    
+    details[open] > summary.section-header {
+      margin-bottom: 1rem;
+    }
+    
+    /* Remove default details marker */
+    details > summary {
+      list-style: none;
+    }
+    
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+    
+    /* ILAE Cards Grid */
+    .ilae-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* ILAE Card styling moved to the comprehensive definition below */
+
+    /* Cross Reference Styling */
+    .cross-ref {
+      color: var(--accent-color);
+      border-bottom: 1px dotted var(--accent-color);
+      position: relative;
+      cursor: help;
+    }
+    
+    .cross-ref .tooltip {
+      visibility: hidden;
+      width: 220px;
+      background: var(--info-bg);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      color: var(--text-color);
+      text-align: left;
+      padding: 0.8rem;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 100;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -110px;
+      opacity: 0;
+      transition: all 0.2s ease;
+      font-weight: normal;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    
+    .cross-ref:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+    
+    /* Modal Styling */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    .modal-content {
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #333333);
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 12px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 10000;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
+    }
+    
+    /* Dark mode styles for modal */
+    body.dark .modal-content {
+      background: var(--card-bg, #2a2a2a);
+      color: var(--text-color, #f5f5f5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    body.dark .modal-title {
+      color: var(--accent-color, #4db8ff);
+    }
+    
+    body.dark .modal-section h3 {
+      color: var(--accent-color, #4db8ff);
+    }
+    
+    body.dark .modal-section p {
+      color: var(--text-color, #e6e6e6);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--text-color, #666666);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      line-height: 1;
+      z-index: 10001;
+    }
+    
+    .modal-close:hover {
+      color: var(--accent-color, #0077b6);
+      transform: scale(1.1);
+    }
+    
+    .modal-title {
+      font-size: 1.8rem;
+      color: var(--accent-color, #0077b6);
+      margin-bottom: 1.5rem;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--accent-color, #0077b6);
+      font-weight: bold;
+    }
+    
+    .modal-section {
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    
+    .modal-section h3 {
+      color: var(--accent-color, #0077b6);
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .modal-section p {
+      line-height: 1.6;
+      color: var(--text-color, #333333);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    #pdfLinkContainer {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    
+    #pdfLink {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: var(--accent-color, #0077b6);
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+    }
+    
+    #pdfLink:hover {
+      background: var(--accent-hover, #005fa3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
+    }
+    
+    /* Additional resources section */
+    #ilae-classification-content h3 {
+      color: var(--primary-color);
+      margin: 2rem 0 1rem;
+      font-size: 1.3rem;
+    }
+    
+    #ilae-classification-content ul {
+      padding-left: 20px;
+      margin-bottom: 2rem;
+    }
+    
+    #ilae-classification-content ul li {
+      margin-bottom: 0.8rem;
+    }
+    
+    #ilae-classification-content ul li a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    #ilae-classification-content ul li a:before {
+      content: '\f15c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 400;
+      margin-right: 8px;
+      color: var(--accent-color);
+    }
+    
+    #ilae-classification-content ul li a:hover {
+      color: var(--accent-hover, #005fa3);
+      text-decoration: underline;
+    }
+    
+    /* Media queries for responsive design */
+    @media (max-width: 992px) {
+      #ilae-classification-content {
+        padding: 1.5rem;
+      }
+      
+      .ilae-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.8rem;
+      }
+      
+      .filter-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .filter-group {
+        width: 100%;
+      }
+      
+      .reset-filters {
+        align-self: center;
+        width: 100%;
+      }
+      
+      .section-header {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+      
+      .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+      }
+      
+      .modal-title {
+        font-size: 1.5rem;
+      }
+      
+      .cross-ref .tooltip {
+        width: 220px;
+        margin-left: -110px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: A1.5rem;
+      }
+      
+      #ilae-classification-content {
+        padding: 1rem;
+      }
+      
+      .ilae-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Animation for transitions */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    /* ILAE Reference Section */
+    .ilae-reference {
+      max-width: 1200px;
+      margin: 1rem auto 0;
+      padding: 1.5rem;
+      background: linear-gradient(to right, #f8f9fa, #edf2f7);
+      border-radius: 12px;
+      border-left: 4px solid #0066cc;
+      position: relative;
+    }
+    
+    .ilae-reference-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .ilae-logo {
+      width: 80px;
+      height: auto;
+      margin-right: 1rem;
+    }
+    
+    .ilae-reference-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #0066cc;
+      margin: 0;
+    }
+    
+    .ilae-reference p {
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+      color: #2d3748;
+    }
+    
+    .ilae-reference a {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    
+    .ilae-reference a:hover {
+      color: #004999;
+      text-decoration: underline;
+    }
+    
+    .ilae-reference-source {
+      text-align: right;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: #718096;
+      margin-top: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .ilae-reference {
+        padding: 1.2rem;
+      }
+      
+      .ilae-reference-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .ilae-logo {
+        margin-bottom: 0.8rem;
+      }
+    }
+
+    /* ILAE Resource Button Styles */
+    .ilae-button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem auto 1rem;
+      text-align: center;
+    }
+    
+    .ilae-resource-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 1rem auto 0;
+      padding: 8px 16px;
+      background-color: var(--accent-color);
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      width: fit-content;
+    }
+    
+    .ilae-resource-button:hover {
+      background-color: var(--accent-hover, #005fa3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      color: white;
+    }
+    
+    .ilae-resource-button i {
+      font-size: 14px;
+    }
+    
+    .ilae-resource-button .fa-external-link-alt {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+    
+    /* Dark mode support */
+    body.dark .ilae-resource-button {
+      background: linear-gradient(145deg, #0077e6, #1a62a3);
+      box-shadow: 0 10px 20px rgba(0, 102, 204, 0.3);
+    }
+    
+    body.dark .ilae-button-description {
+      color: var(--text-color);
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 768px) {
+      .ilae-resource-button {
+        padding: 0.7rem 1.2rem;
+      }
+      
+      .ilae-button-text {
+        font-size: 0.9rem;
+      }
+      
+      .ilae-button-logo {
+        width: 35px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .ilae-resource-button {
+        padding: 0.6rem 1rem;
+        max-width: 270px;
+      }
+      
+      .ilae-button-description {
+        font-size: 0.85rem;
+        margin-top: 0.7rem;
+      }
+    }
+
+    /* Comprehensive ILAE card styling with color coding */
+    .ilae-card {
+      background: var(--info-bg);
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      border-left: 3px solid var(--accent-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    
+    .ilae-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      background: linear-gradient(to bottom, var(--info-bg), rgba(240,248,255,0.5));
+    }
+    
+    .ilae-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      position: relative;
+      padding-bottom: 6px;
+    }
+    
+    .ilae-card h3:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent-color);
+      opacity: 0.7;
+    }
+    
+    .ilae-card p {
+      color: var(--text-color);
+      line-height: 1.5;
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Seizure type color indicators */
+    .ilae-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 30px;
+      height: 8px;
+      border-radius: 0 8px 0 8px;
+      z-index: 1; /* Ensure visibility */
+    }
+    
+    .ilae-card[data-type="focal"]::before {
+      background-color: #3498db !important; /* Blue for focal - using !important to override any conflicts */
+    }
+    
+    .ilae-card[data-type="generalized"]::before {
+      background-color: #e74c3c !important; /* Red for generalized */
+    }
+    
+    .ilae-card[data-type="combined"]::before {
+      background-color: #9b59b6 !important; /* Purple for combined/mixed */
+    }
+    
+    /* Age indicator dot */
+    .ilae-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 35px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      z-index: 1; /* Ensure visibility */
+    }
+    
+    .ilae-card[data-age="neonatal"]::after {
+      background-color: #f1c40f !important; /* Yellow for neonatal */
+    }
+    
+    .ilae-card[data-age="infant"]::after {
+      background-color: #2ecc71 !important; /* Green for infant */
+    }
+    
+    .ilae-card[data-age="childhood"]::after {
+      background-color: #f39c12 !important; /* Orange for childhood */
+    }
+    
+    .ilae-card[data-age="adolescent"]::after {
+      background-color: #1abc9c !important; /* Teal for adolescent */
+    }
+    
+    .ilae-card[data-age="variable"]::after {
+      background-color: #95a5a6 !important; /* Gray for variable age */
+    }
+    
+    /* Color legend for the cards */
+    .color-legend {
+      display: flex;
+      justify-content: center;
+      padding: 8px 15px;
+      margin: 0 auto 1.5rem;
+      background: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      max-width: 900px;
+      background-color: rgba(240, 240, 240, 0.4);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .legend-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .legend-subtitle {
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+    }
+    
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+    
+    .legend-separator {
+      color: #ccc;
+      margin: 0 4px;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
+      border-radius: 2px;
+    }
+    
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      margin-right: 4px;
+      border-radius: 50%;
+    }
+    
+    /* Dark mode adjustments */
+    body.dark .color-legend {
+      background-color: rgba(50, 50, 50, 0.3);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    @media (max-width: 768px) {
+      .legend-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-left: 0;
+        gap: 8px;
+      }
+      
+      .legend-separator {
+        display: none;
+      }
+      
+      .legend-subtitle {
+        align-self: center;
+        padding-left: 0;
+        margin-bottom: 8px;
+      }
+    }
+
+    /* Color legend styling */
+    .legend-focal { background: #3498db; }
+    .legend-generalized { background: #e74c3c; }
+    .legend-combined { background: #9b59b6; }
+
+    .legend-neonatal { background: #f1c40f; }
+    .legend-infant { background: #2ecc71; }
+    .legend-childhood { background: #f39c12; }
+    .legend-adolescent { background: #1abc9c; }
+    .legend-variable { background: #95a5a6; }
+    
+    /* Two‑column layout: sidebar and main content */
+    .ilae-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.5rem;
+    }
+    
+    /* Make the sidebar sticky and scrollable */
+    .ilae-sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+    
+    /* Responsive: single column on smaller screens */
+    @media (max-width: 992px) {
+      .ilae-layout {
+        grid-template-columns: 1fr;
+      }
+      .ilae-sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    /* Seizure Classification Styles - 2025 Update */
+    .classification-diagram {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .classification-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .classification-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    
+    .classification-column {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+    }
+    
+    .classification-type {
+      border-radius: 10px;
+      padding: 1.5rem;
+      height: 100%;
+    }
+    
+    .classification-type h4 {
+      margin-top: 0;
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .classification-type.focal {
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.2) 100%);
+      border: 1px solid rgba(52, 152, 219, 0.3);
+    }
+    
+    .classification-type.generalized {
+      background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.2) 100%);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .classification-type.unknown {
+      background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.2) 100%);
+      border: 1px solid rgba(155, 89, 182, 0.3);
+    }
+    
+    .classification-subtypes {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .subtype-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .subtype-card h5 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .subtype-card ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+    }
+    
+    .subtype-card li {
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+    
+    /* Key Changes Section */
+    .key-changes-section {
+      margin: 2rem 0;
+    }
+    
+    .key-changes-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .changes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .change-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .change-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .change-icon i {
+      font-size: 24px;
+      color: white;
+    }
+    
+    .change-card h4 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+    }
+    
+    .change-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Interactive Seizure Explorer */
+    .interactive-section {
+      margin: 2rem 0;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .interactive-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .seizure-explorer {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .seizure-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .seizure-selector select {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+      width: 100%;
+    }
+    
+    .seizure-details {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      min-height: 200px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .placeholder-message {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 2rem 0;
+    }
+    
+    /* Clinical Examples */
+    .clinical-examples-section {
+      margin: 2.5rem 0;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .clinical-examples-section h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    
+    .examples-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .example-card {
+      background: var(--info-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .example-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+    
+    .example-header {
+      padding: 0.8rem 1.2rem;
+      background: var(--accent-color);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .classification-tag {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .example-content {
+      padding: 1.2rem;
+    }
+    
+    .example-scenario {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .example-classification,
+    .example-reasoning,
+    .example-evolution,
+    .example-manifestations {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    
+    .example-classification:before,
+    .example-reasoning:before,
+    .example-evolution:before,
+    .example-manifestations:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 5px;
+      height: 5px;
+      background: var(--accent-color);
+      border-radius: 50%;
+    }
+    
+    .example-classification strong,
+    .example-reasoning strong,
+    .example-evolution strong,
+    .example-manifestations strong {
+      color: var(--primary-color);
+    }
+    
+    .more-examples-container {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .more-examples-button {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .more-examples-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    
+    .more-examples-content {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .examples-citation {
+      text-align: center;
+      font-size: 0.85rem;
+      font-style: italic;
+      opacity: 0.8;
+      margin-top: 1rem;
+    }
+    
+    @media (max-width: 992px) {
+      .examples-grid,
+      .more-examples-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Decision Tree */
+    .decision-tree-section {
+      margin: 2rem 0;
+    }
+    
+    .decision-tree-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .decision-tree-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .decision-level {
+      display: flex;
+      gap: 1.5rem;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .decision-node {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      min-width: 250px;
+      max-width: 300px;
+      position: relative;
+    }
+    
+    .node-content {
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .node-content p {
+      margin: 0;
+      font-weight: 500;
+    }
+    
+    .node-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    
+    .node-options .option {
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: var(--accent-color);
+      color: white;
+      font-size: 0.85rem;
+    }
+    
+    .decision-node.start {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .node-connector {
+      height: 20px;
+      width: 2px;
+      background: var(--border-color);
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    /* Clinical Tips */
+    .clinical-tips-section {
+      margin: 2rem 0;
+    }
+    
+    .clinical-tips-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .tips-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .tip-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      position: relative;
+      padding-left: 3.5rem;
+    }
+    
+    .tip-number {
+      position: absolute;
+      left: 1.5rem;
+      top: 1.5rem;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+    }
+    
+    .tip-card h4 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+    }
+    
+    .tip-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* EEG Table */
+    .eeg-section {
+      margin: 2rem 0;
+    }
+    
+    .eeg-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .eeg-table-container {
+      overflow-x: auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .eeg-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .eeg-table th, .eeg-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .eeg-table th {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 500;
+    }
+    
+    .eeg-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* Resources */
+    .resources-section {
+      margin: 2rem 0;
+    }
+    
+    .resources-section h3 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .resource-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+      color: var(--text-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .resource-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .resource-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .resource-icon i {
+      font-size: 20px;
+      color: white;
+    }
+    
+    .resource-content h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+    }
+    
+    .resource-content p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .classification-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .classification-column {
+        width: 100%;
+      }
+      
+      .decision-tree-container {
+        padding: 1rem;
+      }
+      
+      .decision-node {
+        min-width: 220px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .classification-diagram,
+      .interactive-section,
+      .decision-tree-container,
+      .eeg-table-container {
+        padding: 1.25rem;
+      }
+      
+      .changes-grid,
+      .examples-grid,
+      .tips-container,
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .tip-card {
+        padding-left: 1.5rem;
+        padding-top: 3rem;
+      }
+      
+      .tip-number {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      .resource-card {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .classification-diagram,
+      .interactive-section,
+      .decision-tree-container,
+      .eeg-table-container {
+        padding: 1rem;
+        border-radius: 12px;
+      }
+      
+      .subtype-card {
+        padding: 0.75rem;
+      }
+      
+      .eeg-table th, .eeg-table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* Carousel styles moved to ilae-classification.css */
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-ilae_classification">
+      <h2 class="page-title">ILAE Classification of the Epilepsies</h2>
+      <!-- Tab Buttons -->
+      <div class="tab-buttons">
+        <button id="classification-tab-btn" class="active" onclick="showILaeTab('classification')">Seizure Classification</button>
+        <button id="syndromes-tab-btn" onclick="showILaeTab('syndromes')">Epilepsy Syndromes</button>
+      </div>
+      <!-- Seizure Classification Content -->
+      <div id="classification-tab" class="ilae-tab-content">
+        <div class="intro-text">
+          <div class="intro-pdf-link intro-pdf-link-centered">
+            <a href="https://www.ilae.org/files/dmfile/updated-classification-of-epileptic-seizures-2025.pdf" target="_blank" class="pdf-button">
+              <i class="fas fa-file-pdf"></i> Download the ILAE Classification PDF
+            </a>
+          </div>
+        </div>
+        
+        <!-- Classification diagram -->
+        <div class="classification-diagram">
+          <div class="classification-header">
+            <h3>2025 ILAE Seizure Classification Framework</h3>
+          </div>
+          <div class="classification-container">
+            <div class="classification-column">
+              <div class="classification-type focal">
+                <h4>Focal</h4>
+                <p>Seizures originating within networks limited to one hemisphere</p>
+                <div class="classification-subtypes">
+                  <div class="subtype-card">
+                    <h5>With Preserved Consciousness</h5>
+                    <p>Patient maintains awareness of self and environment</p>
+                    <ul>
+                      <li>Observable manifestations</li>
+                      <li>Nonobservable manifestations</li>
+                    </ul>
+                  </div>
+                  <div class="subtype-card">
+                    <h5>With Impaired Consciousness</h5>
+                    <p>Patient has altered awareness of self and environment</p>
+                    <ul>
+                      <li>Observable manifestations may occur</li>
+                      <li>Automatisms may be present</li>
+                    </ul>
+                  </div>
+                  <div class="subtype-card">
+                    <h5>Bilateral Tonic-Clonic</h5>
+                    <p>Begins focally and evolves to engage both hemispheres</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="classification-column">
+              <div class="classification-type generalized">
+                <h4>Generalized Onset</h4>
+                <p>Seizures originating within and rapidly engaging bilateral networks</p>
+                <div class="classification-subtypes">
+                  <div class="subtype-card">
+                    <h5>Motor</h5>
+                    <ul>
+                      <li>Tonic-clonic</li>
+                      <li>Clonic</li>
+                      <li>Tonic</li>
+                      <li>Myoclonic</li>
+                      <li>Myoclonic-tonic-clonic</li>
+                      <li>Myoclonic-atonic</li>
+                      <li>Atonic</li>
+                      <li>Epileptic spasms</li>
+                    </ul>
+                  </div>
+                  <div class="subtype-card">
+                    <h5>Non-Motor (Absence)</h5>
+                    <ul>
+                      <li>Typical</li>
+                      <li>Atypical</li>
+                      <li>Myoclonic</li>
+                      <li>Eyelid myoclonia</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="classification-column">
+              <div class="classification-type unknown">
+                <h4>Unknown</h4>
+                <p>When the onset is not clearly determined whether focal or generalized</p>
+                <div class="classification-subtypes">
+                  <div class="subtype-card">
+                    <h5>With Preserved Consciousness</h5>
+                    <p>Patient maintains awareness of self and environment</p>
+                    <ul>
+                      <li>Observable manifestations</li>
+                      <li>Nonobservable manifestations</li>
+                    </ul>
+                  </div>
+                  <div class="subtype-card">
+                    <h5>With Impaired Consciousness</h5>
+                    <p>Patient has altered awareness of self and environment</p>
+                    <ul>
+                      <li>Observable manifestations may occur</li>
+                      <li>Automatisms may be present</li>
+                    </ul>
+                  </div>
+                  <div class="subtype-card">
+                    <h5>Bilateral Tonic-Clonic</h5>
+                    <p>Unknown whether focal or generalized in origin</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Examples Section (Simple Version) -->
+        <div class="clinical-examples-section">
+          <h3>Clinical Examples</h3>
+          <p class="examples-description">Examples illustrating the practical application of the 2025 ILAE seizure classification</p>
+          
+          <div class="examples-carousel">
+            <!-- Example 1 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Unknown - Bilateral Tonic-Clonic (BTC)
+              </div>
+              <div class="example-content">
+                <p>A young woman awakens to find her 20-year-old boyfriend having a seizure in bed. The onset is not witnessed, but she is able to describe bilateral stiffening followed by bilateral "shaking." EEG and MRI findings are normal.</p>
+                <p><strong>Classification:</strong> Bilateral tonic–clonic seizure—unknown whether focal or generalized (BTC)</p>
+              </div>
+            </div>
+            
+            <!-- Example 2 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Focal to Bilateral Tonic-Clonic (FBTC)
+              </div>
+              <div class="example-content">
+                <p>In an alternate scenario of the previous case, the EEG shows a clear right parietal slow-wave focus. The MRI shows a right parietal region of cortical dysplasia.</p>
+                <p><strong>Classification:</strong> Focal to bilateral tonic–clonic seizure (FBTC)</p>
+              </div>
+            </div>
+            
+            <!-- Example 3 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Focal - Impaired Consciousness (FIC)
+              </div>
+              <div class="example-content">
+                <p>A 25-year-old woman describes seizures beginning with 30s of an intense feeling that "familiar music is playing." She can hear other people talking but afterward realizes that she could not determine what they were saying. Eyewitnesses report that the patient does not respond to external stimuli during the seizure.</p>
+                <p><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
+                <p><strong>Evolution:</strong> Auditory aura → Receptive aphasia → Impaired responsiveness → Postictal confusion</p>
+              </div>
+            </div>
+            
+            <!-- Example 4 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Focal - Preserved Consciousness (FPC)
+              </div>
+              <div class="example-content">
+                <p>A 22-year-old man has seizures during which he remains fully aware, with the "hair on my arms standing on edge" and a feeling of being flushed.</p>
+                <p><strong>Classification:</strong> Focal preserved consciousness seizure (FPC) with observable manifestations: piloerection + flushing</p>
+              </div>
+            </div>
+            
+            <!-- Example 5 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Generalized Myoclonic-Tonic-Clonic
+              </div>
+              <div class="example-content">
+                <p>A 13-year-old with juvenile myoclonic epilepsy has seizures beginning with a few jerks, followed by stiffening of all limbs and then rhythmic jerking of all limbs.</p>
+                <p><strong>Classification:</strong> Generalized myoclonic-tonic–clonic seizures (GTC)</p>
+              </div>
+            </div>
+            
+            <!-- Example 6 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Generalized Epileptic Spasm
+              </div>
+              <div class="example-content">
+                <p>A 3-month-old boy has clusters of short seizures with flexion in the neck and hips, and abduction in the shoulders of short duration (up to 2s). Video-EEG showed epileptic spasms associated with a generalized suppression on EEG.</p>
+                <p><strong>Classification:</strong> Generalized epileptic spasm (GES)</p>
+              </div>
+            </div>
+            
+            <!-- Example 7 -->
+            <div class="example-slide">
+              <div class="example-header">
+                Focal Epileptic Spasms
+              </div>
+              <div class="example-content">
+                <p>A 14-month-old girl has sudden extension of both arms and flexion of the trunk for approximately 2s. These seizures repeat in clusters. EEG shows hypsarrhythmia with bilateral spikes, most prominent over the left parietal region. MRI shows left parietal cortical dysplasia.</p>
+                <p><strong>Classification:</strong> Focal seizure with epileptic spasms (focal epileptic spasms)</p>
+              </div>
+            </div>
+            
+            <!-- Example 8 -->
+            <div class="example-slide">
+              <div class="example-header">
+                FPC with Automatisms
+              </div>
+              <div class="example-content">
+                <p>During video-EEG monitoring, a 28-year-old female patient experiences an ascending sensation from the stomach and then starts chewing and manipulating nearby objects using the right hand. The patient can recall what happens and is able to respond.</p>
+                <p><strong>Classification:</strong> Focal preserved consciousness seizure (FPC)</p>
+                <p><strong>Evolution:</strong> Epigastric aura → Oroalimentary automatisms + gestural automatisms with preserved awareness</p>
+              </div>
+            </div>
+            
+            <!-- Example 9 -->
+            <div class="example-slide">
+              <div class="example-header">
+                FBTC with Visual Aura
+              </div>
+              <div class="example-content">
+                <p>An 8-year-old boy reports episodes starting with seeing colored dots and stripes on the left side. Eyewitnesses report that he does not respond, turns his head to the left, becomes stiff, and then has jerks in all limbs.</p>
+                <p><strong>Classification:</strong> Focal-to-bilateral tonic–clonic seizure (FBTC)</p>
+                <p><strong>Evolution:</strong> Visual aura → Versive to left + loss of awareness → Bilateral tonic–clonic</p>
+              </div>
+            </div>
+            
+            <!-- Example 10 -->
+            <div class="example-slide">
+              <div class="example-header">
+                FIC with Automatisms
+              </div>
+              <div class="example-content">
+                <p>A 33-year-old man experienced seizures accompanied by a feeling of abdominal discomfort followed by loss of awareness. His wife reported episodes of lip smacking, fumbling hand movements, and occasional right-hand posturing.</p>
+                <p><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
+                <p><strong>Evolution:</strong> Epigastric aura → Impaired awareness → Oroalimentary automatisms + gestural automatisms + dystonic posturing</p>
+              </div>
+            </div>
+            
+            <!-- Carousel Navigation -->
+            <div class="carousel-nav">
+              <button class="carousel-prev">&#10094;</button>
+              <div class="carousel-dots">
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+                <span class="carousel-dot"></span>
+              </div>
+              <button class="carousel-next">&#10095;</button>
+              <button class="carousel-pause"><i class="fas fa-pause"></i></button>
+            </div>
+          </div>
+          
+          <p class="examples-attribution">Examples adapted from the 2025 ILAE Classification of Epileptic Seizures</p>
+        </div>
+
+        <!-- Resources Section -->
+        <!-- Additional Resources section removed as requested -->
+      </div>
+      <!-- Epilepsy Syndromes Content -->
+      <div id="syndromes-tab" class="ilae-tab-content">
+        <div id="ilae-classification-content" class="ilae-container ilae-layout">
+          <!-- Search and filter section -->
+          <aside class="ilae-sidebar">
+            <div class="search-container">
+            <!-- Search bar -->
+            <div class="search-box">
+              <input type="text" id="searchBar" placeholder="Search epilepsy syndromes..." />
+            </div>
+      
+            <!-- Filter Controls -->
+            <div class="filter-container">
+              <div class="filter-group">
+                <label for="age-filter">Age of Onset:</label>
+                <select id="age-filter" class="filter-dropdown">
+                  <option value="all">All Ages</option>
+                  <option value="neonatal">Neonatal (0-28 days)</option>
+                  <option value="infant">Infant (1-12 months)</option>
+                  <option value="childhood">Childhood (1-10 years)</option>
+                  <option value="adolescent">Adolescent (10-18 years)</option>
+                  <option value="variable">Variable Age of Onset</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="type-filter">Seizure Type:</label>
+                <select id="type-filter" class="filter-dropdown">
+                  <option value="all">All Types</option>
+                  <option value="focal">Focal Epilepsies</option>
+                  <option value="generalized">Generalized Epilepsies</option>
+                  <option value="combined">Combined/Mixed Epilepsies</option>
+                </select>
+              </div>
+              <button id="reset-filters" class="reset-filters">Reset Filters</button>
+            </div>
+            </div>
+          </aside>
+          
+          <div class="ilae-main-content">
+            <!-- Add the color legend at the top of the main content -->
+            <div class="color-legend">
+              <div class="legend-group">
+                <div class="legend-subtitle">Color Code: </div>
+                <div class="legend-row">
+                  <div class="legend-item"><span class="legend-color legend-focal"></span>Focal</div>
+                  <div class="legend-item"><span class="legend-color legend-generalized"></span>Generalized</div>
+                  <div class="legend-item"><span class="legend-color legend-combined"></span>Combined</div>
+                  <div class="legend-separator">|</div>
+                  <div class="legend-item"><span class="legend-dot legend-neonatal"></span>Neonatal</div>
+                  <div class="legend-item"><span class="legend-dot legend-infant"></span>Infant</div>
+                  <div class="legend-item"><span class="legend-dot legend-childhood"></span>Childhood</div>
+                  <div class="legend-item"><span class="legend-dot legend-adolescent"></span>Adolescent</div>
+                  <div class="legend-item"><span class="legend-dot legend-variable"></span>Variable Age</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Introduction text with embedded button -->
+            <div class="intro-text">
+              <p>The ILAE Classification provides a framework for classifying seizures, epilepsies, and epilepsy syndromes. This page presents an overview of these classifications to help with the understanding and diagnosis of epilepsy.</p>
+              <a href="https://www.epilepsydiagnosis.org" target="_blank" class="ilae-resource-button">
+                <i class="fas fa-brain"></i>
+                <span>Visit Official ILAE Classification Website</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+      
+            <!-- No Results Message -->
+            <div id="no-results" class="no-results">
+              <h3>No matching epilepsy syndromes found</h3>
+              <p>Try adjusting your filter criteria or click "Reset Filters" to show all syndromes.</p>
+            </div>
+            
+            <!-- Content Container -->
+            <section class="ilae-content">
+            <div id="contentContainer">
+              <!-- Section 1: Neonates and Infants -->
+              <details open>
+                <summary class="section-header">Epilepsy Syndromes with Onset in Neonates and Infants</summary>
+                <div class="ilae-grid">
+                  <!-- Card: Self‑Limited Neonatal Epilepsy (SeLNE) -->
+                  <div class="ilae-card"
+                       data-title="Self‑Limited Neonatal Epilepsy (SeLNE)"
+                       data-summary="Focal seizures typically starting between days 2 and 7 of life with normal development between events. Most common genetic cause is KCNQ2 mutations."
+                       data-eeg="Interictal EEG may show mild background slowing with occasional focal discharges. Ictal EEG shows focal sharp waves or spikes predominantly in the central and temporal regions."
+                       data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=9"
+                       data-age="neonatal"
+                       data-type="focal">
+                    <h3>Self‑Limited Neonatal Epilepsy (SeLNE)</h3>
+                    <p>Focal seizures starting between days 2 and 7 with normal development. Associated with <span class="cross-ref">KCNQ2<span class="tooltip">KCNQ2 mutations affect potassium channels and are the most common cause of self-limited neonatal epilepsy. Most cases follow autosomal dominant inheritance.</span></span> mutations.</p>
+                  </div>
+                  <!-- Card: Infantile Spasms -->
+                  <div class="ilae-card"
+                       data-title="Infantile Spasms"
+                       data-summary="Characterized by clusters of epileptic spasms, a chaotic hypsarrhythmic EEG pattern, and developmental regression. Peak onset is 4-7 months of age."
+                       data-eeg="EEG typically shows chaotic, high‐amplitude hypsarrhythmia with multifocal spikes, polyspikes, and slow waves. During spasms, there is often an electrodecremental response."
+                       data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=22"
+                       data-age="infant"
+                       data-type="generalized">
+                    <h3>Infantile Spasms</h3>
+                    <p>Clusters of spasms with chaotic EEG and developmental regression. Peak onset 4-7 months.</p>
+                  </div>
+                  <!-- Card: Early Infantile Epileptic Encephalopathy (EIEE) -->
+                  <div class="ilae-card"
+                       data-title="Early Infantile Epileptic Encephalopathy (EIEE)"
+                       data-summary="Also known as Ohtahara syndrome, EIEE presents with severe neonatal encephalopathy, tonic seizures, and a suppression-burst EEG pattern. Onset is typically within the first 10 days of life."
+                       data-eeg="EEG demonstrates a characteristic suppression-burst pattern in both waking and sleeping states, consisting of high-voltage bursts alternating with nearly flat suppression phases at regular intervals."
+                       data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=16"
+                       data-age="neonatal"
+                       data-type="generalized">
+                    <h3>Early Infantile Epileptic Encephalopathy (EIEE)</h3>
+                    <p>Severe neonatal encephalopathy with tonic seizures and suppression-burst on EEG. Also known as <span class="cross-ref">Ohtahara syndrome<span class="tooltip">Named after Dr. Shunsuke Ohtahara who first described it in 1976. Often evolves into West syndrome (infantile spasms) after 3-6 months.</span></span>.</p>
+                  </div>
+                  <!-- Card: Epilepsy of Infancy with Migrating Focal Seizures (EIMFS) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)"
+                       data-summary="Rare syndrome with multifocal seizures that migrate between brain regions; most common genetic causes include KCNT1 mutations. Onset typically before 6 months of age with poor prognosis."
+                       data-eeg="EEG shows a unique pattern of focal seizures that shift from one hemisphere to another during the same recording. Characteristic 'migration' of ictal foci is pathognomonic."
+                       data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=20"
+                       data-age="infant"
+                       data-type="focal">
+                    <h3>Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)</h3>
+                    <p>Multifocal, migrating focal seizures with onset before 6 months. Associated with <span class="cross-ref">KCNT1<span class="tooltip">KCNT1 encodes a sodium-activated potassium channel. Mutations lead to gain of function and increased excitability. Other genes involved include SCN1A, SCN2A, and KCNQ2.</span></span> mutations.</p>
+                  </div>
+                  <!-- Added Card: Dravet Syndrome -->
+                  <div class="ilae-card"
+                       data-title="Dravet Syndrome"
+                       data-summary="Previously known as Severe Myoclonic Epilepsy of Infancy (SMEI). Characterized by prolonged, fever-sensitive seizures in the first year, followed by multiple seizure types. Associated with SCN1A mutations in 80% of cases."
+                       data-eeg="Early EEG may be normal, but later shows generalized spike and polyspike-wave discharges, photosensitivity, and focal/multifocal abnormalities."
+                       data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=25"
+                       data-age="infant"
+                       data-type="combined">
+                    <h3>Dravet Syndrome</h3>
+                    <p>Begins with prolonged, often fever-triggered seizures in the first year. Associated with <span class="cross-ref">SCN1A<span class="tooltip">SCN1A gene provides instructions for making sodium channel subunits. Mutations lead to impaired function of inhibitory interneurons, causing hyperexcitability. 90% of mutations occur de novo.</span></span> mutations (80% of cases).</p>
+                  </div>
+                </div>
+              </details>
+              
+              <!-- Section 2: Self‑Limited Focal Epilepsies of Childhood -->
+              <details open>
+                <summary class="section-header">Self‑Limited Focal Epilepsies of Childhood</summary>
+                <div class="ilae-grid">
+                  <!-- Card: Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS) -->
+                  <div class="ilae-card"
+                       data-title="Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)"
+                       data-summary="Formerly called Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Focal seizures with centrotemporal semiology, typically occurring during sleep. Remission is expected by adolescence."
+                       data-eeg="EEG shows high‐amplitude centrotemporal sharp‐and‐slow wave complexes on a normal background, enhanced during drowsiness and sleep."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=6"
+                       data-age="childhood"
+                       data-type="focal">
+                    <h3>Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)</h3>
+                    <p>Focal centrotemporal seizures during sleep with remission by adolescence. Formerly called <span class="cross-ref">BECTS<span class="tooltip">Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Name changed to Self-Limited Epilepsy with Centrotemporal Spikes in the 2017 ILAE classification to avoid the term "benign" as cognitive and behavioral issues can occur.</span></span>.</p>
+                  </div>
+                  <!-- Card: Self-­ limited epilepsy with autonomic seizures (SeLEAS) -->
+                  <div class="ilae-card"
+                       data-title="Self-­Limited epilepsy with autonomic seizures (SeLEAS)"
+                       data-summary="Formerly known as Panayiotopoulos syndrome or early onset benign occipital epilepsy. Characterized by focal autonomic seizures that are often prolonged, with peak onset at 3-6 years. Excellent prognosis with spontaneous resolution."
+                       data-eeg="EEG shows high-­amplitude (>200 μV) focal spikes with variable localization, predominantly in the posterior regions, activated by sleep."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=10"
+                       data-age="childhood"
+                       data-type="focal">
+                    <h3>Self-­Limited Epilepsy with Autonomic Seizures (SeLEAS)</h3>
+                    <p>Onset in early childhood of focal autonomic seizures that are often prolonged. Formerly known as <span class="cross-ref">Panayiotopoulos syndrome<span class="tooltip">Named after Dr. Chrysostomos P. Panayiotopoulos. Key features include ictal vomiting, pallor, and eye deviation. Despite often prolonged seizures (>30 minutes in 40% of cases), prognosis is excellent.</span></span>.</p>
+                  </div>
+                  <!-- Card: Childhood Occipital Visual Epilepsy (COVE) -->
+                  <div class="ilae-card"
+                       data-title="Childhood Occipital Visual Epilepsy (COVE)"
+                       data-summary="Formerly known as Gastaut type of childhood occipital epilepsy. Characterized by focal visual seizures with occipital EEG abnormalities, often accompanied by visual auras (elementary visual hallucinations), headache, and ictal blindness."
+                       data-eeg="EEG shows interictal occipital spikes with normal background, especially during sleep. Ictal EEG demonstrates occipital onset with fast rhythmic activity."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=12"
+                       data-age="childhood"
+                       data-type="focal">
+                    <h3>Childhood Occipital Visual Epilepsy (COVE)</h3>
+                    <p>Focal visual seizures with occipital EEG findings and favorable prognosis. Formerly called <span class="cross-ref">Gastaut type<span class="tooltip">Named after Henri Gastaut. Distinguished from migraine by brief duration of visual symptoms (seconds to minutes), stereotypical appearance, and potential evolution to other seizure types.</span></span> of childhood occipital epilepsy.</p>
+                  </div>
+                  <!-- Card: Photosensitive Occipital Lobe Epilepsy (POLE) -->
+                  <div class="ilae-card"
+                       data-title="Photosensitive Occipital Lobe Epilepsy (POLE)"
+                       data-summary="Triggered by photic stimulation, presenting with focal visual seizures; strong female predominance noted. May evolve from visual symptoms to complex partial or generalized tonic-clonic seizures."
+                       data-eeg="EEG shows occipital spike‑and‑wave discharges enhanced by eye closure and photic stimulation. Photosensitivity is the hallmark feature."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=14"
+                       data-age="childhood"
+                       data-type="focal">
+                    <h3>Photosensitive Occipital Lobe Epilepsy (POLE)</h3>
+                    <p>Focal visual seizures triggered by light with characteristic occipital EEG patterns. Strong <span class="cross-ref">female predominance<span class="tooltip">Female predominance is a common feature of photosensitive epilepsies, possibly related to hormonal influences on neural excitability.</span></span>.</p>
+                  </div>
+                </div>
+              </details>
+        
+              <!-- Section 3: Generalized Epilepsies of Childhood -->
+              <details open>
+                <summary class="section-header">Generalized Epilepsies of Childhood</summary>
+                <div class="ilae-grid">
+                  <!-- Card: Childhood Absence Epilepsy (CAE) -->
+                  <div class="ilae-card"
+                       data-title="Childhood Absence Epilepsy (CAE)"
+                       data-summary="Characterized by brief impaired awareness episodes with a regular 3 Hz spike‑and‑wave pattern on EEG. Typical onset between 4-10 years with high frequency of absences (many per day)."
+                       data-eeg="EEG displays a consistent 3 Hz spike‑and‑wave discharge on a normal background, bilaterally synchronous and symmetrical."
+                       data-pdf="assets/documents/idiopathic-generalized2.pdf#page=8"
+                       data-age="childhood"
+                       data-type="generalized">
+                    <h3>Childhood Absence Epilepsy (CAE)</h3>
+                    <p>Brief staring spells with classic 3 Hz spike‑and‑wave EEG activity. Peak onset 5-7 years with <span class="cross-ref">multiple daily episodes<span class="tooltip">Children may have dozens to hundreds of absence seizures per day, each lasting 5-30 seconds. Often misinterpreted as daydreaming or inattention. Can be provoked by hyperventilation in about 90% of patients.</span></span>.</p>
+                  </div>
+                  <!-- Card: Epilepsy with eyelid myoclonia (EEM) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy with eyelid myoclonia (EEM)"
+                       data-summary="Also known as Jeavons syndrome. A triad of frequent eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Eyelid myoclonia is often most prominent upon awakening."
+                       data-eeg="Eye closure and intermittent photic stimulation elicits fast (3‑6 Hz) generalized polyspikes or polyspike-and-wave complexes."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=17"
+                       data-age="childhood"
+                       data-type="generalized">
+                    <h3>Epilepsy with Eyelid Myoclonia (EEM)</h3>
+                    <p>Eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Also called <span class="cross-ref">Jeavons syndrome<span class="tooltip">Named after Peter Jeavons who first described it in 1977. Features the triad of eyelid myoclonia with or without absences, eye-closure sensitivity, and photosensitivity. Often resistant to medications.</span></span>.</p>
+                  </div>
+                  <!-- Card: Epilepsy with Myoclonic Atonic Seizures (EMAtS) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy with Myoclonic Atonic Seizures (EMAtS)"
+                       data-summary="Previously known as Doose syndrome. A severe syndrome with myoclonic and atonic seizures leading to drop attacks and generalized EEG abnormalities. Onset typically between 2-5 years of age."
+                       data-eeg="EEG demonstrates generalized spike-wave or polyspike-wave discharges (2-3 Hz) with myoclonic and atonic components. Background may show theta rhythms."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=22"
+                       data-age="childhood"
+                       data-type="generalized">
+                    <h3>Epilepsy with Myoclonic Atonic Seizures (EMAtS)</h3>
+                    <p>Myoclonic and atonic seizures causing drop attacks with generalized EEG findings. Previously called <span class="cross-ref">Doose syndrome<span class="tooltip">Named after Hermann Doose who described it in 1970. Characterized by diverse seizure types, with myoclonic-atonic seizures being the hallmark. Children often have normal development before seizure onset.</span></span>.</p>
+                  </div>
+                  <!-- Card: Epilepsy with Myoclonic Absence (EMA) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy with Myoclonic Absence (EMA)"
+                       data-summary="Very rare childhood epilepsy syndrome that presents with daily myoclonic absence seizures characterized by rhythmic myoclonic jerks with impaired consciousness. Often resistant to medications with poor outcome."
+                       data-eeg="EEG demonstrates regular 3-Hz generalized spike-and-wave pattern time-locked with myoclonic jerks, distinguishing it from typical absence seizures."
+                       data-pdf="assets/documents/onset-in-childhood2.pdf#page=19"
+                       data-age="childhood"
+                       data-type="generalized">
+                    <h3>Epilepsy with Myoclonic Absence (EMA)</h3>
+                    <p>Very rare childhood epilepsy syndrome with daily myoclonic absence seizures. Features <span class="cross-ref">rhythmic 3 Hz jerking<span class="tooltip">During seizures, there is rhythmic myoclonic jerking at 3 Hz, often involving the shoulders and arms, with concomitant impaired awareness. Seizures typically last 10-60 seconds and may cause progressive drop of arms.</span></span> with impaired consciousness.</p>
+                  </div>
+                </div>
+              </details>
+        
+              <!-- Section 4: Idiopathic Generalized Epilepsies (IGE) -->
+              <details open>
+                <summary class="section-header">Idiopathic Generalized Epilepsies (IGE)</summary>
+                <div class="ilae-grid">
+                  <!-- Card: Juvenile Absence Epilepsy (JAE) -->
+                  <div class="ilae-card"
+                       data-title="Juvenile Absence Epilepsy (JAE)"
+                       data-summary="Characterized by less frequent absence seizures than CAE, with onset in adolescence (10-16 years). More than 90% have generalized tonic-clonic seizures, distinguishing it from CAE."
+                       data-eeg="EEG exhibits a consistent 3-5.5 Hz spike‑and‑wave discharge on a normal background, typically faster than the 3 Hz pattern of CAE."
+                       data-pdf="assets/documents/idiopathic-generalized2.pdf#page=11"
+                       data-age="adolescent"
+                       data-type="generalized">
+                    <h3>Juvenile Absence Epilepsy (JAE)</h3>
+                    <p>Brief impaired awareness episodes with >3 Hz spike‑and‑wave EEG. Distinguished from CAE by <span class="cross-ref">later onset (10-16 years)<span class="tooltip">Unlike CAE, JAE features less frequent absences but >90% develop generalized tonic-clonic seizures. Absences are typically less frequent than in CAE but may be longer in duration.</span></span> and frequent GTCs.</p>
+                  </div>
+                  <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
+                  <div class="ilae-card"
+                       data-title="Juvenile Myoclonic Epilepsy (JME)"
+                       data-summary="The most common IGE in adolescents, characterized by myoclonic jerks soon after waking, and may include absence and generalized tonic–clonic seizures. Strong genetic component and lifelong treatment often required."
+                       data-eeg="EEG shows generalized polyspike‑and‑wave discharges at 3-5.5 Hz with photic sensitivity in about 30-40% of patients."
+                       data-pdf="assets/documents/idiopathic-generalized2.pdf#page=14"
+                       data-age="adolescent"
+                       data-type="generalized">
+                    <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
+                    <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‑and‑wave EEG. Prominent <span class="cross-ref">morning jerks<span class="tooltip">Myoclonic jerks typically occur within 1-2 hours after awakening and can be triggered by sleep deprivation, alcohol, and stress. JME has a strong genetic component and usually requires lifelong treatment.</span></span> with high photosensitivity.</p>
+                  </div>
+                  <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)"
+                       data-summary="Features isolated generalized tonic–clonic seizures without other seizure types, with standard treatment response. Seizures often occur shortly after awakening or during relaxation after exertion."
+                       data-eeg="EEG reveals 3-5.5 Hz generalized spike-wave or polyspike-wave discharges on a normal background. Interictal EEG may be normal in up to 50% of patients."
+                       data-pdf="assets/documents/idiopathic-generalized2.pdf#page=18"
+                       data-age="adolescent"
+                       data-type="generalized">
+                    <h3>Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)</h3>
+                    <p>Isolated generalized tonic–clonic seizures with normal interictal EEG in up to 50% of cases. Often <span class="cross-ref">sleep-related<span class="tooltip">GTCA seizures frequently occur shortly after awakening (within the first 2 hours) or during relaxation periods. About 80% of patients respond well to appropriate anti-seizure medications.</span></span>.</p>
+                  </div>
+                </div>
+              </details>
+              
+              <!-- Section 5: Epilepsy Syndromes with Onset at a Variable Age -->
+              <details open>
+                <summary class="section-header">Epilepsy Syndromes with Onset at a Variable Age</summary>
+                <div class="ilae-grid">
+                  <!-- Card: Sleep-Related Hypermotor Epilepsy (SHE) -->
+                  <div class="ilae-card"
+                       data-title="Sleep-Related Hypermotor Epilepsy (SHE)"
+                       data-summary="Formerly known as Nocturnal Frontal Lobe Epilepsy (NFLE). Features brief, stereotyped hyperkinetic seizures predominantly during sleep; may be associated with both genetic (e.g., CHRNA4, KCNT1) and structural causes."
+                       data-eeg="Scalp EEG during sleep shows hyperkinetic movements with abnormal frontal activity in only 50% of cases due to the deep location of seizure origin."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=6"
+                       data-age="variable"
+                       data-type="focal">
+                    <h3>Sleep-Related Hypermotor Epilepsy (SHE)</h3>
+                    <p>Brief hyperkinetic seizures during sleep with focal frontal EEG abnormalities. Formerly called <span class="cross-ref">NFLE<span class="tooltip">Nocturnal Frontal Lobe Epilepsy was renamed to Sleep-Related Hypermotor Epilepsy in 2017 because: 1) seizures can occur during daytime sleep, 2) the origin isn't always frontal, and 3) the semiology is more accurately described as hyperkinetic rather than just nocturnal.</span></span>.</p>
+                  </div>
+                  <!-- Card: Familial Mesial Temporal Lobe Epilepsy (FMTLE) -->
+                  <div class="ilae-card"
+                       data-title="Familial Mesial Temporal Lobe Epilepsy (FMTLE)"
+                       data-summary="A focal epilepsy syndrome with seizures originating from the mesial temporal lobe; often familial and presenting in adolescence/adulthood with variable penetrance. Typically has a better prognosis than hippocampal sclerosis-associated MTLE."
+                       data-eeg="EEG shows focal temporal discharges with mild background slowing. Interictal discharges may be absent in up to 60% of patients."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=8"
+                       data-age="variable"
+                       data-type="focal">
+                    <h3>Familial Mesial Temporal Lobe Epilepsy (FMTLE)</h3>
+                    <p>Focal temporal seizures with a positive family history. Features <span class="cross-ref">psychic and autonomic auras<span class="tooltip">Common aura types include déjà vu, jamais vu, epigastric rising sensations, and fear. Unlike sporadic MTLE, FMTLE is typically not associated with hippocampal sclerosis and has a better prognosis with many achieving seizure freedom on medication.</span></span>, often well-controlled.</p>
+                  </div>
+                  <!-- Card: Familial Focal Epilepsy with Variable Foci (FFEVF) -->
+                  <div class="ilae-card"
+                       data-title="Familial Focal Epilepsy with Variable Foci (FFEVF)"
+                       data-summary="Presents with focal seizures whose localization varies among affected family members, suggesting complex genetic inheritance. DEPDC5 mutations are the most common identified cause."
+                       data-eeg="EEG is normal in 60% of cases or shows mild temporal slowing. When abnormal, focal epileptiform discharges vary in location between family members."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=11"
+                       data-age="variable"
+                       data-type="focal">
+                    <h3>Familial Focal Epilepsy with Variable Foci (FFEVF)</h3>
+                    <p>Focal seizures with variable localization among family members. Associated with <span class="cross-ref">DEPDC5<span class="tooltip">DEPDC5 gene mutations account for about 12-37% of FFEVF cases. This gene is part of the mTOR pathway regulation, and mutations can lead to cortical malformations including focal cortical dysplasia.</span></span> mutations.</p>
+                  </div>
+                  <!-- Card: Epilepsy with Auditory Features (EAF) -->
+                  <div class="ilae-card"
+                       data-title="Epilepsy with Auditory Features (EAF)"
+                       data-summary="Characterized by focal aware seizures with auditory auras (buzzing, humming, distortion), sometimes with receptive language disturbances. The LGI1 gene is mutated in familial cases (autosomal dominant lateral temporal lobe epilepsy)."
+                       data-eeg="EEG is mostly normal but may demonstrate focal temporal discharges, particularly in the lateral temporal regions."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=10"
+                       data-age="variable"
+                       data-type="focal">
+                    <h3>Epilepsy with Auditory Features (EAF)</h3>
+                    <p>Focal seizures with auditory auras and possible temporal EEG abnormalities. Familial form associated with <span class="cross-ref">LGI1<span class="tooltip">LGI1 (Leucine-rich Glioma Inactivated 1) gene mutations are found in about 50% of familial cases, known as Autosomal Dominant Lateral Temporal Lobe Epilepsy (ADLTLE), but are rare in sporadic cases.</span></span> mutations.</p>
+                  </div>
+                  <!-- Card: Autoimmune Epilepsies (added) -->
+                  <div class="ilae-card"
+                       data-title="Autoimmune Epilepsies"
+                       data-summary="A growing category of epilepsies associated with autoimmune mechanisms, including anti-NMDAR encephalitis, anti-LGI1 encephalitis, and GAD65 antibody-associated epilepsy. Often presents with abrupt onset of seizures and other neurological symptoms."
+                       data-eeg="EEG patterns vary but may show focal or multifocal epileptiform discharges, slowing, or extreme delta brush in anti-NMDAR encephalitis."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=18"
+                       data-age="variable"
+                       data-type="combined">
+                    <h3>Autoimmune Epilepsies</h3>
+                    <p>Various syndromes with autoimmune etiology, including <span class="cross-ref">anti-NMDAR<span class="tooltip">Anti-NMDA receptor encephalitis typically affects young women and features psychiatric symptoms, memory deficits, seizures, and movement disorders. It's often responsive to immunotherapy, with 80% of patients achieving good outcomes.</span></span>, anti-LGI1, and GAD65 antibody-associated epilepsies.</p>
+                  </div>
+                  <!-- Card: Progressive Myoclonus Epilepsies (PME) -->
+                  <div class="ilae-card"
+                       data-title="Progressive Myoclonus Epilepsies (PME)"
+                       data-summary="A group of rare genetic disorders characterized by myoclonus, progressive neurological deterioration (dementia, ataxia), and epilepsy. Includes Unverricht-Lundborg disease, Lafora disease, and neuronal ceroid lipofuscinoses."
+                       data-eeg="EEG demonstrates background slowing and generalized spike/polyspike and wave discharges, often photosensitive. The extent of EEG abnormalities progresses with disease course."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=22"
+                       data-age="variable"
+                       data-type="combined">
+                    <h3>Progressive Myoclonus Epilepsies (PME)</h3>
+                    <p>Severe myoclonic seizures with progressive neurological decline. Includes <span class="cross-ref">Unverricht-Lundborg disease<span class="tooltip">Caused by mutations in the CSTB gene encoding cystatin B. The most common PME in Europe, especially Finland. Characterized by stimulus-sensitive myoclonus and tonic-clonic seizures with onset at 6-16 years, followed by progressive neurological deterioration.</span></span>, Lafora disease, and others.</p>
+                  </div>
+                  <!-- Card: Rasmussen Syndrome (RS) -->
+                  <div class="ilae-card"
+                       data-title="Rasmussen Syndrome (RS)"
+                       data-summary="A rare, progressive autoimmune encephalitis with intractable focal seizures, hemiplegia, and cognitive decline, characterized by unilateral cerebral atrophy. Inflammation is likely immune-mediated but the exact trigger remains unknown."
+                       data-eeg="EEG reveals unilateral focal discharges with marked background slowing in one hemisphere. Frequent epilepsia partialis continua is characteristic."
+                       data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=16"
+                       data-age="variable"
+                       data-type="focal">
+                    <h3>Rasmussen Syndrome (RS)</h3>
+                    <p>Intractable seizures with progressive hemiplegia and unilateral EEG abnormalities. Features <span class="cross-ref">epilepsia partialis continua<span class="tooltip">Epilepsia partialis continua is a form of ongoing focal motor seizure activity that may continue for extended periods (days to years). In Rasmussen syndrome, it frequently affects the face and hand. Hemispherectomy may be required for seizure control.</span></span> and unilateral atrophy.</p>
+                  </div>
+                </div>
+              </details>
+              
+              <!-- Links to PDF resources -->
+              <h3>Additional Resources</h3>
+              <ul class="resource-links">
+                <li><a href="assets/documents/epilepsy-syndromes-introduction.pdf" target="_blank">Introduction to the Epilepsy Syndrome Papers (Epilepsia, 2022)</a></li>
+                <li><a href="assets/documents/epilepsy-syndromes-methodology1.pdf" target="_blank">Methodology for Classification and Definition of Epilepsy Syndromes (Epilepsia, 2022)</a></li>
+                <li><a href="assets/documents/onset-at-a-variable-age2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset at a Variable Age (Epilepsia, 2022)</a></li>
+                <li><a href="assets/documents/onset-in-childhood2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Childhood (Epilepsia, 2022)</a></li>
+                <li><a href="assets/documents/onset-in-neonates-and-infants2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Neonates and Infants (Epilepsia, 2022)</a></li>
+                <li><a href="assets/documents/idiopathic-generalized2.pdf" target="_blank">ILAE Position Statement: Idiopathic Generalized Epilepsy Syndromes (Epilepsia, 2022)</a></li>
+              </ul>
+            </section>
+            </div>
+          </div>
+        </main>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </div>
+
+      <!-- ILAE Modal -->
+      <div id="ilae-modal" class="modal">
+        <div class="modal-content">
+          <button class="modal-close">&times;</button>
+          <h2 id="modal-title"></h2>
+          <div class="modal-section">
+            <h3>Overview</h3>
+            <p id="modal-overview"></p>
+          </div>
+          <div class="modal-section">
+            <h3>EEG Findings</h3>
+            <p id="modal-eeg"></p>
+          </div>
+          <div id="pdfLinkContainer">
+            <a id="pdfLink" href="#" target="_blank">
+              <i class="fas fa-file-pdf"></i> View Full Details (PDF)
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        // Initialize ILAE Classification Page
+        function initializeILAEClassification() {
+          // Initialize filter and search functionality
+          const ageFilter = document.getElementById('age-filter');
+          const typeFilter = document.getElementById('type-filter');
+          const resetBtn = document.getElementById('reset-filters');
+          const searchBar = document.getElementById('searchBar');
+          
+          // Add event listeners
+          if (ageFilter && typeFilter && resetBtn && searchBar) {
+            ageFilter.addEventListener('change', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+            resetBtn.addEventListener('click', resetFilters);
+            searchBar.addEventListener('input', applyFilters);
+          }
+          
+          // Initialize the section headers
+          document.querySelectorAll('.section-header').forEach(header => {
+            // Initially open all sections
+            header.parentElement.setAttribute('open', true);
+          });
+          
+          // Initialize the ILAE cards
+          initializeIlaeCards();
+          
+          // Apply any saved filters or search (if coming back to page)
+          if (typeof applyFilters === 'function') {
+            applyFilters();
+          }
+        }
+        
+        // Function to apply filters and search
+        function applyFilters() {
+          const ageFilter = document.getElementById('age-filter');
+          const typeFilter = document.getElementById('type-filter');
+          const searchBar = document.getElementById('searchBar');
+          
+          if (!ageFilter || !typeFilter || !searchBar) return;
+          
+          const ageValue = ageFilter.value;
+          const typeValue = typeFilter.value;
+          const searchValue = searchBar.value.toLowerCase();
+          
+          // Get all cards
+          const cards = document.querySelectorAll('.ilae-card');
+          let visibleCount = 0;
+          
+          // Reset section visibility
+          document.querySelectorAll('details').forEach(section => {
+            section.style.display = 'block';
+            const grid = section.querySelector('.ilae-grid');
+            if (grid) grid.style.display = 'grid';
+          });
+          
+          // Filter cards
+          cards.forEach(card => {
+            const cardAge = card.getAttribute('data-age');
+            const cardType = card.getAttribute('data-type');
+            const cardTitle = card.getAttribute('data-title') ? card.getAttribute('data-title').toLowerCase() : '';
+            const cardSummary = card.getAttribute('data-summary') ? card.getAttribute('data-summary').toLowerCase() : '';
+            const cardContent = card.textContent.toLowerCase();
+            
+            // Check if card matches all filters
+            const matchesAge = ageValue === 'all' || cardAge === ageValue;
+            const matchesType = typeValue === 'all' || cardType === typeValue;
+            const matchesSearch = searchValue === '' || 
+                                  cardTitle.includes(searchValue) || 
+                                  cardSummary.includes(searchValue) || 
+                                  cardContent.includes(searchValue);
+            
+            // Show or hide card based on filters
+            if (matchesAge && matchesType && matchesSearch) {
+              card.style.display = 'block';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          
+          // Check each section for visible cards
+          document.querySelectorAll('details').forEach(section => {
+            const visibleCards = Array.from(section.querySelectorAll('.ilae-card')).filter(card => 
+              card.style.display !== 'none'
+            );
+            
+            // If no visible cards in a section, hide the section
+            if (visibleCards.length === 0) {
+              section.style.display = 'none';
+            }
+          });
+          
+          // Show or hide the 'no results' message
+          const noResults = document.getElementById('no-results');
+          if (noResults) {
+            if (visibleCount === 0) {
+              noResults.style.display = 'block';
+            } else {
+              noResults.style.display = 'none';
+            }
+          }
+        }
+        
+        // Function to reset filters
+        function resetFilters() {
+          const ageFilter = document.getElementById('age-filter');
+          const typeFilter = document.getElementById('type-filter');
+          const searchBar = document.getElementById('searchBar');
+          
+          if (ageFilter) ageFilter.value = 'all';
+          if (typeFilter) typeFilter.value = 'all';
+          if (searchBar) searchBar.value = '';
+          
+          if (typeof applyFilters === 'function') {
+            applyFilters();
+          }
+        }
+        
+        // Function to initialize ILAE cards
+        function initializeIlaeCards() {
+          const cards = document.querySelectorAll('.ilae-card');
+          const modal = document.getElementById('ilae-modal');
+          
+          if (!modal) return;
+          
+          const modalContent = modal.querySelector('.modal-content');
+          const closeBtn = modal.querySelector('.modal-close');
+          
+          cards.forEach(card => {
+            card.addEventListener('click', function() {
+              // Get data from card attributes
+              const title = this.getAttribute('data-title');
+              const summary = this.getAttribute('data-summary');
+              const eeg = this.getAttribute('data-eeg');
+              const pdfLink = this.getAttribute('data-pdf');
+              
+              // Populate modal with card data
+              document.getElementById('modal-title').textContent = title;
+              document.getElementById('modal-overview').innerHTML = summary;
+              document.getElementById('modal-eeg').innerHTML = eeg || 'No specific EEG findings documented.';
+              
+              // Update PDF link
+              const pdfLinkElement = document.getElementById('pdfLink');
+              if (pdfLink) {
+                pdfLinkElement.href = pdfLink;
+                pdfLinkElement.style.display = 'inline-flex';
+              } else {
+                pdfLinkElement.style.display = 'none';
+              }
+              
+              // Show the modal
+              modal.style.display = 'flex';
+              modalContent.style.opacity = '1';
+              
+              // Prevent click from bubbling to modal background
+              modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+              });
+            });
+          });
+          
+          // Close modal when clicking the close button
+          if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              modal.style.display = 'none';
+            });
+          }
+          
+          // Close modal when clicking outside the content
+          modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+              modal.style.display = 'none';
+            }
+          });
+          
+          // Close modal with Escape key
+          document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'flex') {
+              modal.style.display = 'none';
+            }
+          });
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+          initializeILAEClassification();
+          
+          // Tab toggle for ILAE Classification page
+          window.showILaeTab = function(tab) {
+            const cBtn = document.getElementById('classification-tab-btn');
+            const sBtn = document.getElementById('syndromes-tab-btn');
+            const cDiv = document.getElementById('classification-tab');
+            const sDiv = document.getElementById('syndromes-tab');
+            if (tab === 'classification') {
+              cBtn.classList.add('active');
+              sBtn.classList.remove('active');
+              cDiv.style.display = 'block';
+              sDiv.style.display = 'none';
+            } else {
+              cBtn.classList.remove('active');
+              sBtn.classList.add('active');
+              cDiv.style.display = 'none';
+              sDiv.style.display = 'block';
+            }
+          }
+        });
+      </script>
+    </body>
+  </html>

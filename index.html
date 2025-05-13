@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  <title>EEG Curriculum</title>
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Mobile fix for card spacing -->
+  <link rel="stylesheet" href="assets/css/mobile-cards-fix.css" />
+  
+  <!-- Core Scripts -->
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  <script src="assets/js/news-ticker.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from index.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+  
+  <!-- Access Code Modal Styles -->
+  <style>
+    .access-code-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .access-code-modal.active {
+      display: flex;
+    }
+    
+    .access-code-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .access-code-content h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    
+    .access-code-input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    
+    .access-code-input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    
+    .access-code-submit {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .access-code-submit:hover {
+      background-color: #0056b3;
+    }
+    
+    .access-code-error {
+      color: #dc3545;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    /* Games Modal Styles */
+    .games-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .games-modal.active {
+      display: flex;
+      animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .games-modal-content {
+      width: 90%;
+      max-width: 500px;
+      height: 80vh;
+      max-height: 700px;
+      background: linear-gradient(135deg, rgba(40, 40, 50, 0.9), rgba(20, 20, 30, 0.95));
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .games-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 1001;
+      background: rgba(80, 80, 90, 0.7);
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+    
+    .games-modal-close:hover {
+      background: rgba(120, 120, 140, 0.8);
+      transform: scale(1.1);
+    }
+    
+    .games-modal h3 {
+      margin: 0;
+      padding: 20px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 24px;
+      height: calc(100% - 70px);
+      overflow-y: auto;
+      /* Custom scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+    
+    .games-grid::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .games-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .games-grid::-webkit-scrollbar-thumb {
+      background-color: rgba(255,255,255,0.2);
+      border-radius: 10px;
+    }
+
+    .game-button {
+      background: rgba(60, 60, 120, 0.4);
+      border: 1px solid rgba(100, 100, 255, 0.2);
+      border-radius: 14px;
+      padding: 24px 16px;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .game-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    }
+
+    .game-button:hover {
+      background: rgba(80, 80, 160, 0.6);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(100, 100, 255, 0.4);
+    }
+    
+    .game-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-button i {
+      font-size: 32px;
+      margin-bottom: 12px;
+      color: #4d9fff;
+      text-shadow: 0 0 10px rgba(77, 159, 255, 0.5);
+      transition: transform 0.3s ease;
+    }
+    
+    .game-button:hover i {
+      transform: scale(1.1);
+    }
+
+    .game-button h4 {
+      margin: 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .game-button p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.8;
+      max-width: 90%;
+      line-height: 1.4;
+    }
+
+    /* Game iframe styles */
+    #game-iframe {
+      display: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1002;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    #game-iframe.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Mobile responsive adjustments */
+    @media (max-width: 480px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+      }
+      
+      .games-modal-content {
+        width: 95%;
+        height: 85vh;
+      }
+      
+      .game-button {
+        padding: 16px 12px;
+      }
+      
+      .game-button i {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Access Code Modal -->
+  <div class="access-code-modal" id="access-code-modal">
+    <div class="access-code-content">
+      <h2>Enter Access Code</h2>
+      <input type="text" class="access-code-input" id="access-code-input" placeholder="Enter access code" autocomplete="off">
+      <div class="access-code-error" id="access-code-error">Invalid access code. Please try again.</div>
+      <button class="access-code-submit" id="access-code-submit">Submit</button>
+    </div>
+  </div>
+
+  <!-- Games Modal -->
+  <div class="games-modal" id="games-modal">
+    <div class="games-modal-content">
+      <button class="games-modal-close" id="games-modal-close">✕</button>
+      <h3>EEG Brain Games</h3>
+      <div class="games-grid">
+        <div class="game-button" data-game="flappy_brain/flappy_brain.html">
+          <i class="fas fa-brain"></i>
+          <h4>Flappy Brain</h4>
+          <p>Navigate through neural pathways</p>
+        </div>
+        <div class="game-button" data-game="flappy_brain/galactibrain.html">
+          <i class="fas fa-space-shuttle"></i>
+          <h4>GalactiBrain</h4>
+          <p>Space adventure with neurons</p>
+        </div>
+        <div class="game-button" data-game="flappy_brain/astrobrain.html">
+          <i class="fas fa-meteor"></i>
+          <h4>AstroBrain</h4>
+          <p>Shoot through the neural cosmos</p>
+        </div>
+        <div class="game-button" data-game="flappy_brain/pacbrain.html">
+          <i class="fas fa-ghost"></i>
+          <h4>Pac Brain</h4>
+          <p>Classic maze game with neurons</p>
+        </div>
+      </div>
+      <iframe id="game-iframe" src="about:blank" style="width: 100%; height: 100%; border: none; background: transparent; position: absolute; top: 0; left: 0; z-index: 1002; display: none;" allow="accelerometer; autoplay; encrypted-media; gyroscope; touch; fullscreen" allowfullscreen allow-scripts webkitallowfullscreen mozallowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Homepage Cards -->
+    <div id="home-content" class="cards-container">
+      <h2 class="page-title">Explore the Epilepsy Navigator</h2>
+      <div class="cards-grid">
+        <!-- Card 1 -->
+        <div class="card">
+          <a href="epilepsy_rotation.html" class="card-link">Epilepsy Rotation <i class="fa-solid fa-lock" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+          <i class="fa-solid fa-brain"></i>
+          <div class="content-wrapper">
+            <h3>Epilepsy Rotation</h3>
+            <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="card">
+          <a href="seizure_management.html" class="card-link">Seizure Management</a>
+          <i class="fa-solid fa-file-medical"></i>
+          <div class="content-wrapper">
+            <h3>Seizure Management</h3>
+            <p>Access concise guidelines for seizure management and ASM protocols.</p>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="card">
+          <a href="ilae_classification.html" class="card-link">ILAE Classification</a>
+          <i class="fa-solid fa-file-alt"></i>
+          <div class="content-wrapper">
+            <h3>ILAE Classification</h3>
+            <p>Explore comprehensive ILAE epilepsy syndrome classifications and definitions.</p>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="card">
+          <a href="natus_instructions.html" class="card-link">Natus & Persyst</a>
+          <i class="fa-solid fa-desktop"></i>
+          <div class="content-wrapper">
+            <h3>Natus & Persyst</h3>
+            <p>Follow our step-by-step guide to launching Natus and Persyst, reviewing patient studies, and configuring the display.</p>
+          </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="card">
+          <a href="acns_criteria.html" class="card-link">ACNS Criteria</a>
+          <i class="fa-solid fa-chart-bar"></i>
+          <div class="content-wrapper">
+            <h3>ACNS Criteria</h3>
+            <p>Reference ACNS standardized terminology and EEG pattern classification criteria.</p>
+          </div>
+        </div>
+        <!-- Card 6 - Question Bank (moved from position 10) -->
+        <div class="card">
+          <a href="question_bank.html" class="card-link">Question Bank <i class="fa-solid fa-lock" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+          <i class="fa-solid fa-question"></i>
+          <div class="content-wrapper">
+            <h3>Question Bank</h3>
+            <p>Test your EEG knowledge with chapter-based questions from Rowan's Primer of EEG.</p>
+          </div>
+        </div>
+        <!-- Card 7 - EEG Simulator -->
+        <div class="card">
+          <a href="eeg_waveforms.html" class="card-link">EEG Simulator</a>
+          <i class="fa-solid fa-wave-square"></i>
+          <div class="content-wrapper">
+            <h3>EEG Simulator</h3>
+            <p>Interact with our EEG simulator to visualize normal and abnormal EEG patterns and artifacts.</p>
+          </div>
+        </div>
+        <!-- Card 8 -->
+        <div class="card">
+          <a href="eeg_videos.html" class="card-link">EEG Videos</a>
+          <i class="fa-solid fa-video"></i>
+          <div class="content-wrapper">
+            <h3>EEG Videos</h3>
+            <p>Watch educational videos on normal variants, artifacts, and abnormalities.</p>
+          </div>
+        </div>
+        <!-- Card 9 -->
+        <div class="card">
+          <a href="faq.html" class="card-link">Learning Resources</a>
+          <i class="fa-solid fa-book"></i>
+          <div class="content-wrapper">
+            <h3>Learning Resources</h3>
+            <p>Access comprehensive EEG learning materials and educational resources to enhance your understanding.</p>
+          </div>
+        </div>
+        <!-- Card 10 - EEG Atlas (moved from position 6) -->
+        <div class="card">
+          <a href="eeg_atlas.html" class="card-link">EEG Atlas</a>
+          <i class="fa-solid fa-book"></i>
+          <div class="content-wrapper">
+            <h3>EEG Atlas</h3>
+            <p>Review and explore samples of normal and abnormal EEG patterns in our visual atlas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
+
+  <script>
+    // Access Code Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('access-code-modal');
+      const input = document.getElementById('access-code-input');
+      const submitBtn = document.getElementById('access-code-submit');
+      const errorMsg = document.getElementById('access-code-error');
+      
+      // Add access code protection to both epilepsy rotation and question bank links
+      const protectedLinks = document.querySelectorAll('a[href="epilepsy_rotation.html"], a[href="question_bank.html"]');
+      
+      protectedLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          // Get the target URL
+          const targetUrl = this.getAttribute('href');
+          
+          // Check if access code is stored and valid
+          const storedAccessCode = localStorage.getItem('accessCode');
+          const storedTimestamp = localStorage.getItem('accessCodeTimestamp');
+          const currentTime = new Date().getTime();
+          const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+          
+          // If no valid access code, show modal and prevent navigation
+          if (!storedAccessCode || !storedTimestamp || (currentTime - parseInt(storedTimestamp)) > thirtyDaysInMs) {
+            e.preventDefault();
+            modal.classList.add('active');
+            input.focus();
+            
+            // Store the target URL to redirect after successful authentication
+            localStorage.setItem('pendingRedirect', targetUrl);
+          }
+          // If valid access code exists, navigation proceeds normally
+        });
+      });
+      
+      // Handle access code submission
+      submitBtn.addEventListener('click', function() {
+        const accessCode = input.value.trim().toLowerCase();
+        
+        if (accessCode === 'mountsinai') {
+          // Store access code and timestamp
+          localStorage.setItem('accessCode', accessCode);
+          localStorage.setItem('accessCodeTimestamp', new Date().getTime().toString());
+          
+          // Hide modal
+          modal.classList.remove('active');
+          errorMsg.style.display = 'none';
+          
+          // Redirect if there was a pending redirect
+          const pendingRedirect = localStorage.getItem('pendingRedirect');
+          if (pendingRedirect) {
+            localStorage.removeItem('pendingRedirect');
+            window.location.href = pendingRedirect;
+          }
+        } else {
+          // Show error message
+          errorMsg.style.display = 'block';
+          input.value = '';
+          input.focus();
+        }
+      });
+      
+      // Handle Enter key
+      input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          submitBtn.click();
+        }
+      });
+
+      // Initialize secret game trigger with retries
+      function initializeSecretGameTrigger() {
+        const secretGameTrigger = document.getElementById('secret-game-trigger');
+        if (secretGameTrigger) {
+          // Only add event listener if not already initialized
+          if (!secretGameTrigger.getAttribute('data-initialized')) {
+            secretGameTrigger.addEventListener('click', function() {
+              const gamesModal = document.getElementById('games-modal');
+              gamesModal.classList.add('active');
+            });
+            secretGameTrigger.setAttribute('data-initialized', 'true');
+            console.log('Secret game trigger initialized');
+          }
+        } else {
+          // Retry after a short delay if the trigger is not found
+          setTimeout(initializeSecretGameTrigger, 100);
+        }
+      }
+
+      // Start initialization with a delay to ensure header is loaded
+      setTimeout(initializeSecretGameTrigger, 500);
+
+      // Initialize games modal
+      const gamesModal = document.getElementById('games-modal');
+      const gamesModalClose = document.getElementById('games-modal-close');
+      const gameButtons = document.querySelectorAll('.game-button');
+
+      // Handle game button clicks with improved mobile support
+      gameButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const gameUrl = this.getAttribute('data-game');
+          const gameIframe = document.getElementById('game-iframe');
+          const gamesGrid = document.querySelector('.games-grid');
+          
+          // Hide the games grid and show the iframe
+          gamesGrid.style.display = 'none';
+          gameIframe.style.display = 'block';
+          gameIframe.classList.add('active');
+          
+          // Force iframe reload
+          gameIframe.src = 'about:blank';
+          
+          // Set both the height and width explicitly to ensure proper sizing on mobile
+          gameIframe.style.width = '100%';
+          gameIframe.style.height = '100%';
+          
+          // Add small delay before loading to ensure clean state
+          setTimeout(() => {
+            gameIframe.src = gameUrl;
+            
+            // Focus iframe and attempt to capture keyboard events
+            gameIframe.focus();
+            
+            // For mobile - ensure iframe has proper dimensions
+            const adjustIframeSize = () => {
+              const modalContent = document.querySelector('.games-modal-content');
+              if (modalContent) {
+                const modalWidth = modalContent.offsetWidth;
+                const modalHeight = modalContent.offsetHeight;
+                gameIframe.style.width = modalWidth + 'px';
+                gameIframe.style.height = modalHeight + 'px';
+              }
+            };
+            
+            // Adjust size immediately and after a delay to account for rendering
+            adjustIframeSize();
+            setTimeout(adjustIframeSize, 200);
+          }, 100);
+        });
+      });
+
+      // Update close button functionality
+      gamesModalClose.addEventListener('click', function() {
+        const gameIframe = document.getElementById('game-iframe');
+        const gamesGrid = document.querySelector('.games-grid');
+        
+        // Show games grid and hide iframe
+        gamesGrid.style.display = 'grid';
+        gameIframe.style.display = 'none';
+        gameIframe.classList.remove('active');
+        
+        // Clear the iframe source
+        gameIframe.src = 'about:blank';
+        
+        // Close the modal
+        gamesModal.classList.remove('active');
+      });
+
+      // Update modal click handler
+      gamesModal.addEventListener('click', function(e) {
+        if (e.target === gamesModal) {
+          const gameIframe = document.getElementById('game-iframe');
+          const gamesGrid = document.querySelector('.games-grid');
+          
+          // Show games grid and hide iframe
+          gamesGrid.style.display = 'grid';
+          gameIframe.style.display = 'none';
+          gameIframe.classList.remove('active');
+          
+          // Clear the iframe source
+          gameIframe.src = 'about:blank';
+          
+          // Close the modal
+          gamesModal.classList.remove('active');
+        }
+      });
+    });
+    
+    // PWA installation
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      const installBtn = document.getElementById('installBtn');
+      installBtn.style.display = 'block';
+    
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          console.log('App installed');
+          installBtn.style.display = 'none';
+        } else {
+          console.log('App not installed');
+        }
+        
+        deferredPrompt = null;
+      });
+    });
+    
+    // Hide install button if already installed
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('installBtn').style.display = 'none';
+      deferredPrompt = null;
+    });
+    
+    // Disclaimer auto-popup functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for the disclaimer to be loaded
+      setTimeout(function() {
+        const disclaimerModal = document.getElementById('disclaimer-modal');
+        if (!disclaimerModal) return;
+        
+        // Check if disclaimer has been shown in the last 30 days
+        const lastShown = localStorage.getItem('disclaimerLastShown');
+        const currentTime = new Date().getTime();
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+        
+        // Show disclaimer if never shown or if it's been more than 30 days
+        if (!lastShown || (currentTime - parseInt(lastShown)) > thirtyDaysInMs) {
+          disclaimerModal.classList.add('active');
+          console.log('Showing disclaimer - not shown in the last 30 days');
+          
+          // Store current timestamp when disclaimer is shown
+          localStorage.setItem('disclaimerLastShown', currentTime.toString());
+          
+          // Handle disclaimer close and acknowledge button
+          const disclaimerClose = document.getElementById('disclaimer-close');
+          const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
+          
+          if (disclaimerClose) {
+            disclaimerClose.addEventListener('click', function() {
+              disclaimerModal.classList.remove('active');
+            });
+          }
+          
+          if (disclaimerAcknowledge) {
+            disclaimerAcknowledge.addEventListener('click', function() {
+              disclaimerModal.classList.remove('active');
+            });
+          }
+        } else {
+          console.log('Disclaimer not shown - already seen in the last 30 days');
+        }
+      }, 1000); // Delay to ensure disclaimer is loaded
+    });
+  </script>
+</body>
+</html>
+

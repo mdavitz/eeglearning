@@ -1,0 +1,80 @@
+[
+    {
+        "id": "2Q1",
+        "figure": "2q1.png",
+        "questionText": "What abnormal condition is most likely to arise out of this stage of sleep (Fig. 2Q1)?",
+        "options": [
+            {"value": "a", "text": "Frontal lobe seizures."},
+            {"value": "b", "text": "REM behavior disorder. The eye leads indicate rapid eye movements."},
+            {"value": "c", "text": "Sleep walking."},
+            {"value": "d", "text": "Sleep paralysis."}
+        ],
+        "correctAnswerLetter": "C",
+        "explanation": "C This EEG shows slow wave sleep (N3). In slow wave sleep the EEG has at least 20% diffuse delta activity. The spindles and K-complexes of stage II sleep become rare. There is moderate muscle tone and there are no rapid eye movements. The parasomnias associated with slow wave sleep are night terrors, sleep walking, and bedwetting.Frontal lobe seizures are often nocturnal and typically arise from N2 sleep, not N3 sleep. This EEG is too slow to represent REM sleep. Furthermore, the eye leads are synchronous and would be mirror images in REM sleep. Sleep paralysis and hypnogogic hallucinations occur typically in the transitions from wake to sleep or sleep to wake. During sleep paralysis, the individual experiences a complete inability to move often accompanied by an urgent need to flee from an intruder or respond to a pressing situation. Sleep paralysis can occur alone or with hypnogogic hallucinations, narcolepsy and/or cataplexy."
+    },
+    {
+        "id": "2Q2",
+        "figure": "2q2.png",
+        "questionText": "The sinusoidal rhythm seen in the box (Fig. 2Q2) represents:",
+        "options": [
+            {"value": "a", "text": "Mu rhythm and would attenuate with eye opening."},
+            {"value": "b", "text": "Wicket spikes and would attenuate by moving the arms."},
+            {"value": "c", "text": "Mu rhythm and would attenuate by thinking about moving the arms."},
+            {"value": "d", "text": "A brief potentially ictal rhythmic discharge (BIRD)."}
+        ],
+        "correctAnswerLetter": "C",
+        "explanation": "C Mu rhythm is normal and found in the central derivations (C3/C4) over the motor strip. It can be bilateral or unilateral. It attenuates with movement or even the thought of movement of the contralateral upper extremity.The PDR attenuates with eye opening. Wicket spikes are found in the mid-temporal electrodes, not the central derivations and are unrelated to arm movements. BIRDs (brief potentially ictal rhythmic discharges) are very brief (less than 10 seconds, typically 0.5–4 seconds) runs of rhythmic activity greater than 4Hz without evolution, which are associated with seizures and correlated with the seizure focus."
+    },
+    {
+        "id": "2Q3",
+        "figure": "2q3.png",
+        "questionText": "A 5-year-old child is referred to you for frequent episodes of inattention noticed by his teachers. His neurological exam is normal. You do an EEG and hyperventilate the child (Fig. 2Q3). This EEG indicates:",
+        "options": [
+            {"value": "a", "text": "The child is engaging in the task and hyperventilating well."},
+            {"value": "b", "text": "The child has childhood absence epilepsy."},
+            {"value": "c", "text": "The child may have a toxic metabolic disturbance."},
+            {"value": "d", "text": "Diffuse slowing suggestive of diffuse cerebral dysfunction."}
+        ],
+        "correctAnswerLetter": "A",
+        "explanation": "A The EEG shows diffuse high voltage theta activity which is a normal response to hyperventilation and only occurs with good effort. Adults are less likely than children to have high amplitude theta and delta activity with hyperventilation.This EEG lacks the 3 Hz spike and wave of childhood absence epilepsy. It is not appropriate to evaluate for diffuse slowing during hyperventilation. There are no features here to suggest a toxic metabolic disturbance."
+    },
+    {
+        "id": "2Q4",
+        "figure": "2q4.png",
+        "questionText": "A 16-year-old girl comes to you after having a witnessed GTC seizure after a weekend of not sleeping. You do a routine EEG (Fig. 2Q4). The technician stops the photic stimulation due to the finding pictured. You tell the technician,",
+        "options": [
+            {"value": "a", "text": "This is a photoparoxysmal response to photic stimulation. Continuing the photic stimulation could lead to a convulsion."},
+            {"value": "b", "text": "This is photic driving and a perfectly normal response to photic stimulation."},
+            {"value": "c", "text": "This is a photomyogenic response to photic stimulation. Continuing the photic stimulation could lead to a convulsion."},
+            {"value": "d", "text": "This is a photomyogenic response to photic stimulation and a perfectly normal response to photic stimulation."}
+        ],
+        "correctAnswerLetter": "D",
+        "explanation": "D The EEG shows a photomyogenic response which is somewhat rare but perfectly normal. Myogenic potentials (EMG artifacts) are seen in the frontal derivations, time locked to the flash frequency (arrows).Seizures can occur in response to a specific stimulation such as photic stimulation, reading, thinking, or even hearing a particular note of music. Of these photosensitivity is the most common, frequently seen in generalized epilepsy, particularly juvenile myoclonic epilepsy. In reflex epilepsy, an individual only has seizures in response to the stimulus. In a typical photoparoxysmal response, an individual will have high voltage generalized spike/polyspike wave discharge in response to photic stimulation. Photosensitivity is often maximal at 14–16 flashes per second. If the technician encounters a photoparoxysmal response the photic stimulation should be stopped to prevent a GTC seizure. Typically, the evoked discharges outlast cessation of the flash stimulus by a second or so.Photic stimulation can evoke a rhythmic frequency in the occipital derivations which is at same frequency (the fundamental), a harmonic (twice the flash frequency) and/or a subharmonic (half the flash frequency). This is termed photic driving and it is perfectly normal. It is not seen here."
+    },
+    {
+        "id": "2Q5",
+        "figure": "2q5.png",
+        "questionText": "A 30 year-old man presents to the emergency room after an episode of loss of consciousness which occurred on the 6 train coming home from work in NYC in August. You have no further details. He has a routine EEG (fig 2Q5). You explain:",
+        "options": [
+            {"value": "a", "text": "His EEG shows bilateral temporal lobe sharp waves and he may need an ASM."},
+            {"value": "b", "text": "His EEG is normal."},
+            {"value": "c", "text": "His EEG is abnormal and suggests bilateral temporal lobe cerebral dysfunction."},
+            {"value": "d", "text": "His EEG shows bilateral temporal lobe BIRDs and he may need an ASM."}
+        ],
+        "correctAnswerLetter": "B",
+        "explanation": "B The EEG shows normal bilateral wicket spikes in the temporal derivations. Wicket spikes look like a comb or wicket fence. The duration of the waveforms is similar, regardless of variation in amplitude. As opposed to a temporal sharp wave, wicket spikes have no aftergoing slow wave. This is a normal finding in drowsiness. A and D are incorrect. This is not a sharp wave or a BIRD. A sharp wave has an aftergoing slow wave and BIRDs cannot be diagnosed in an area of a known normal variant like wicket spikes or mu rhythm. C is incorrect as there is no temporal lobe slowing here to suggest temporal cerebral dysfunction."
+    },
+    {
+        "id": "2Q6",
+        "figure": "2q6.png",
+        "questionText": "A 32-year-old male with no past medical history presented to the emergency department after being struck by a motorcycle while bicycling. His partner, a newly minted neurologist (with a possible case of new attending syndrome), urged him to come to the emergency department to get a neurology consult, CT head, MRI brain, and EEG. The neurology consult attending, a seasoned attending, reviewed the normal neuroimaging and chose not to disturb the EEG technologist, instructing the ED team to instead acquire a rapid EEG study to quickly screen for non-convulsive status epilepticus. While the ED nurse was applying the headband, the patient reported some pain when the headband was applied to his left forehead, so the nurse had to adjust the headband. You see the reduced montage EEG and ask your consult attending about the waves indicated by the arrows. What will your attending say?",
+        "options": [
+            {"value": "a", "text": "These are frontally-predominant periodic discharges occurring at 1 Hz. New attendings are not always wrong!"},
+            {"value": "b", "text": "These are electrode artifact. The electrodes might not be in good contact with the patient’s forehead because of a scalp hematoma."},
+            {"value": "c", "text": "These are eye blinks, but the headband might be slightly rotated to the left, such that the right-sided electrodes are placed more anteriorly."},
+            {"value": "d", "text": "These are eye blinks, but the headband might be slightly rotated to the right, such that the left-sided electrodes are placed more anteriorly."}
+        ],
+        "correctAnswerLetter": "D",
+        "explanation": "D This sample (Fig2. Q6) shows eye blinks, however their asymmetric appearance is due to rotation of the headband towards the right, such that the left-sided electrodes are placed more anteriorly over the forehead (as opposed to rotated leftward such that the right-sided electrodes are placed more anteriorly). Even though this is a reduced montage study, the same fundamental principles of EEG apply in manifesting the Bell’s phenomenon associated with eye closure in the frontal channels. Although new attendings are not always wrong, these are not consistent with periodic discharges because they have a limited bifrontal field that rapidly drops off after the two anterior channels despite their high voltage. These are also not electrode artifact since the pattern is not limited to one electrode and has a plausible field seen with eye blinks."
+    }
+]

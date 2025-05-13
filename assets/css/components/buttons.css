@@ -1,0 +1,198 @@
+/*-----------------------------------------------
+  BUTTONS & CONTROLS
+-----------------------------------------------*/
+.btn, 
+.btn-primary {
+  display: inline-block;
+  background: var(--accent-color);
+  color: white;
+  text-decoration: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover, 
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active,
+.btn-primary:active {
+  background: var(--accent-active);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-light {
+  background: white;
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-light:hover {
+  background: var(--hover-bg);
+  color: var(--accent-hover);
+}
+
+body.dark .btn-light {
+  background: var(--info-bg);
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
+}
+
+body.dark .btn-light:hover {
+  background: var(--hover-bg);
+  color: var(--accent-hover);
+}
+
+body.dark .btn {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/*-----------------------------------------------
+  FORM ELEMENTS
+-----------------------------------------------*/
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background: var(--info-bg);
+  color: var(--text-color);
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 5px;
+  background: var(--info-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: border 0.3s ease, background 0.3s ease;
+  font-size: 0.9rem;
+  display: block;
+}
+
+.form-group input[type="file"]:hover {
+  background: rgba(0, 102, 204, 0.05);
+  border-color: var(--accent-color);
+}
+
+/*-----------------------------------------------
+  INSTALL BUTTON - PWA
+-----------------------------------------------*/
+#installBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, background-color 0.3s;
+  z-index: 999;
+}
+
+#installBtn:hover {
+  transform: translateY(-3px);
+  background-color: var(--accent-hover);
+}
+
+body.dark #installBtn {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Styles for disabled links */
+.disabled-link {
+  opacity: 0.6 !important;
+  background-color: #cccccc !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  color: #666666 !important;
+}
+
+.disabled-link:hover {
+  background-color: #cccccc !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Override button hover effects */
+.card a.disabled-link:hover {
+  background-color: #cccccc !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode styles for disabled links */
+body.dark .disabled-link {
+  background-color: #444444 !important;
+  color: #999999 !important;
+}
+
+body.dark .disabled-link:hover {
+  background-color: #444444 !important;
+}
+
+body.dark .card a.disabled-link:hover {
+  background-color: #444444 !important;
+}
+
+/* Font toggle button styling */
+.font-toggle-btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.font-toggle-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.font-toggle-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.4);
+}
+
+/* Ensure buttons scale properly with large font */
+body.large-font .btn,
+body.large-font .btn-primary,
+body.large-font .btn-light {
+  padding: 0.8rem 1.7rem;
+} 

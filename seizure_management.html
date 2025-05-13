@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seizure Management - EEG Curriculum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <!-- <script src="assets/js/search.js" defer></script> -->
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from seizure_management.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+  
+  <style>
+    /* Any custom styling that should remain in the HTML file */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* When the modal is open, prevent scrolling on the main body */
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+    
+    /* Modal Styling (Keep if specific to this page or move to components/modals.css) */
+    #dev-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      backdrop-filter: blur(3px);
+    }
+    #dev-modal .modal-content {
+      background: var(--info-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    #dev-modal h2 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    #dev-modal p {
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+    #dev-modal input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 80%;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--info-bg);
+      color: var(--text-color);
+    }
+    #dev-modal button {
+      margin: 0 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--accent-color);
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    #dev-modal button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    #dev-modal .error {
+      color: #ff3b30;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    
+    /* Remove bullet points for lists with class "no-bullets" (Keep if specific or move to base.css) */
+    .no-bullets {
+      list-style: none;
+      margin: 0;
+      padding-left: 0;
+    }
+    
+    /* Table styling */
+    .med-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .med-table th, .med-table td {
+      text-align: left;
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .med-table th {
+      background-color: var(--accent-color);
+      color: #fff;
+      position: sticky;
+      top: 0;
+    }
+    .med-table tr:hover {
+      background-color: var(--info-bg);
+    }
+    
+    /* Table Container */
+    .table-container {
+      max-width: 100%;
+      overflow-x: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Card-based view for medication details */
+    .med-card {
+      background: var(--info-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .med-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .med-card h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .med-card h3 .med-category {
+      font-size: 0.9rem;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    
+    /* Dose table in med card */
+    .med-card .dose-table {
+      margin-top: 1rem;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .med-card .dose-table th, .med-card .dose-table td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .med-card .dose-table th {
+      background-color: var(--bg-color);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    /* Special considerations section */
+    .special-considerations {
+      background-color: rgba(255, 193, 7, 0.1);
+      border-left: 3px solid #ffc107;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 0 8px 8px 0;
+    }
+    .special-considerations h4 {
+      color: #d39e00;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Drug interactions section */
+    .drug-interactions {
+      background-color: rgba(220, 53, 69, 0.1);
+      border-left: 3px solid #dc3545;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 0 8px 8px 0;
+    }
+    .drug-interactions h4 {
+      color: #dc3545;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    
+    /* No results message */
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      background-color: var(--info-bg);
+      border-radius: 8px;
+      margin: 2rem auto;
+      max-width: 600px;
+    }
+    .no-results i {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+    .no-results h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    .no-results p {
+      color: var(--text-secondary);
+    }
+    
+    /* Animations for medication cards */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    #medicationsTableBody tr {
+      opacity: 0;
+    }
+    
+    #medicationsTableBody tr.card-visible {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    /* Medication search box styling */
+    .medications-search {
+      position: relative;
+      margin-bottom: 20px;
+      max-width: 100%;
+    }
+    
+    .medications-search input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color, rgba(0,0,0,0.1));
+      font-size: 16px;
+      background-color: var(--bg-color, #fff);
+      color: var(--text-color, #333);
+    }
+    
+    .medications-search .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted, #666);
+    }
+    
+    /* Dark mode support */
+    body.dark .medications-search input {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--header-text, #f0f0f0);
+    }
+    
+    /* ASM Filter Styles */
+    .asm-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    
+    .filter-checkbox {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: rgba(0, 102, 204, 0.1);
+      border-radius: 980px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      text-align: center;
+      min-width: 120px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .filter-checkbox:hover {
+      background-color: rgba(0, 102, 204, 0.2);
+      transform: scale(1.02);
+    }
+    
+    /* Hide checkbox visually but keep it accessible */
+    .filter-checkbox input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    /* Active states using the checkbox state */
+    .filter-checkbox input:checked + span {
+      font-weight: 600;
+    }
+    
+    body.dark .filter-checkbox {
+      background-color: rgba(41, 151, 255, 0.15);
+    }
+    
+    body.dark .filter-checkbox:hover {
+      background-color: rgba(41, 151, 255, 0.25);
+    }
+    
+    /* Active state using class instead of directly styling the checkbox */
+    .filter-checkbox.active {
+      background-color: var(--accent-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+      transform: translateY(-1px);
+    }
+    
+    /* Hide rows based on data attributes */
+    tr.hidden-by-filter {
+      display: none;
+    }
+
+    /* Mobile responsive improvements */
+    @media (max-width: 768px) {
+      .asm-filters {
+        gap: 8px;
+      }
+      
+      .filter-checkbox {
+        padding: 12px 16px;
+        min-width: 100px;
+        flex: 1;
+      }
+      
+      /* Ensure filters work with responsive table/card layout */
+      .custom-table[data-mobile-cards="true"] tr.hidden-by-filter {
+        display: none !important;
+      }
+      
+      /* Improve touch targets for mobile */
+      .filter-checkbox input {
+        height: 20px;
+        width: 20px;
+        top: 3px;
+      }
+    }
+    
+    /* Reference Cards Styling */
+    .reference-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .reference-card-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background-color: rgba(0, 102, 204, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--accent-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      flex: 1 1 250px;
+    }
+    
+    .reference-card-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      background-color: rgba(0, 102, 204, 0.15);
+    }
+    
+    .reference-card-icon {
+      margin-right: 12px;
+      font-size: 1.4em;
+      color: #e74c3c;
+    }
+    
+    .reference-card-text strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .reference-card-subtext {
+      font-size: 0.85em;
+      opacity: 0.9;
+    }
+    
+    .reference-download-icon {
+      margin-left: auto;
+      font-size: 0.85em;
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 768px) {
+      .reference-card-link {
+        flex: 1 1 100%;
+        padding: 14px 16px;
+      }
+      
+      .reference-card-icon {
+        font-size: 1.2em;
+      }
+      
+      .reference-card-text strong {
+        font-size: 1em;
+      }
+    }
+
+    /* Action Button Styling */
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--accent-color);
+      color: white;
+      font-weight: 500;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .action-button:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+    }
+    
+    .action-button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(0, 102, 204, 0.3);
+    }
+    
+    body.dark .action-button {
+      box-shadow: 0 2px 8px rgba(41, 151, 255, 0.3);
+    }
+    
+    body.dark .action-button:hover {
+      box-shadow: 0 4px 12px rgba(41, 151, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-seizure_management">
+      <div class="container" id="seizure-management">
+        <h2 class="page-title">Seizure Management</h2>
+        
+        <!-- Quick Links - For navigation -->
+        <div class="quick-links">
+          <a href="#" id="all-btn" class="active" onclick="filterCategory('all', false); return false;">All Content</a>
+          <a href="#status-epilepticus" onclick="filterCategory('epilepticus', false); return false;">Status Epilepticus</a>
+          <a href="#anti-seizure-medications" onclick="filterCategory('medications', false); return false;">Medications</a>
+          <a href="#asm-flowcharts" onclick="filterCategory('asm-flowcharts', false); return false;">ASM Flowcharts</a>
+          <a href="#asm-withdrawal" onclick="filterCategory('asm-withdrawal', false); return false;">ASM Withdrawal</a>
+          <a href="#refractory-epilepsy" onclick="filterCategory('refractory-epilepsy', false); return false;">Refractory Epilepsy</a>
+        </div>
+        
+        <!-- Content Container with Expandable Details -->
+        <div id="contentContainer">
+          <!-- 1. Status Epilepticus Section -->
+          <details open class="section-detail">
+            <summary class="section-header">Status Epilepticus</summary>
+            <div class="info-box" id="status-epilepticus">
+              <div class="info-box info-box-accent mb-3">
+                <h3 class="mt-0 d-flex align-center">
+                  <i class="fas fa-bookmark icon-spacing info-text"></i>
+                  Clinical Reference Cards
+                </h3>
+                <p class="mb-3 text-secondary font-italic">Courtesy of Dr. Gena Ghearing</p>
+                
+                <div class="reference-cards-container">
+                  <a href="assets/documents/IIC card.pdf" target="_blank" class="reference reference-card-link">
+                    <i class="fas fa-file-pdf reference-card-icon"></i>
+                    <span class="reference-card-text">
+                      <strong>Ictal Interictal Continuum (IIC) Card</strong>
+                      <span class="reference-card-subtext">Management Protocol</span>
+                    </span>
+                    <i class="fas fa-download reference-download-icon"></i>
+                  </a>
+                  
+                  <a href="assets/documents/status epilepticus pocket card - revised - GG.pdf" target="_blank" class="reference reference-card-link">
+                    <i class="fas fa-file-pdf reference-card-icon"></i>
+                    <span class="reference-card-text">
+                      <strong>Status Epilepticus</strong>
+                      <span class="reference-card-subtext">Pocket Reference Card</span>
+                    </span>
+                    <i class="fas fa-download reference-download-icon"></i>
+                  </a>
+                </div>
+              </div>
+              
+              <p><strong>Management of Convulsive Status Epilepticus</strong></p>
+              <p><a class="reference" href="https://www.neurocriticalcare.org/Portals/0/ENLS%205.0/ENLS%205.0%20Protocol%20-%20SE.pdf" target="_blank">Neurocritical Care Society Guidelines</a></p>
+              
+              <p>The following table outlines the time‐based phases, interventions, and dosing regimens:</p>
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Phase</th>
+                    <th>Time Range</th>
+                    <th>Intervention &amp; Dosing</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Phase">Stabilization Phase</td>
+                    <td data-label="Time Range">0–5 minutes</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>ABCs (Airway, Breathing, Circulation)</li>
+                        <li>Record seizure onset and monitor vitals</li>
+                        <li>Establish IV access</li>
+                        <li>ECG monitoring</li>
+                        <li>Finger stick blood glucose (if &lt;60 mg/dL)</li>
+                        <li>Administer 100 mg IV thiamine + 50 mL D50W</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Phase">Initial Therapy Phase</td>
+                    <td data-label="Time Range">5–20 minutes</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>IV Lorazepam: 0.1 mg/kg, max 4 mg (may repeat once)</li>
+                        <li>OR IV Midazolam: 0.2 mg/kg, max 10 mg (IM if no IV access)</li>
+                        <li>OR IV Diazepam: 0.15–0.2 mg/kg, max 10 mg (may repeat once)</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Phase">Second-line Therapy</td>
+                    <td data-label="Time Range">20–40 minutes</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>IV Fosphenytoin/Phenytoin: 20 mg/kg, single dose</li>
+                        <li>OR IV Valproic Acid: 40 mg/kg, max 3000 mg/dose, single dose</li>
+                        <li>OR IV Levetiracetam: 60 mg/kg, max 4500 mg/dose, single dose</li>
+                        <li>If none available, consider IV Phenobarbital: 15 mg/kg, single dose</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Phase">Refractory Therapy</td>
+                    <td data-label="Time Range">&ge; 40 minutes</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>Intubate the patient</li>
+                        <li>
+                          Initiate continuous infusion therapy:
+                          <ul class="no-bullets">
+                            <li>Midazolam: 0.2 mg/kg bolus, then infusion 0.2–2.9 mg/kg/h</li>
+                            <li>OR/AND Propofol: 1 mg/kg bolus, then infusion 20–60 µg/kg/min</li>
+                          </ul>
+                        </li>
+                        <li>Add a second ASM (options: fosphenytoin, valproic acid, levetiracetam, lacosamide, or phenobarbital)</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Phase">Breakthrough/Recurrence</td>
+                    <td data-label="Time Range">N/A</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>Up-titrate available drips or initiate propofol if not already started</li>
+                        <li>Address underlying cause of seizures</li>
+                        <li>
+                          If super refractory SE, consider additional continuous infusion:
+                          <ul class="no-bullets">
+                            <li>Ketamine: 1–2 mg/kg bolus followed by 2–10 mg/kg/h (repeat bolus as needed)</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Phase">Additional Therapies</td>
+                    <td data-label="Time Range">N/A</td>
+                    <td data-label="Intervention & Dosing">
+                      <ul class="no-bullets">
+                        <li>Ketogenic diet</li>
+                        <li>Phenobarbital: 15–20 mg/kg</li>
+                        <li>Pentobarbital: 5–15 mg/kg then 0.5–5 mg/kg/h</li>
+                        <li>Hypothermia</li>
+                        <li>Immunomodulation</li>
+                        <li>Epilepsy surgery</li>
+                        <li>ECT</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          
+          <!-- 2. Anti-Seizure Medications Section -->
+          <details open class="section-detail">
+            <summary class="section-header">Anti-Seizure Medications</summary>
+            <div class="info-box" id="anti-seizure-medications">
+              <p>Below is a list of anti-seizure medications (ASMs) with typical adult dosing ranges, common side effects, and their therapeutic ranges (if applicable) along with the metabolite measured:</p>
+              
+              <!-- ASM Filters -->
+              <div class="asm-filters">
+                <label class="filter-checkbox" for="filter-broad-spectrum">
+                  <input type="checkbox" id="filter-broad-spectrum">
+                  <span>Broad Spectrum</span>
+                </label>
+                <label class="filter-checkbox" for="filter-focal">
+                  <input type="checkbox" id="filter-focal">
+                  <span>Narrow Spectrum</span>
+                </label>
+                <label class="filter-checkbox" for="filter-other">
+                  <input type="checkbox" id="filter-other">
+                  <span>Other</span>
+                </label>
+              </div>
+              
+              <table class="custom-table" data-mobile-cards="true">
+                <thead>
+                  <tr>
+                    <th>Medication</th>
+                    <th>Typical Adult Dose Range</th>
+                    <th>Common Side Effects</th>
+                    <th>Therapeutic Range</th>
+                  </tr>
+                </thead>
+                <!-- Add an ID to the tbody so we can target its rows -->
+                <tbody id="medicationsTableBody">
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/brivaracetam-drug-information" target="_blank">Brivaracetam</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 100–200 mg/day (in 2 divided doses)</td>
+                    <td data-label="Common Side Effects">Drowsiness, dizziness, fatigue, irritability</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/carbamazepine-drug-information" target="_blank">Carbamazepine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 800–1200 mg/day (in 2 divided doses; range ~400–1600 mg)</td>
+                    <td data-label="Common Side Effects">Dizziness, drowsiness, diplopia, ataxia</td>
+                    <td data-label="Therapeutic Range">Carbamazepine 4–12 µg/mL; CBZ‑10,11‑epoxide 0.4-4 μg/mL</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/cannabidiol-drug-information" target="_blank">Cannabidiol</a> <em>(rare, for Dravet/LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 10–20 mg/kg/day (in 2 doses)</td>
+                    <td data-label="Common Side Effects">Diarrhea, fatigue, decreased appetite, somnolence</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/cenobamate-drug-information" target="_blank">Cenobamate</a> <em>(new)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 200 mg/day (after gradual titration; max 400 mg/day)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, fatigue, headache, nausea</td>
+                    <td data-label="Therapeutic Range">3.8-54.6 mg/L</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/clobazam-drug-information" target="_blank">Clobazam</a> <em>(adjunct for LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 10–40 mg/day (usually divided BID)</td>
+                    <td data-label="Common Side Effects">Sedation, drowsiness, drooling</td>
+                    <td data-label="Therapeutic Range">Clobazam 30-300 ng/mL; N-desmethylclobazam 300-3000 ng/mL/td</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/clonazepam-drug-information" target="_blank">Clonazepam</a> <em>(rarely used long-term)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 0.5 to 1.5 mg/day in 1 to 3 divided doses
+                      <div></div> Adjunctive therapy: 0.5 to 1 mg/day in 1 to 3 divided doses</td>
+                    <td data-label="Common Side Effects">Sedation, drowsiness, cognitive impairment, tolerance</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/eslicarbazepine-drug-information" target="_blank">Eslicarbazepine acetate</a></td>
+                    <td data-label="Typical Adult Dose Range"> Oral: 800–1600 mg/day (usually once daily)</td>
+                    <td data-label="Common Side Effects">Dizziness, headache, diplopia, somnolence</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="absence">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/ethosuximide-drug-information" target="_blank">Ethosuximide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 500–1500 mg/day (maximum ~60 mg/kg/day; for absence seizures only)</td>
+                    <td data-label="Common Side Effects">Nausea, vomiting, lethargy, headache, weight loss</td>
+                    <td data-label="Therapeutic Range">40–100 µg/mL</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/felbamate-drug-information?sectionName=Adult&anchor=F54526112&source=auto_suggest&selectedTitle=1~1---2~4---fenflu&showDrugLabel=true&search=fenfluramine#F54526112" target="_blank">Felbamate</a> <em>(rarely used – toxicity)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 1200–3600 mg/day (divided TID–QID)</td>
+                    <td data-label="Common Side Effects">Sedation, nausea, vomiting, risk of aplastic anemia/liver failure</td>
+                    <td data-label="Therapeutic Range">NA</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/fenfluramine-drug-information" target="_blank">Fenfluramine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 0.2-0.35 mg/kg BID</td>
+                    <td data-label="Common Side Effects">Hypertension, pulmonary hypertension, valvular Heart Disease, weight loss</td>
+                    <td data-label="Therapeutic Range"><50 µg/L</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/gabapentin-drug-information" target="_blank">Gabapentin</a> <em>(rarely effective for epilepsy)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 900–3600 mg/day (divided TID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, peripheral edema, ataxia</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/lacosamide-drug-information" target="_blank">Lacosamide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 200–400 mg/day and maximum 600 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, headache, nausea</td>
+                    <td data-label="Therapeutic Range">10-20 mg/L</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/lamotrigine-drug-information" target="_blank">Lamotrigine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (in 2 divided doses; slow titration. Note that dosing changes for patients taking drugs that alter metabolism)</td>
+                    <td data-label="Common Side Effects">Rash (risk of Stevens–Johnson syndrome), dizziness, headache</td>
+                    <td data-label="Therapeutic Range">3-15 µg/mL</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/levetiracetam-drug-information" target="_blank">Levetiracetam</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 1000–4000 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Drowsiness, dizziness, irritability, behavioral changes</td>
+                    <td data-label="Therapeutic Range">10-40 µg/mL</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/oxcarbazepine-drug-information" target="_blank">Oxcarbazepine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 600–2400 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, sedation, hyponatremia</td>
+                    <td data-label="Therapeutic Range">3–35 µg/mL (MHD)</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/perampanel-drug-information" target="_blank">Perampanel</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 8–12 mg/day (once daily at bedtime)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, hostility, irritability, falls</td>
+                    <td data-label="Therapeutic Range">200–600 ng/mL</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/phenobarbital-drug-information" target="_blank">Phenobarbital</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 60–200 mg/day (usually once at bedtime)</td>
+                    <td data-label="Common Side Effects">Sedation, cognitive impairment, ataxia, dependence</td>
+                    <td data-label="Therapeutic Range">10–40 µg/mL</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/phenytoin-drug-information" target="_blank">Phenytoin</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 300–400 mg/day (divided BID; ~5–7 mg/kg/day to maintain level 10–20 µg/mL)</td>
+                    <td data-label="Common Side Effects">Nystagmus, ataxia, gingival hyperplasia, hirsutism, sedation</td>
+                    <td data-label="Therapeutic Range">10–20 µg/mL (zero-order)</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/primidone-drug-information" target="_blank">Primidone</a> <em>(rarely used)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 750–1500 mg/day (divided BID–TID)</td>
+                    <td data-label="Common Side Effects">Sedation, ataxia, nausea, dizziness</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="focal">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/pregabalin-drug-information" target="_blank">Pregabalin</a> <em>(rarely used for epilepsy)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 150–600 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, weight gain, peripheral edema</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/rufinamide-drug-information" target="_blank">Rufinamide</a> <em>(rare, LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 1800–3200 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, fatigue, nausea, vomiting</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/stiripentol-drug-information" target="_blank">Stiripentol</a> <em>(rare, Dravet)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 50 mg/kg/day (divided TID)</td>
+                    <td data-label="Common Side Effects">Drowsiness, ataxia, loss of appetite</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/tiagabine-drug-information" target="_blank">Tiagabine</a> <em>(rarely used)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 32–56 mg/day (divided BID–QID)</td>
+                    <td data-label="Common Side Effects">Dizziness, nervousness, fatigue, tremor</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/topiramate-drug-information" target="_blank">Topiramate</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Cognitive slowing, weight loss, paresthesias, kidney stones</td>
+                    <td data-label="Therapeutic Range">5-20 µg/mL</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/valproate-valproic-acid-drug-information" target="_blank">Valproate (Valproic acid)</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 1000–3000 mg/day (divided BID–TID; ~15–60 mg/kg/day)</td>
+                    <td data-label="Common Side Effects">GI upset, tremor, weight gain, hair loss, hepatotoxicity, thrombocytopenia</td>
+                    <td data-label="Therapeutic Range">50-125 mcg/mL</td>
+                  </tr>
+                  <tr data-asm-type="other">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/vigabatrin-drug-information" target="_blank">Vigabatrin</a> <em>(rare – infantile spasms)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 2000–3000 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Visual field defects, sedation, irritability</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr data-asm-type="broad-spectrum">
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/zonisamide-drug-information" target="_blank">Zonisamide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (once daily or divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, loss of appetite, weight loss</td>
+                    <td data-label="Therapeutic Range">10–40 mcg/mL</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>*Note:* The doses listed are typical adult maintenance ranges. Actual prescribing should be individualized, and many medications require slow titration or weight‐based dosing in children. Always consult detailed references for specific dosing and monitoring recommendations.</p>
+              <p><em>References: Epilepsy Foundation; ILAE; UpToDate drug monographs.</em></p>
+            </div>
+          </details>
+          
+          <!-- 3. ASM Flowcharts Section (moved up from bottom) -->
+          <details open class="section-detail">
+            <summary class="section-header">ASM Flowcharts</summary>
+            <div class="info-box" id="asm-flowcharts">
+              <p>These flow charts provide guidance on anti-seizure medication selection based on seizure type, mechanisms of action, and clinical applications:</p>
+              
+              <div class="image-container">
+                <h3>Choice of Anti-Seizure Medications</h3>
+                <p>Monotherapy and add-on therapy options for seizures in adults and children:</p>
+                <img src="assets/images/Clinica_choice.png" alt="Anti-seizure medication choice flowchart" class="responsive-image">
+              </div>
+              
+              <div class="image-container">
+                <h3>Mechanisms of Action</h3>
+                <p>Neurobiological targets of commonly used anti-seizure medications:</p>
+                <img src="assets/images/Clinical_mechanism.png" alt="Anti-seizure medication mechanisms of action" class="responsive-image">
+              </div>
+              
+              <div class="image-container">
+                <h3>Clinical Spectrum of Anti-Seizure Medications</h3>
+                <p>Treatment approaches for different types of epilepsy in adults and children:</p>
+                <img src="assets/images/Clinical_spectrum.png" alt="Clinical spectrum of anti-seizure medications" class="responsive-image">
+              </div>
+              
+              <div class="reference">
+                <p><strong>Reference:</strong> Löscher, W., Klein, P. The Pharmacology and Clinical Efficacy of Antiseizure Medications: From Bromide Salts to Cenobamate and Beyond. <em>CNS Drugs</em> 35, 935–963 (2021). <a href="https://link.springer.com/article/10.1007/s40263-021-00827-8" target="_blank">https://link.springer.com/article/10.1007/s40263-021-00827-8</a></p>
+              </div>
+            </div>
+          </details>
+          
+          <!-- 4. ASM Withdrawal Section -->
+          <details open class="section-detail">
+            <summary class="section-header">ASM Withdrawal</summary>
+            <div class="info-box" id="asm-withdrawal">
+              <p>ASM withdrawal should be performed gradually under medical supervision after careful consideration of seizure recurrence risk factors.</p>
+              
+              <h3 class="mt-3">Key Considerations for ASM Withdrawal:</h3>
+              <ul>
+                <li>Minimum 2 years seizure-free before attempting withdrawal</li>
+                <li>Longer seizure-free period for patients with prior relapses or refractory epilepsy</li>
+                <li>Gradual tapering over months (typically 3-6 months)</li>
+                <li>Higher recurrence risk with multiple seizure types, abnormal EEG, or structural lesions</li>
+                <li>Consider driving restrictions during and after medication withdrawal</li>
+              </ul>
+              
+              <p class="mt-3">Use the prediction tool below to estimate seizure recurrence risk after medication withdrawal, but always consult your epilepsy specialist before making any medication changes.</p>
+              
+              <div class="text-center mt-4 mb-3">
+                <a href="http://epilepsypredictiontools.info/index" target="_blank" class="action-button">
+                  <i class="fas fa-calculator icon-spacing"></i>
+                  Epilepsy Prediction Tools
+                </a>
+              </div>
+            </div>
+          </details>
+          
+          <!-- 5. Management of Refractory Epilepsy Section -->
+          <details open class="section-detail">
+            <summary class="section-header">Management of Refractory Epilepsy</summary>
+            <div class="info-box" id="refractory-epilepsy">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Therapy Category</th>
+                    <th>Description/Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Therapy Category">Definition</td>
+                    <td data-label="Description/Details">Drug-resistant epilepsy (DRE) is defined as failure to achieve sustained seizure freedom after trials of two appropriate ASMs. Approximately one-third of patients have DRE, which increases risks (including SUDEP). Early referral to an epilepsy center is essential.</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Therapy Category">Surgical Options</td>
+                    <td data-label="Description/Details">Resection, lesionectomy, lobar/multilobar resections, or hemispherectomy in catastrophic cases; corpus callosotomy may reduce drop attacks.</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Therapy Category">Neuromodulation Techniques</td>
+                    <td data-label="Description/Details">
+                      <strong>VNS:</strong> Vagus nerve stimulation (VNS) has demonstrated that approximately 49% of patients achieve a ≥50% reduction in seizure frequency within 1–2 years (see <a class="reference" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4884552/#:~:text=Specifically%2C%2049%25%20of%20patients%20responded,median%20seizure%20reduction%20%3D%2063%25" target="_blank">VNS outcomes</a>).
+                      <br><br>
+                      <strong>RNS:</strong> Responsive neurostimulation (RNS) offers a median seizure reduction of around 60% over several years (see <a class="reference" href="https://pubmed.ncbi.nlm.nih.gov/37655833/" target="_blank">RNS outcomes</a>).
+                      <br><br>
+                      <strong>DBS:</strong> Deep brain stimulation (DBS) targeting the anterior nucleus of the thalamus has shown a median seizure reduction of about 56% in controlled trials (see <a class="reference" href="https://www.neurology.org/doi/10.1212/WNL.0000000000001334" target="_blank">DBS outcomes</a>).
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-label="Therapy Category">Dietary &amp; Other Therapies</td>
+                    <td data-label="Description/Details">Ketogenic diet (or variants), immunotherapies, etc.</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Therapy Category">References</td>
+                    <td data-label="Description/Details">ILAE/AAN recommendations; ACNS guidelines; UpToDate; Epilepsy Foundation.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+          
+          // Footer loaded - the font size functionality will be handled by includes-loader.js
+          console.log('Footer loaded in seizure_management.html');
+        });
+        
+      // Load disclaimer modal
+      fetch('includes/disclaimer.html')
+        .then(response => response.text())
+        .then(data => {
+          // Create a container if it doesn't exist
+          let disclaimerContainer = document.getElementById('disclaimer-container');
+          if (!disclaimerContainer) {
+            disclaimerContainer = document.createElement('div');
+            disclaimerContainer.id = 'disclaimer-container';
+            document.body.appendChild(disclaimerContainer);
+          }
+          disclaimerContainer.innerHTML = data;
+        });
+    
+    // PWA installation
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      const installBtn = document.getElementById('installBtn');
+      installBtn.style.display = 'block';
+    
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          console.log('App installed');
+          installBtn.style.display = 'none';
+        } else {
+          console.log('App not installed');
+        }
+        
+        deferredPrompt = null;
+      });
+    });
+    
+    // Hide install button if already installed
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('installBtn').style.display = 'none';
+      deferredPrompt = null;
+    });
+    
+    // Initialize medication cards animation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Find the medications table body
+      const medTableBody = document.getElementById('medicationsTableBody');
+      if (medTableBody) {
+        // Get all rows
+        const rows = medTableBody.querySelectorAll('tr');
+        
+        // Check if we're on mobile
+        const isMobile = window.innerWidth < 768;
+        
+        // Add animation class with a small delay between each
+        rows.forEach((row, index) => {
+          setTimeout(() => {
+            row.classList.add('card-visible');
+          }, index * (isMobile ? 30 : 50)); // Faster animation on mobile
+        });
+
+        // Initialize filtering to "All" on page load
+        setTimeout(() => {
+          filterCategory('all', true);
+        }, 100);
+
+        // ASM Filter functionality
+        const filterBroadSpectrum = document.getElementById('filter-broad-spectrum');
+        const filterFocal = document.getElementById('filter-focal');
+        const filterOther = document.getElementById('filter-other');
+        
+        // Function to filter the medications table based on ASM type
+        function filterMedications() {
+          const showBroadSpectrum = filterBroadSpectrum.checked;
+          const showFocal = filterFocal.checked;
+          const showOther = filterOther.checked;
+          
+          // Show all medications if no filters checked
+          const showAll = !showBroadSpectrum && !showFocal && !showOther;
+          
+          // Update active class on labels
+          filterBroadSpectrum.closest('.filter-checkbox').classList.toggle('active', showBroadSpectrum);
+          filterFocal.closest('.filter-checkbox').classList.toggle('active', showFocal);
+          filterOther.closest('.filter-checkbox').classList.toggle('active', showOther);
+          
+          // Filter rows based on selected checkboxes
+          rows.forEach(row => {
+            const asmType = row.getAttribute('data-asm-type');
+            
+            if (showAll) {
+              // Show all rows if no filter is selected
+              row.classList.remove('hidden-by-filter');
+            } else if (showBroadSpectrum && asmType === 'broad-spectrum') {
+              // Show broad spectrum ASMs
+              row.classList.remove('hidden-by-filter');
+            } else if (showFocal && asmType === 'focal') {
+              // Show focal ASMs
+              row.classList.remove('hidden-by-filter');
+            } else if (showOther && asmType === 'other') {
+              // Show other ASMs
+              row.classList.remove('hidden-by-filter');
+            } else {
+              // Hide rows that don't match selected filters
+              row.classList.add('hidden-by-filter');
+            }
+          });
+          
+          // Scroll to table after filtering on mobile for better UX
+          if (isMobile) {
+            const table = document.querySelector('.custom-table[data-mobile-cards="true"]');
+            if (table && !showAll) {
+              setTimeout(() => {
+                table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }, 100);
+            }
+          }
+        }
+        
+        // Add event listeners to the checkboxes
+        if (filterBroadSpectrum && filterFocal && filterOther) {
+          filterBroadSpectrum.addEventListener('change', function() {
+            // If this checkbox is checked, uncheck the others
+            if (this.checked) {
+              if (filterFocal.checked) filterFocal.checked = false;
+              if (filterOther.checked) filterOther.checked = false;
+            }
+            filterMedications();
+          });
+          
+          filterFocal.addEventListener('change', function() {
+            // If this checkbox is checked, uncheck the others
+            if (this.checked) {
+              if (filterBroadSpectrum.checked) filterBroadSpectrum.checked = false;
+              if (filterOther.checked) filterOther.checked = false;
+            }
+            filterMedications();
+          });
+          
+          filterOther.addEventListener('change', function() {
+            // If this checkbox is checked, uncheck the others
+            if (this.checked) {
+              if (filterBroadSpectrum.checked) filterBroadSpectrum.checked = false;
+              if (filterFocal.checked) filterFocal.checked = false;
+            }
+            filterMedications();
+          });
+        }
+      }
+    });
+
+    // Content filtering function to show/hide sections
+    function filterCategory(category, isInitialLoad = false) {
+      // Get all quick link buttons and section details
+      const quickLinks = document.querySelectorAll('.quick-links a');
+      const sectionDetails = document.querySelectorAll('.section-detail');
+      
+      // Update active state for quick links
+      quickLinks.forEach(link => {
+        link.classList.remove('active');
+        if ((category === 'all' && link.id === 'all-btn') || 
+            (link.getAttribute('href').includes(category))) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Show/hide sections based on selected category
+      sectionDetails.forEach(section => {
+        const sectionId = section.querySelector('.info-box').id;
+        
+        if (category === 'all') {
+          // Show all sections
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'epilepticus' && sectionId === 'status-epilepticus') {
+          // Show only status epilepticus section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'medications' && sectionId === 'anti-seizure-medications') {
+          // Show only medications section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'asm-withdrawal' && sectionId === 'asm-withdrawal') {
+          // Show only ASM withdrawal section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'refractory-epilepsy' && sectionId === 'refractory-epilepsy') {
+          // Show only refractory epilepsy section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'asm-flowcharts' && sectionId === 'asm-flowcharts') {
+          // Show only ASM flowcharts section
+          section.style.display = 'block';
+          section.open = true;
+        } else {
+          // Hide all other sections
+          section.style.display = 'none';
+        }
+      });
+      
+      // Only scroll if this is not the initial page load
+      if (!isInitialLoad) {
+        // Scroll to the top of the content area
+        document.getElementById('seizure-management').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  </script>
+</body>
+</html>

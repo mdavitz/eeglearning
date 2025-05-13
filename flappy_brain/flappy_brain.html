@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile-friendly viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Brain</title>
+  <!-- Load a retro 8-bit font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    /* 8-bit style for the mute button */
+    #muteButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
+      cursor: pointer;
+    }
+    #muteButton:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="320" height="480"></canvas>
+  <!-- Mute Button -->
+  <button id="muteButton">Mute</button>
+  <script>
+    // Game constants
+    const GRAVITY = 0.3;
+    const JUMP_STRENGTH = -5;
+    const PIPE_SPEED = 2.3;
+    const PIPE_WIDTH = 50;
+    const GAP_MIN = 130;
+    const GAP_MAX = 180;
+    const COLLISION_MARGIN = 5;
+
+    // Game state
+    const gameState = {
+      frames: 0,
+      score: 0,
+      bestScore: Number(localStorage.getItem("bestScore")) || 0,
+      state: "menu", // "menu", "playing", "paused", "gameover"
+      isMuted: false
+    };
+
+    // Canvas setup
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Asset loading
+    const assets = {
+      images: {},
+      sounds: {}
+    };
+
+    // Load images
+    const imageFiles = {
+      background: "background.png",
+      foreground: "foreground.png",
+      bird: "bird.png",
+      pipeNorth: "pipeNorth.png",
+      pipeSouth: "pipeSouth.png",
+      neuron: "neuron.png"
+    };
+
+    // Load sounds
+    const soundFiles = {
+      flap: "flap.wav",
+      score: "score.wav",
+      hit: "hit.wav",
+      music: "music.m4a"
+    };
+
+    // Load all assets
+    let loadedAssets = 0;
+    const totalAssets = Object.keys(imageFiles).length + Object.keys(soundFiles).length;
+
+    function loadAssets() {
+      // Load images
+      Object.entries(imageFiles).forEach(([key, src]) => {
+        const img = new Image();
+        img.onload = () => {
+          assets.images[key] = img;
+          loadedAssets++;
+          if (loadedAssets === totalAssets) startGame();
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          loadedAssets++;
+          if (loadedAssets === totalAssets) startGame();
+        };
+        img.src = src;
+      });
+
+      // Load sounds
+      Object.entries(soundFiles).forEach(([key, src]) => {
+        const audio = new Audio(src);
+        if (key === 'music') {
+          audio.loop = true;
+          audio.volume = 0.2;
+        }
+        assets.sounds[key] = audio;
+        loadedAssets++;
+        if (loadedAssets === totalAssets) startGame();
+      });
+    }
+
+    // Game objects
+    const bird = {
+      x: 50,
+      y: canvas.height / 2,
+      width: 50,
+      height: 40,
+      velocity: 0,
+      rotation: 0,
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(
+          assets.images.bird,
+          -this.width / 2,
+          -this.height / 2,
+          this.width,
+          this.height
+        );
+        ctx.restore();
+      },
+      update() {
+        this.velocity += GRAVITY;
+        this.y += this.velocity;
+        this.rotation = Math.min(Math.PI / 2, Math.max(-Math.PI / 2, this.velocity * 0.1));
+
+        if (this.y + this.height / 2 > canvas.height) {
+          this.y = canvas.height - this.height / 2;
+          this.velocity = 0;
+          gameOver();
+        }
+        if (this.y - this.height / 2 < 0) {
+          this.y = this.height / 2;
+          this.velocity = 0;
+        }
+      },
+      jump() {
+        this.velocity = JUMP_STRENGTH;
+        playSound('flap');
+      },
+      reset() {
+        this.y = canvas.height / 2;
+        this.velocity = 0;
+        this.rotation = 0;
+      }
+    };
+
+    const pipes = [];
+    const particles = [];
+
+    // Game functions
+    function createPipe() {
+      const gap = Math.floor(Math.random() * (GAP_MAX - GAP_MIN + 1)) + GAP_MIN;
+      const maxPipeHeight = canvas.height - gap - 80;
+      const topPipeHeight = Math.floor(Math.random() * maxPipeHeight) + 40;
+      pipes.push({
+        x: canvas.width,
+        top: topPipeHeight,
+        bottom: canvas.height - (topPipeHeight + gap),
+        passed: false
+      });
+    }
+
+    function createParticles(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x,
+          y,
+          velocity: {
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2
+          },
+          lifetime: 30,
+          size: Math.random() * 3 + 1
+        });
+      }
+    }
+
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].velocity.x;
+        particles[i].y += particles[i].velocity.y;
+        particles[i].lifetime--;
+        if (particles[i].lifetime <= 0) particles.splice(i, 1);
+      }
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff0";
+        ctx.fill();
+      });
+    }
+
+    function updatePipes() {
+      pipes.forEach(pipe => {
+        pipe.x -= PIPE_SPEED;
+        if (
+          bird.x + bird.width/2 - COLLISION_MARGIN > pipe.x &&
+          bird.x - bird.width/2 + COLLISION_MARGIN < pipe.x + PIPE_WIDTH
+        ) {
+          if (
+            bird.y - bird.height/2 + COLLISION_MARGIN < pipe.top ||
+            bird.y + bird.height/2 - COLLISION_MARGIN > canvas.height - pipe.bottom
+          ) {
+            createParticles(bird.x, bird.y, 30);
+            gameOver();
+          }
+        }
+        if (!pipe.passed && pipe.x + PIPE_WIDTH < bird.x) {
+          pipe.passed = true;
+          gameState.score++;
+          playSound('score');
+        }
+      });
+      pipes.splice(0, pipes.findIndex(pipe => pipe.x + PIPE_WIDTH > 0));
+    }
+
+    function drawPipes() {
+      pipes.forEach(pipe => {
+        ctx.drawImage(assets.images.pipeNorth, pipe.x, 0, PIPE_WIDTH, pipe.top);
+        ctx.drawImage(assets.images.pipeSouth, pipe.x, canvas.height - pipe.bottom, PIPE_WIDTH, pipe.bottom);
+      });
+    }
+
+    function drawBackground() {
+      ctx.drawImage(assets.images.background, 0, 0, canvas.width, canvas.height);
+    }
+
+    function drawForeground() {
+      ctx.drawImage(assets.images.foreground, 0, canvas.height - 30, canvas.width, 30);
+    }
+
+    function drawHUD() {
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(`Score: ${gameState.score}`, 20, 20);
+      ctx.font = "12px Arial";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(`Best: ${gameState.bestScore}`, 20, canvas.height - 20);
+    }
+
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Flappy Brain", canvas.width/2, canvas.height/2 - 40);
+      ctx.font = "20px Arial";
+      ctx.fillText("Click or tap to start", canvas.width/2, canvas.height/2);
+      ctx.fillText("Press P to Pause", canvas.width/2, canvas.height/2 + 30);
+    }
+
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = "#ff0";
+      ctx.font = "28px 'Press Start 2P', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 60);
+      
+      ctx.font = "16px 'Press Start 2P', monospace";
+      ctx.fillText(`Score: ${gameState.score}`, canvas.width/2, canvas.height/2 - 20);
+      ctx.fillText(`Best: ${gameState.bestScore}`, canvas.width/2, canvas.height/2 + 10);
+      
+      const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      
+      ctx.fillStyle = `rgba(0, 200, 0, ${pulse * 0.7})`;
+      ctx.fillRect(buttonX, buttonY, 200, 50);
+      
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(buttonX, buttonY, 200, 50);
+      
+      ctx.fillStyle = "#fff";
+      ctx.font = "18px 'Press Start 2P', monospace";
+      ctx.fillText("TAP TO RESTART", canvas.width/2, canvas.height/2 + 80);
+    }
+
+    function drawPause() {
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Paused", canvas.width/2, canvas.height/2);
+    }
+
+    function gameOver() {
+      gameState.state = "gameover";
+      playSound('hit');
+      if (gameState.score > gameState.bestScore) {
+        gameState.bestScore = gameState.score;
+        localStorage.setItem("bestScore", gameState.bestScore);
+      }
+    }
+
+    function resetGame() {
+      bird.reset();
+      pipes.length = 0;
+      particles.length = 0;
+      gameState.frames = 0;
+      gameState.score = 0;
+      gameState.state = "playing";
+      createParticles(canvas.width/2, canvas.height/2, 20);
+    }
+
+    function isInRestartButton(x, y) {
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      return (
+        x >= buttonX &&
+        x <= buttonX + 200 &&
+        y >= buttonY &&
+        y <= buttonY + 50
+      );
+    }
+
+    function playSound(name) {
+      if (gameState.isMuted) return;
+      const sound = assets.sounds[name];
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(err => console.log('Audio play failed:', err));
+      }
+    }
+
+    function handleInteraction(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const canvasX = x * scaleX;
+      const canvasY = y * scaleY;
+      
+      switch (gameState.state) {
+        case "menu":
+          gameState.state = "playing";
+          playSound('music');
+          break;
+        case "playing":
+          bird.jump();
+          break;
+        case "gameover":
+          if (isInRestartButton(canvasX, canvasY)) {
+            resetGame();
+          }
+          break;
+      }
+    }
+
+    function gameLoop() {
+      drawBackground();
+      
+      if (gameState.state === "menu") {
+        drawMenu();
+      } else if (gameState.state === "playing" || gameState.state === "paused") {
+        if (gameState.state === "playing") {
+          gameState.frames++;
+          if (gameState.frames % 100 === 0) createPipe();
+          bird.update();
+          updatePipes();
+          updateParticles();
+        }
+        drawPipes();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        if (gameState.state === "paused") drawPause();
+      } else if (gameState.state === "gameover") {
+        drawPipes();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        drawGameOver();
+      }
+      
+      drawParticles();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      // Event listeners
+      canvas.addEventListener("click", handleInteraction);
+      canvas.addEventListener("touchstart", handleInteraction, { passive: false });
+      canvas.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+      canvas.addEventListener("touchend", e => e.preventDefault(), { passive: false });
+
+      document.addEventListener("keydown", e => {
+        if (e.code === "Space") {
+          switch (gameState.state) {
+            case "menu":
+              gameState.state = "playing";
+              playSound('music');
+              break;
+            case "playing":
+              bird.jump();
+              break;
+            case "gameover":
+              resetGame();
+              break;
+          }
+        } else if (e.code === "KeyP") {
+          if (gameState.state === "playing") {
+            gameState.state = "paused";
+          } else if (gameState.state === "paused") {
+            gameState.state = "playing";
+          }
+        }
+      });
+
+      document.getElementById("muteButton").addEventListener("click", e => {
+        e.stopPropagation();
+        gameState.isMuted = !gameState.isMuted;
+        Object.values(assets.sounds).forEach(sound => sound.muted = gameState.isMuted);
+        e.target.textContent = gameState.isMuted ? "Unmute" : "Mute";
+      });
+
+      // Start the game loop
+      gameLoop();
+    }
+
+    // Start loading assets
+    loadAssets();
+  </script>
+</body>
+</html>

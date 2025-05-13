@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Lead Placement Practice - EEG Curriculum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <!-- Page-specific CSS for EEG Simulator -->
+  <link rel="stylesheet" href="assets/css/pages/eeg-waveforms.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Page-specific JS -->
+  <script src="assets/js/pages/eeg-lead-practice.js" defer></script>
+  <script src="assets/js/pages/eeg-lessons.js" defer></script>
+  
+  <style>
+    /* Page specific styles can go here */
+    .page-subtitle {
+      text-align: center;
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+    
+    /* Practice Tab Styles */
+    .practice-tabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .practice-tab {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      margin: 0 5px;
+      font-size: 1rem;
+      color: #555;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .practice-tab:hover {
+      color: var(--primary-color);
+    }
+    
+    .practice-tab.active {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .practice-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--primary-color);
+    }
+    
+    .tab-content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_lead_practice.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <!-- Main Content -->
+  <main>
+    <div class="page-eeg_lead_practice">
+      <h1 class="page-title">EEG Simulator</h1>
+      
+      <!-- Tab Buttons for Waveform Simulator and Lead Practice -->
+      <div class="tab-buttons">
+        <a href="eeg_waveforms.html" id="waveform-btn">EEG Waveform Simulator</a>
+        <button id="lead-practice-btn" class="active">EEG Lead Practice</button>
+      </div>
+      
+      <!-- Main Content Tabs -->
+      <div class="practice-tabs">
+        <button class="practice-tab active" data-tab="lead-placement">Lead Placement Practice</button>
+        <button class="practice-tab" data-tab="phase-reversal">Phase Reversal</button>
+        <button class="practice-tab" data-tab="10-20-system">10-20 System</button>
+        <button class="practice-tab" data-tab="montages">Montage Types</button>
+      </div>
+      
+      <!-- Tab Content Containers -->
+      <div class="tab-content-container">
+        <!-- Lead Placement Practice Tab (initially visible) -->
+        <div class="tab-content active" id="lead-placement-tab">
+          <h2 class="page-subtitle">Lead Placement Practice</h2>
+          
+          <!-- Tutorial Button -->
+          <button id="tutorial-btn" class="tutorial-button">
+            <i class="fas fa-graduation-cap"></i> Start Tutorial
+          </button>
+          
+          <div id="lead-practice-container">
+            <!-- App Introduction -->
+            <div class="app-intro">
+              <p>Practice placing EEG electrodes according to the International 10-20 System. Select electrodes from the list and place them on the head model, then check your accuracy. You can also view different montage configurations to see how electrodes are arranged.</p>
+              
+              <div class="instruction-box">
+                <div class="instruction-header">
+                  <i class="fas fa-info-circle"></i>
+                  <h3>How to Use This Tool</h3>
+                </div>
+                <ol>
+                  <li><b>Select an electrode</b> from the list on the left (Fp1, F3, etc.)</li>
+                  <li><b>Click on the head model</b> where you think it should be placed</li>
+                  <li>Continue until you've placed all the electrodes</li>
+                  <li>Click <b>Check Placement</b> to see your accuracy</li>
+                  <li>Use the <b>montage dropdown</b> to visualize different EEG montages</li>
+                </ol>
+              </div>
+            </div>
+            
+            <!-- Practice Area -->
+            <div class="practice-area">
+              <!-- Controls Section -->
+              <div class="controls-section">
+                <!-- Montage Selector -->
+                <div class="montage-selector">
+                  <h3>Select Montage</h3>
+                  <select id="montage-select">
+                    <option value="10-20">International 10-20 System</option>
+                    <option value="longitudinal-bipolar">Longitudinal Bipolar</option>
+                    <option value="transverse-bipolar">Transverse Bipolar</option>
+                    <option value="referential">Referential</option>
+                    <option value="laplacian">Laplacian</option>
+                  </select>
+                </div>
+                
+                <!-- Difficulty Selector -->
+                <div class="difficulty-selector">
+                  <h3>Difficulty Level</h3>
+                  <select id="difficulty-select">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                  <div id="difficulty-info" class="difficulty-info medium">
+                    Standard tolerance for correct placement
+                  </div>
+                </div>
+                
+                <!-- Practice Mode Selector - NEW -->
+                <div class="mode-selector">
+                  <h3>Practice Mode</h3>
+                  <select id="mode-select">
+                    <option value="standard" selected>Standard Practice</option>
+                    <option value="timed">Timed Challenge</option>
+                    <option value="random">Random Lead Quiz</option>
+                    <option value="guided">Guided Practice</option>
+                  </select>
+                  <div id="mode-info" class="mode-info standard">
+                    Place all leads at your own pace
+                  </div>
+                  <button id="start-btn" class="action-btn start-btn" style="display: none;">
+                    Start Practice
+                  </button>
+                </div>
+                
+                <!-- Mode-specific UI elements -->
+                <div class="mode-specific-container">
+                  <!-- Timer Display for Timed Mode -->
+                  <div id="timer-display" class="timer-display" style="display: none;">2:00</div>
+                  
+                  <!-- Random Lead Prompt for Random Mode -->
+                  <div id="random-lead-prompt" class="mode-prompt" style="display: none;">
+                    Click Start to begin Random Lead Quiz
+                  </div>
+                  
+                  <!-- Guided Instructions for Guided Mode -->
+                  <div id="guided-instructions" class="mode-prompt" style="display: none;">
+                    Click Start to begin Guided Practice
+                  </div>
+                </div>
+                
+                <!-- Lead Selection -->
+                <div class="lead-selection">
+                  <h3>EEG Leads</h3>
+                  <div class="leads-container" id="leads-container">
+                    <!-- Leads will be dynamically inserted here -->
+                  </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                  <button id="check-btn" class="action-btn check-btn">Check Placement</button>
+                  <button id="reset-btn" class="action-btn reset-btn" title="Clear all placed leads and start over"><i class="fas fa-undo-alt"></i> Reset All</button>
+                </div>
+                
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                  <h3>Accuracy</h3>
+                  <div id="score">0 / 0 correct</div>
+                  <div id="feedback"></div>
+                </div>
+              </div>
+              
+              <!-- Head Model Area -->
+              <div class="head-model-area">
+                <div class="head-model">
+                  <div class="direction-indicator indicator-front">Nasion</div>
+                  <div class="direction-indicator indicator-back">Inion</div>
+                  <div class="direction-indicator indicator-left">Left</div>
+                  <div class="direction-indicator indicator-right">Right</div>
+                  <div class="head-outline">
+                    <!-- Dropped leads will appear here -->
+                  </div>
+                  <div id="dropped-leads">
+                    <!-- Dropped leads will be dynamically inserted here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase Reversal Tab -->
+        <div class="tab-content" id="phase-reversal-tab">
+          <h2 class="page-subtitle">Understanding Phase Reversal in EEG</h2>
+          
+          <div class="lesson-intro">
+            <p>Phase reversal is a key concept in interpreting EEG recordings and localizing the source of electrical activity. It occurs when adjacent electrode pairs in a bipolar montage display deflections in opposite directions.</p>
+          </div>
+          
+          <div class="concept-explanation">
+            <h4>How Phase Reversals Work</h4>
+            <p>In a bipolar montage, each channel records the voltage difference between two electrodes. When an electrical discharge occurs beneath an electrode:</p>
+            
+            <div class="key-points">
+              <div class="key-point">
+                <div class="point-number">1</div>
+                <div class="point-text">The voltage at that electrode changes relative to surrounding electrodes</div>
+              </div>
+              <div class="key-point">
+                <div class="point-number">2</div>
+                <div class="point-text">The electrode sees the highest voltage when directly over the source</div>
+              </div>
+              <div class="key-point">
+                <div class="point-number">3</div>
+                <div class="point-text">In bipolar recordings, this creates opposite deflections in adjacent channels</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="phase-reversal-simulator">
+            <h4>Interactive Phase Reversal Simulator</h4>
+            
+            <div class="simulator-container">
+              <div class="simulator-layout">
+                <div class="head-diagram-wrapper">
+                  <div class="head-diagram">
+                    <!-- Simplified head with electrodes -->
+                    <div class="electrode" data-electrode="Fp1" style="top: 15%; left: 38%;">Fp1</div>
+                    <div class="electrode" data-electrode="Fp2" style="top: 15%; left: 62%;">Fp2</div>
+                    <div class="electrode" data-electrode="F7" style="top: 32%; left: 15%;">F7</div>
+                    <div class="electrode" data-electrode="F3" style="top: 32%; left: 32%;">F3</div>
+                    <div class="electrode" data-electrode="Fz" style="top: 32%; left: 50%;">Fz</div>
+                    <div class="electrode" data-electrode="F4" style="top: 32%; left: 68%;">F4</div>
+                    <div class="electrode" data-electrode="F8" style="top: 32%; left: 85%;">F8</div>
+                    <div class="electrode" data-electrode="T7" style="top: 50%; left: 10%;">T7</div>
+                    <div class="electrode" data-electrode="C3" style="top: 50%; left: 32%;">C3</div>
+                    <div class="electrode" data-electrode="Cz" style="top: 50%; left: 50%;">Cz</div>
+                    <div class="electrode" data-electrode="C4" style="top: 50%; left: 68%;">C4</div>
+                    <div class="electrode" data-electrode="T8" style="top: 50%; left: 90%;">T8</div>
+                    <div class="electrode" data-electrode="P7" style="top: 68%; left: 15%;">P7</div>
+                    <div class="electrode" data-electrode="P3" style="top: 68%; left: 32%;">P3</div>
+                    <div class="electrode" data-electrode="Pz" style="top: 68%; left: 50%;">Pz</div>
+                    <div class="electrode" data-electrode="P4" style="top: 68%; left: 68%;">P4</div>
+                    <div class="electrode" data-electrode="P8" style="top: 68%; left: 85%;">P8</div>
+                    <div class="electrode" data-electrode="O1" style="top: 85%; left: 38%;">O1</div>
+                    <div class="electrode" data-electrode="O2" style="top: 85%; left: 62%;">O2</div>
+                    <div class="activity-source" id="activity-source"></div>
+                  </div>
+                </div>
+                
+                <div class="simulation-controls">
+                  <div class="montage-selection">
+                    <label for="reversal-montage-select">Montage:</label>
+                    <select id="reversal-montage-select">
+                      <option value="longitudinal-bipolar">Longitudinal Bipolar</option>
+                      <option value="referential-avg">Referential Average</option>
+                    </select>
+                  </div>
+                  
+                  <div class="voltage-control">
+                    <span>Voltage Intensity:</span>
+                    <div class="slider-with-markers">
+                      <input type="range" id="voltage-slider" min="50" max="200" value="120" class="voltage-slider">
+                      <div id="slider-track" class="slider-track" style="width: 46.7%;"></div>
+                      <div class="slider-value">
+                        <span id="voltage-value">120</span> μV
+                      </div>
+                      <div class="slider-markers">
+                        <span>50 μV</span>
+                        <span>100 μV</span>
+                        <span>150 μV</span>
+                        <span>200 μV</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="instructions">
+                    <p>Click or tap on any location on the head to simulate an electrical discharge and observe the resulting phase reversal.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="eeg-display">
+                <div class="waveform-display" id="phase-reversal-waveforms">
+                  <!-- Waveforms will be dynamically generated here -->
+                </div>
+              </div>
+              
+              <div class="voltage-math-explanation">
+                <h4>Mathematical Foundation of EEG Montages</h4>
+                <div class="math-content">
+                  <div class="formula-section">
+                    <h5>Bipolar Montage Calculation</h5>
+                    <div class="formula">
+                      <span class="math-eq">V<sub>channel</sub> = V<sub>electrode1</sub> - V<sub>electrode2</sub></span>
+                    </div>
+                    <div class="formula-explanation">
+                      <p>Example: For channel F3-C3</p>
+                      <p>V<sub>F3-C3</sub> = V<sub>F3</sub> - V<sub>C3</sub></p>
+                      <p>If V<sub>F3</sub> = +60μV and V<sub>C3</sub> = +100μV, then V<sub>F3-C3</sub> = -40μV (downward deflection)</p>
+                    </div>
+                  </div>
+                  
+                  <div class="formula-section">
+                    <h5>Referential Average Montage</h5>
+                    <div class="formula">
+                      <span class="math-eq">V<sub>avg</sub> = (V<sub>1</sub> + V<sub>2</sub> + ... + V<sub>n</sub>) / n</span>
+                      <br>
+                      <span class="math-eq">V<sub>channel</sub> = V<sub>electrode</sub> - V<sub>avg</sub></span>
+                    </div>
+                    <div class="formula-explanation">
+                      <p>The average reference is calculated as the mean of all electrode voltages, then each electrode is referenced to this average.</p>
+                      <p>Example: If we have electrodes F3, C3, P3 with voltages +60μV, +100μV, +80μV:</p>
+                      <p>V<sub>avg</sub> = (60 + 100 + 80) / 3 = 80μV</p>
+                      <p>V<sub>F3-avg</sub> = 60 - 80 = -20μV (downward deflection)</p>
+                      <p>V<sub>C3-avg</sub> = 100 - 80 = +20μV (upward deflection)</p>
+                    </div>
+                  </div>
+                  
+                  <div class="formula-section">
+                    <h5>Phase Reversal Criterion</h5>
+                    <div class="formula">
+                      <span class="math-eq">V<sub>channel1</sub> × V<sub>channel2</sub> < 0</span>
+                    </div>
+                    <div class="formula-explanation">
+                      <p>A phase reversal occurs when two adjacent channels that share an electrode have opposite polarities (one positive, one negative).</p>
+                      <p>Example: If F3-C3 = -40μV and C3-P3 = +40μV, then -40 × 40 = -1600 < 0, indicating a phase reversal at C3.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 10-20 System Tab -->
+        <div class="tab-content" id="10-20-system-tab">
+          <h2 class="page-subtitle">The International 10-20 System</h2>
+          <!-- Content for 10-20 system lesson -->
+          <p>Content coming soon...</p>
+        </div>
+        
+        <!-- Montages Tab -->
+        <div class="tab-content" id="montages-tab">
+          <h2 class="page-subtitle">Understanding EEG Montages</h2>
+          <!-- Content for montages lesson -->
+          <p>Content coming soon...</p>
+        </div>
+      </div>
+      
+      <!-- Modal for memes -->
+      <div class="meme-modal">
+        <div class="meme-content">
+          <span class="meme-close">&times;</span>
+          <img src="" alt="Meme" class="meme-image">
+          <div class="meme-text"></div>
+        </div>
+      </div>
+      
+      <!-- Tutorial Mode -->
+      <div class="tutorial-mode">
+        <div class="tutorial-content">
+          <span class="tutorial-close">&times;</span>
+          <h2>EEG Lead Placement Tutorial</h2>
+          
+          <div class="tutorial-progress">
+            <span class="progress-dot active" data-step="1"></span>
+            <span class="progress-dot" data-step="2"></span>
+            <span class="progress-dot" data-step="3"></span>
+            <span class="progress-dot" data-step="4"></span>
+            <span class="progress-dot" data-step="5"></span>
+          </div>
+          
+          <div class="tutorial-steps">
+            <div class="tutorial-step active" data-step="1">
+              <h3>Welcome to the EEG Lead Placement Practice!</h3>
+              <div class="tutorial-diagram">
+                <div class="diagram-head"></div>
+                <div class="diagram-point" style="top: 30%; left: 40%;">Fp1</div>
+                <div class="diagram-point" style="top: 30%; left: 60%;">Fp2</div>
+                <div class="diagram-caption">The International 10-20 System places electrodes at specific locations on the scalp.</div>
+              </div>
+              <p>This tool will help you learn and practice the International 10-20 System for EEG electrode placement.</p>
+            </div>
+            
+            <div class="tutorial-step" data-step="2">
+              <h3>How to Place Leads</h3>
+              <p>Drag and drop leads from the list onto the head model. Position them where you think they should go according to the 10-20 system.</p>
+              <div class="tutorial-diagram">
+                <div class="diagram-head"></div>
+                <div class="diagram-point" style="top: 30%; left: 40%;">Fp1</div>
+                <div class="diagram-caption">Each lead has a specific location based on cranial landmarks.</div>
+              </div>
+            </div>
+            
+            <div class="tutorial-step" data-step="3">
+              <h3>Checking Your Placement</h3>
+              <p>When you've placed all the leads, click the "Check Placement" button to see how accurate you are.</p>
+              <div class="tutorial-diagram">
+                <div class="diagram-head"></div>
+                <div class="diagram-point correct" style="top: 30%; left: 40%;">Fp1</div>
+                <div class="diagram-point incorrect" style="top: 50%; left: 65%;">C4</div>
+                <div class="diagram-caption">Correct placements will turn green, incorrect ones will turn red.</div>
+              </div>
+            </div>
+            
+            <div class="tutorial-step" data-step="4">
+              <h3>Different Practice Modes</h3>
+              <p>Try different practice modes to challenge yourself:</p>
+              <ul>
+                <li><strong>Standard:</strong> Place all leads at your own pace</li>
+                <li><strong>Timed:</strong> Place leads within a time limit</li>
+                <li><strong>Random:</strong> Place specific requested leads</li>
+                <li><strong>Guided:</strong> Follow step-by-step instructions</li>
+              </ul>
+            </div>
+            
+            <div class="tutorial-step" data-step="5">
+              <h3>Visualizing Montages</h3>
+              <p>Use the montage selector to see how different EEG montages connect the electrodes. This helps you understand how the leads relate to each other in clinical practice.</p>
+              <div class="tutorial-diagram">
+                <div class="diagram-head"></div>
+                <div class="diagram-point" style="top: 30%; left: 40%;">Fp1</div>
+                <div class="diagram-point" style="top: 50%; left: 45%;">C3</div>
+                <div class="diagram-line"></div>
+                <div class="diagram-caption">Montages show how leads are connected for EEG interpretation.</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tutorial-navigation">
+            <button id="prev-step" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button id="next-step">Next <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+</body>
+</html>

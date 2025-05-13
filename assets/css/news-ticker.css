@@ -1,0 +1,300 @@
+/**
+ * News Ticker Styles
+ * Styling for the header news ticker that shows latest articles
+ */
+
+.news-ticker-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  position: relative;
+  background-color: var(--color-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  flex: 1; /* Take available space */
+  min-width: 0; /* Allow flex item to shrink below content size */
+}
+
+.news-ticker {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.news-ticker__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 18px 0 0 18px;
+  z-index: 2;
+}
+
+.news-ticker__content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 75px; /* Make room for the label */
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  transition: transform 0.5s ease;
+  position: relative;
+}
+
+.news-ticker__article {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 75px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.news-ticker__article.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.news-ticker__title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  position: relative;
+}
+
+.news-ticker__title:before {
+  content: attr(data-source);
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 10px;
+  color: white;
+  background-color: var(--accent-color);
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.news-ticker__title[data-source="Epilepsia"]:before {
+  background-color: #1e88e5;
+}
+
+.news-ticker__title[data-source="Epilepsy Currents"]:before {
+  background-color: #43a047;
+}
+
+.news-ticker__title[data-source="Neurology"]:before {
+  background-color: #e53935;
+}
+
+/* Dark mode specific styles */
+body.dark .news-ticker__label,
+body.dark .news-ticker__title:before {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.news-ticker__title a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.news-ticker__title a:hover {
+  color: var(--accent-color, #00a8ff);
+  text-decoration: underline;
+}
+
+.news-ticker__controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  margin-right: 5px;
+  z-index: 3;
+  position: relative;
+}
+
+.news-ticker__prev,
+.news-ticker__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.news-ticker__prev:hover,
+.news-ticker__next:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .news-ticker-container {
+    margin: 0 0.5rem;
+    height: 32px;
+    flex: 1;
+    min-width: 0; /* Allow container to shrink below content size */
+    max-width: none; /* Remove max-width restriction */
+  }
+  
+  .header-inner {
+    flex-wrap: nowrap !important; /* Never wrap header items */
+    padding: 0.5rem !important; /* Reduce padding */
+    gap: 0.25rem !important; /* Reduce gap between items */
+  }
+  
+  .logo {
+    width: auto !important; /* Allow logo to resize */
+    height: 30px !important; /* Fixed height */
+    margin-right: 0.25rem !important; /* Reduce margin */
+    flex-shrink: 0; /* Don't allow logo to shrink */
+  }
+  
+  .universal-search-menu {
+    margin-left: 0.25rem !important; /* Reduce margin */
+    flex-shrink: 0; /* Don't allow search to shrink */
+  }
+  
+  .news-ticker {
+    height: 32px;
+    padding: 0 5px; /* Reduce padding */
+  }
+  
+  .news-ticker__label {
+    font-size: 0.6rem;
+    padding: 0 4px;
+    width: 50px; /* Smaller width */
+  }
+  
+  .news-ticker__content {
+    padding-left: 50px; /* Match the smaller label width */
+  }
+  
+  /* Create overlay effect for source badge */
+  .news-ticker__content:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 50px; /* Match label width */
+    background: var(--color-dark);
+    z-index: 4;
+    pointer-events: none;
+  }
+  
+  .news-ticker__article {
+    padding-left: 50px; /* Match the smaller label width */
+  }
+  
+  .news-ticker__title {
+    font-size: 0.7rem;
+    overflow: visible;
+  }
+  
+  .news-ticker__title:before {
+    z-index: 10;
+    font-size: 0.6rem;
+    padding: 0 2px;
+    margin-right: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Hide controls on very small screens */
+  @media (max-width: 480px) {
+    .news-ticker__controls {
+      display: none;
+    }
+    
+    .news-ticker__content {
+      padding-right: 0;
+    }
+  }
+  
+  /* Article horizontal scrolling effect */
+  .news-ticker__article[data-needs-scroll="true"] .news-ticker__title a {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker-scroll 12s linear 1.5s infinite;
+    animation-fill-mode: both;
+    padding-right: 20px;
+  }
+  
+  @keyframes ticker-scroll {
+    0%, 5% {
+      transform: translateX(0);
+    }
+    95%, 100% {
+      transform: translateX(calc(-100%));
+    }
+  }
+  
+  /* Pause animation on touch */
+  .news-ticker__article:active .news-ticker__title a {
+    animation-play-state: paused;
+  }
+}
+
+/* On hover, pause the animation (desktop only) */
+@media (hover: hover) {
+  .news-ticker__article:hover .news-ticker__title a {
+    animation-play-state: paused;
+  }
+}
+
+/* Show on larger screens */
+@media (min-width: 900px) {
+  .news-ticker-container {
+    max-width: 800px;
+  }
+}
+
+/* For extra-large screens */
+@media (min-width: 1200px) {
+  .news-ticker-container {
+    max-width: 1000px;
+  }
+}

@@ -1,0 +1,116 @@
+/*-----------------------------------------------
+  MODERNIZED TABLE STYLING
+-----------------------------------------------*/
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--info-bg);
+  font-size: 1rem;
+  color: var(--text-color);
+  border-radius: 8px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 2px 6px var(--shadow-color);
+  margin: 1.5rem 0;
+  transition: background var(--transition-duration), box-shadow var(--transition-duration);
+}
+
+.custom-table thead tr {
+  background-color: var(--accent-color);
+  color: white;
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-duration);
+}
+
+.custom-table thead th {
+  font-weight: 600;
+  padding: 16px;
+  text-align: left;
+  border: none;
+}
+
+.custom-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-duration);
+}
+
+.custom-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.custom-table td,
+.custom-table th {
+  padding: 16px;
+  text-align: left;
+  border: none;
+}
+
+.custom-table td + td,
+.custom-table th + th {
+  border-left: 1px solid var(--border-color);
+}
+
+.custom-table tr:hover td {
+  background-color: var(--hover-bg);
+}
+
+.custom-table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+body.dark .custom-table {
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+body.dark .custom-table thead tr {
+  background-color: var(--accent-color);
+}
+
+body.dark .custom-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Responsive table */
+@media screen and (max-width: 768px) {
+  .responsive-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .responsive-table table {
+    min-width: 600px;
+  }
+  
+  .custom-table {
+    font-size: 0.9rem;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 12px;
+  }
+}
+
+/* Large font mode adjustments for tables */
+body.large-font .custom-table {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+body.large-font .custom-table th,
+body.large-font .custom-table td {
+  padding: 12px 15px;
+}
+
+/* Improve mobile table readability in large font mode */
+@media (max-width: 768px) {
+  body.large-font .custom-table td:before {
+    font-weight: 600;
+    padding-right: 10px;
+  }
+  
+  body.large-font .custom-table td {
+    padding: 10px 8px;
+  }
+} 

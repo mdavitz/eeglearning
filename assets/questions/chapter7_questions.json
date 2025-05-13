@@ -1,0 +1,93 @@
+[
+  {
+    "id": "7Q1",
+    "figure": "7q1.png",
+    "questionText": "A 58-year-old woman with ulcerative colitis and primary biliary sclerosis has a change in mental status while hospitalized for pneumonia. A continuous EEG is done (Fig. 7Q1). The most appropriate next step is:",
+    "options": [
+      { "value": "A", "text": "Start a dexmedetomidine (precedex) drip for non-convulsive status epilepticus (NCSE)." },
+      { "value": "B", "text": "Examine the labs and recent imaging, as this EEG is most consistent with cortical hyperexcitability secondary to a toxic metabolic encephalopathy." },
+      { "value": "C", "text": "Tell the family that you are very sorry, but that she has Creutzfeldt–Jakob disease (CJD)." },
+      { "value": "D", "text": "Get an immediate non-contrast head CT; you suspect a hemorrhage." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "The EEG shows continuous 1–2 Hz generalized periodic discharges with a triphasic morphology, classic for toxic metabolic encephalopathy. This pattern does not meet electrographic SE criteria (GPD > 2.5 Hz), although NCSE can be tested with a benzodiazepine bolus. Dexmedetomidine is not an antiseizure agent, there are no focal features to suggest hemorrhage, and the clinical picture doesn’t fit CJD."
+  },
+  {
+    "id": "7Q2",
+    "figure": "7q2.png",
+    "questionText": "The findings on the EEG (Fig. 7Q2) are most likely to be seen in which of the following clinical conditions?",
+    "options": [
+      { "value": "A", "text": "Normal—those are small-sharp spikes." },
+      { "value": "B", "text": "Left-sided transverse sinus thrombosis with left posterior strokes." },
+      { "value": "C", "text": "Meniere’s disease." },
+      { "value": "D", "text": "Anti-NMDA receptor encephalitis." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This EEG shows left hemispheric slowing with lateralized periodic discharges maximal posteriorly—classic for a focal structural lesion such as transverse sinus thrombosis with posterior infarcts. Small sharp spikes are benign variants; Meniere’s has no EEG correlate; anti-NMDA encephalitis shows extreme delta brush."
+  },
+  {
+    "id": "7Q3",
+    "figure": "7q3.png",
+    "questionText": "A 64-year-old woman is transferred in a post-anoxic coma with frequent myoclonus. Her MRI shows bilateral caudate diffusion restriction. Continuous EEG is obtained (Fig. 7Q3). From what little information you have, the most likely diagnosis is:",
+    "options": [
+      { "value": "A", "text": "Myoclonic status epilepticus in post-anoxic coma." },
+      { "value": "B", "text": "Creutzfeldt–Jakob disease." },
+      { "value": "C", "text": "Severe hepatic encephalopathy." },
+      { "value": "D", "text": "Alpha coma." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "In this clinical context—diffusion restriction in the caudates, post-anoxic coma with preserved brainstem reflexes but absent withdrawal, and EEG showing lateralized periodic discharges—the most likely etiology is Creutzfeldt–Jakob disease despite the post-anoxic setting."
+  },
+  {
+    "id": "7Q4",
+    "figure": "7q4.png",
+    "questionText": "A 65-year-old woman with an acute right subdural hematoma is encephalopathic on the ward, prompting continuous EEG (Fig. 7Q4). What is your impression and the appropriate management?",
+    "options": [
+      { "value": "A", "text": "EKG artifact—no antiseizure treatment needed." },
+      { "value": "B", "text": "1–2.5 Hz lateralized periodic discharges (LPDs) over the right hemisphere—intubate and start an anesthetic drip for NCSE." },
+      { "value": "C", "text": "1–2.5 Hz LPDs over the right hemisphere—start an antiseizure medication to prevent evolution into seizures." },
+      { "value": "D", "text": "1–2.5 Hz LPDs over the right hemisphere—no treatment needed since these are not seizures." }
+    ],
+    "correctAnswerLetter": "C",
+    "explanation": "LPDs at 1–2.5 Hz lie on the ictal–interictal continuum and warrant antiseizure medication to prevent progression to electrographic seizures. They are not mere artifact, and aggressive anesthesia for NCSE is not indicated at this stage."
+  },
+  {
+    "id": "7Q5",
+    "figure": "7q5.png",
+    "questionText": "Interpret the pattern shown in Fig. 7Q5 and select the appropriate management:",
+    "options": [
+      { "value": "A", "text": "Generalized periodic discharges—treat with antiseizure medications." },
+      { "value": "B", "text": "Non-convulsive seizure—treat with antiseizure medications." },
+      { "value": "C", "text": "Lateralized rhythmic delta without sharp components (LRDA)—no treatment needed." },
+      { "value": "D", "text": "EKG artifact." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "This is lateralized rhythmic delta activity with superimposed sharp waves—an electrographic seizure (non-convulsive). It requires antiseizure treatment. Pure LRDA without sharps does not, and this is not artifact."
+  },
+  {
+    "id": "7Q6",
+    "figure": "7q6.png",
+    "questionText": "A patient is admitted to the ICU after cardiac arrest with prolonged downtime and is started on targeted temperature management. Two days after rewarming, off sedation, the EEG has evolved from suppression into burst-suppression with identical, highly epileptiform bursts (Fig. 7Q6). How does this affect prognosis?",
+    "options": [
+      { "value": "A", "text": "Some return of cerebral activity indicates better prognosis." },
+      { "value": "B", "text": "Burst-suppression with identical epileptiform bursts indicates poor prognosis." },
+      { "value": "C", "text": "Burst-suppression is typical of sedation, so cannot prognosticate." },
+      { "value": "D", "text": "Short bursts (<10 s) without evolution are non-seizures and not prognostic." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "Post-anoxic burst-suppression with identical, highly epileptiform bursts in the absence of sedation portends a very poor neurological prognosis."
+  },
+  {
+    "id": "7Q7",
+    "figure": "7q7.png",
+    "questionText": "A 24-year-old woman is admitted after a tonic–clonic seizure and noted to have weeks of behavioral change and possible hallucinations. In the ICU she is intubated, and EEG shows rhythmic delta with superimposed fast activity (extreme delta brush) (Fig. 7Q7). Based on this and her history, you are highly suspicious for:",
+    "options": [
+      { "value": "A", "text": "Creutzfeldt–Jakob disease." },
+      { "value": "B", "text": "Autoimmune encephalitis, e.g., anti-NMDA receptor encephalitis." },
+      { "value": "C", "text": "Schizophrenia." },
+      { "value": "D", "text": "Early-onset Alzheimer dementia." }
+    ],
+    "correctAnswerLetter": "B",
+    "explanation": "Extreme delta brush (rhythmic delta with superimposed fast activity) is highly specific for anti-NMDA receptor encephalitis in the appropriate clinical context."
+  }
+]
