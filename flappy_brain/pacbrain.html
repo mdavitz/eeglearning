@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <!-- Responsive viewport for better mobile compatibility -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pac Brain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="EEG Learning">
+  <meta name="theme-color" content="#007aff">  <title>Pac Brain</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
@@ -76,6 +79,9 @@
       }
     }
   </style>
+  <!-- iOS Mobile Layout -->
+  <link rel="stylesheet" href="../assets/css/ios-style-mobile.css">
+  <script src="../assets/js/ios-mobile.js" defer></script>
 </head>
 <body>
   <canvas id="gameCanvas" width="320" height="480"></canvas>

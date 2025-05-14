@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <!-- Mobile-friendly viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flappy Brain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="EEG Learning">
+  <meta name="theme-color" content="#007aff">  <title>Flappy Brain</title>
   <!-- Load a retro 8-bit font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -44,6 +47,9 @@
       transform: translate(3px, 3px);
     }
   </style>
+  <!-- iOS Mobile Layout -->
+  <link rel="stylesheet" href="../assets/css/ios-style-mobile.css">
+  <script src="../assets/js/ios-mobile.js" defer></script>
 </head>
 <body>
   <canvas id="gameCanvas" width="320" height="480"></canvas>

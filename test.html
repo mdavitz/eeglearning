@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="EEG Learning">
+  <meta name="theme-color" content="#007aff">
+  <title>Mobile Test - EEG Learning</title>
+  
+  <!-- Add iOS style sheets -->
+  <link rel="stylesheet" href="assets/css/ios-style-mobile.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .content {
+      padding: 20px;
+      padding-top: 70px;
+    }
+    
+    .button {
+      display: inline-block;
+      background-color: #007aff;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    /* Force mobile styles for testing */
+    @media (min-width: 768px) {
+      body {
+        max-width: 390px;
+        margin: 0 auto;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        min-height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>Mobile UI Test</h1>
+    <p>This page tests the fullscreen sheets for the mobile UI.</p>
+    
+    <div style="margin: 40px 0;">
+      <a href="#" id="show-search" class="button">Open Search Sheet</a>
+      <br>
+      <a href="#" id="show-settings" class="button">Open Settings Sheet</a>
+    </div>
+    
+    <p>The sheets should now open full screen instead of as bottom sheets. They should have a close button in the top right corner.</p>
+    
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+    
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+  </div>
+
+  <!-- Mobile test script -->
+  
+  <!-- iOS mobile script -->
+  <script src="assets/js/ios-mobile-init.js" defer></script>
+  <script src="assets/js/ios-mobile.js" defer></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize mobile UI manually since we're on a desktop
+      if (typeof initMobileInterface === 'function') {
+        initMobileInterface();
+      }
+      
+      // Add event listeners for our buttons
+      document.getElementById('show-search').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof showSearchSheet === 'function') {
+          showSearchSheet();
+        }
+      });
+      
+      document.getElementById('show-settings').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof showSettingsSheet === 'function') {
+          showSettingsSheet();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
