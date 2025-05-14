@@ -316,6 +316,9 @@ function initFontSize() {
   
   if (bigFont === 'true') {
     fontSizeValue = '18px';
+    document.body.classList.add('large-font');
+  } else {
+    document.body.classList.remove('large-font');
   }
   
   document.documentElement.style.setProperty('--base-font-size', fontSizeValue);
@@ -323,6 +326,18 @@ function initFontSize() {
     bigFont === 'true' ? '16px' : '14px'); // Adjust small font size based on base size
   document.documentElement.style.setProperty('--large-font-size', 
     bigFont === 'true' ? '20px' : '18px'); // Adjust large font size based on base size
+    
+  // Dispatch a storage event for other scripts to detect the change
+  try {
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'bigFont',
+      newValue: bigFont,
+      oldValue: bigFont === 'true' ? 'false' : 'true',
+      storageArea: localStorage
+    }));
+  } catch (e) {
+    console.error('Error dispatching storage event:', e);
+  }
 }
 
 /**
