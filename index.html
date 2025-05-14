@@ -40,6 +40,9 @@
   <!-- iOS-style mobile interface -->
   <link rel="stylesheet" href="assets/css/ios-style-mobile.css" />
   
+  <!-- Mobile home redesign -->
+  <link rel="stylesheet" href="assets/css/mobile-home-redesign.css" />
+  
   <!-- Core Scripts -->
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
@@ -458,6 +461,83 @@
     <!-- Homepage Cards -->
     <div id="home-content" class="cards-container">
       <h2 class="page-title">Explore the Epilepsy Navigator</h2>
+      
+      <!-- Mobile-optimized homepage (only shows on mobile) -->
+      <div class="mobile-homepage">
+        <div class="mobile-grid">
+          <a href="epilepsy_rotation.html" class="mobile-card locked">
+            <div class="mobile-card-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="mobile-card-title">Epilepsy Rotation</h3>
+          </a>
+          
+          <a href="seizure_management.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-file-medical"></i>
+            </div>
+            <h3 class="mobile-card-title">Seizure Management</h3>
+          </a>
+          
+          <a href="ilae_classification.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-file-alt"></i>
+            </div>
+            <h3 class="mobile-card-title">ILAE Classification</h3>
+          </a>
+          
+          <a href="natus_instructions.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-desktop"></i>
+            </div>
+            <h3 class="mobile-card-title">Natus & Persyst</h3>
+          </a>
+          
+          <a href="acns_criteria.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="mobile-card-title">ACNS Criteria</h3>
+          </a>
+          
+          <a href="question_bank.html" class="mobile-card locked">
+            <div class="mobile-card-icon">
+              <i class="fas fa-question"></i>
+            </div>
+            <h3 class="mobile-card-title">Question Bank</h3>
+          </a>
+          
+          <a href="eeg_waveforms.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-wave-square"></i>
+            </div>
+            <h3 class="mobile-card-title">EEG Simulator</h3>
+          </a>
+          
+          <a href="eeg_videos.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-video"></i>
+            </div>
+            <h3 class="mobile-card-title">EEG Videos</h3>
+          </a>
+          
+          <a href="faq.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <h3 class="mobile-card-title">Learning Resources</h3>
+          </a>
+          
+          <a href="eeg_atlas.html" class="mobile-card">
+            <div class="mobile-card-icon">
+              <i class="fas fa-atlas"></i>
+            </div>
+            <h3 class="mobile-card-title">EEG Atlas</h3>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Original card grid (only shows on desktop) -->
       <div class="cards-grid">
         <!-- Card 1 -->
         <div class="card">

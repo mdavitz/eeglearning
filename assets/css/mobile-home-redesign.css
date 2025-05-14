@@ -1,0 +1,184 @@
+/* 
+ * Mobile Homepage Redesign - Simplified, clean design
+ */
+
+/* Hide mobile homepage by default */
+.mobile-homepage {
+  display: none !important;
+}
+
+/* Mobile devices only */
+@media (max-width: 767px) {
+  /* Hide desktop elements */
+  body main #home-content .cards-grid {
+    display: none !important;
+  }
+  
+  /* Main container styling */
+  body main #home-content.cards-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    background-color: #f8f8fa !important;
+  }
+  
+  body.dark main #home-content.cards-container {
+    background-color: #000 !important;
+  }
+  
+  /* Page title */
+  body main #home-content.cards-container h2 {
+    font-size: 24px !important;
+    margin: 24px 20px 16px !important;
+    padding: 0 !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    text-align: center !important;
+  }
+  
+  body.dark main #home-content.cards-container h2 {
+    color: #fff !important;
+  }
+
+  /* Show the mobile-optimized menu on mobile */
+  .mobile-homepage {
+    display: block !important;
+    padding: 0 16px 32px !important;
+  }
+  
+  /* Simple grid layout for all items */
+  .mobile-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  /* Card styling */
+  .mobile-card {
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px 10px !important;
+    min-height: 130px !important;
+    text-decoration: none !important;
+    transition: transform 0.15s ease-out !important;
+  }
+  
+  .mobile-card:active {
+    transform: scale(0.98) !important;
+    background: #f8f8fa !important;
+  }
+  
+  body.dark .mobile-card {
+    background: #1c1c1e !important;
+  }
+  
+  body.dark .mobile-card:active {
+    background: #2c2c2e !important;
+  }
+
+  /* Card icon */
+  .mobile-card-icon {
+    width: 60px !important;
+    height: 60px !important;
+    background-color: rgba(0, 122, 255, 0.1) !important;
+    border-radius: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .mobile-card-icon i {
+    font-size: 26px !important;
+    color: #007aff !important;
+  }
+  
+  /* Card color variations */
+  .mobile-card:nth-child(3n+2) .mobile-card-icon {
+    background-color: rgba(52, 199, 89, 0.1) !important;
+  }
+  
+  .mobile-card:nth-child(3n+2) .mobile-card-icon i {
+    color: #34c759 !important;
+  }
+  
+  .mobile-card:nth-child(3n+3) .mobile-card-icon {
+    background-color: rgba(255, 149, 0, 0.1) !important;
+  }
+  
+  .mobile-card:nth-child(3n+3) .mobile-card-icon i {
+    color: #ff9500 !important;
+  }
+  
+  .mobile-card:nth-child(3n+4) .mobile-card-icon {
+    background-color: rgba(175, 82, 222, 0.1) !important;
+  }
+  
+  .mobile-card:nth-child(3n+4) .mobile-card-icon i {
+    color: #af52de !important;
+  }
+  
+  /* Card title */
+  .mobile-card-title {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    color: #000 !important;
+    margin: 0 !important;
+  }
+  
+  body.dark .mobile-card-title {
+    color: #fff !important;
+  }
+  
+  /* Badge for locked content */
+  .mobile-card.locked::after {
+    content: '\f023' !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    font-size: 11px !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: #007aff !important;
+    color: white !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* For very small screens */
+  @media (max-width: 374px) {
+    .mobile-grid {
+      gap: 12px !important;
+    }
+    
+    .mobile-card {
+      min-height: 110px !important;
+      padding: 16px 8px !important;
+    }
+    
+    .mobile-card-icon {
+      width: 50px !important;
+      height: 50px !important;
+      margin-bottom: 10px !important;
+    }
+    
+    .mobile-card-icon i {
+      font-size: 22px !important;
+    }
+    
+    .mobile-card-title {
+      font-size: 13px !important;
+    }
+  }
+} 

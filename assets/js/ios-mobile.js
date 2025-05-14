@@ -135,12 +135,60 @@ function updatePageTitle() {
     pageTitleElement.className = 'ios-page-title';
     pageTitleElement.textContent = pageTitle;
     document.body.insertBefore(pageTitleElement, document.body.firstChild);
+    
+    // Apply dark styling to the new page title
+    setTimeout(() => {
+      applyPageTitleStyle(pageTitleElement);
+    }, 10);
   } else {
     // Update the existing page title
     document.querySelector('.ios-page-title').textContent = pageTitle;
   }
 }
 
+// Helper function to apply dark styling to page title
+function applyPageTitleStyle(pageTitleElement) {
+  const titleElement = pageTitleElement || document.querySelector('.ios-page-title');
+  if (titleElement) {
+    titleElement.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 900 !important;
+      background-color: rgba(60, 60, 67, 0.95) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border-bottom: 1px solid rgba(80, 80, 90, 0.3) !important;
+      padding: 0 16px !important;
+      height: 44px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: calc(var(--base-font-size) + 2px) !important;
+      font-weight: 600 !important;
+      color: white !important;
+      letter-spacing: -0.2px !important;
+      transition: all var(--ios-transition) !important;
+      padding-top: var(--ios-safe-area-top) !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      text-align: center !important;
+      min-height: calc(44px + var(--ios-safe-area-top)) !important;
+    `;
+    
+    // Apply different style for dark mode
+    if (document.body.classList.contains('dark')) {
+      titleElement.style.cssText += `
+        background-color: rgba(28, 28, 30, 0.95) !important;
+        border-bottom-color: #38383a !important;
+      `;
+    }
+  }
+}
+
+/**
+ * Initializes the mobile interface
+ */
 function initMobileInterface() {
   // Hide header and footer on mobile
   const header = document.querySelector('header, #header-container');
@@ -155,6 +203,12 @@ function initMobileInterface() {
   
   // Update page title
   updatePageTitle();
+  
+  // Apply custom styling to the page title to match the bottom bar
+  const pageTitle = document.querySelector('.ios-page-title');
+  if (pageTitle) {
+    applyPageTitleStyle(pageTitle);
+  }
   
   // Handle any EEG Curriculum elements by hiding them
   const curriculumBars = document.querySelectorAll('header .curriculum-bar, #curriculum-bar, .top-menu-bar, header .curriculum-nav, #top-nav, header .navigation-bar, .curriculum-reference');
@@ -285,19 +339,32 @@ function createTabBar() {
   tabBar.className = 'mobile-nav';
   
   // Force the styling directly in JavaScript using darker colors
-  tabBar.style.backgroundColor = 'rgba(60, 60, 67, 0.95)'; // Much darker grey
-  tabBar.style.backdropFilter = 'blur(10px)';
-  tabBar.style.WebkitBackdropFilter = 'blur(10px)';
-  tabBar.style.borderTop = '1px solid rgba(80, 80, 90, 0.3)';
-  tabBar.style.boxShadow = '0 -1px 3px rgba(0, 0, 0, 0.1)';
-  
-  // Make tab icons white for contrast
-  tabBar.style.color = 'white';
+  // Use !important flag to override any existing styles
+  tabBar.style.cssText = `
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 60px !important;
+    padding-bottom: var(--ios-safe-area-bottom) !important;
+    background-color: rgba(60, 60, 67, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-top: 1px solid rgba(80, 80, 90, 0.3) !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    z-index: 1000 !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1) !important;
+    color: white !important;
+  `;
   
   // Apply dark mode styling if needed - even darker in dark mode
   if (document.body.classList.contains('dark')) {
-    tabBar.style.backgroundColor = 'rgba(28, 28, 30, 0.95)';
-    tabBar.style.borderTopColor = '#38383a';
+    tabBar.style.cssText += `
+      background-color: rgba(28, 28, 30, 0.95) !important;
+      border-top-color: #38383a !important;
+    `;
   }
   
   // Define tab items - removed epilepsy and seizure tabs, keeping only essential navigation
@@ -312,19 +379,20 @@ function createTabBar() {
     const tabLink = document.createElement('a');
     tabLink.href = tab.url;
     tabLink.setAttribute('aria-label', tab.label); // Add aria-label for accessibility
-    tabLink.style.color = 'white'; // Make tab icons white
+    tabLink.style.cssText = 'color: white !important; flex: 1 !important; display: flex !important; align-items: center !important; justify-content: center !important; height: 100% !important;';
     
     // Set as active if it's the current page
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     if (tab.url === currentPage) {
       tabLink.className = 'active';
-      tabLink.style.color = '#0A84FF'; // iOS blue for active tab
+      tabLink.style.color = '#0A84FF !important'; // iOS blue for active tab
     }
     
     // Add tab icon
     const icon = document.createElement('i');
     icon.className = tab.icon;
     icon.setAttribute('aria-hidden', 'true');
+    icon.style.cssText = 'font-size: 24px !important;';
     tabLink.appendChild(icon);
     
     // Don't add text label anymore to save space
@@ -356,23 +424,46 @@ function createTabBar() {
   const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       if (mutation.target === document.body && mutation.attributeName === 'class') {
+        // Update bottom navigation bar
         if (document.body.classList.contains('dark')) {
-          tabBar.style.backgroundColor = 'rgba(28, 28, 30, 0.95)';
-          tabBar.style.borderTopColor = '#38383a';
+          tabBar.style.cssText += `
+            background-color: rgba(28, 28, 30, 0.95) !important;
+            border-top-color: #38383a !important;
+          `;
         } else {
-          tabBar.style.backgroundColor = 'rgba(60, 60, 67, 0.95)';
-          tabBar.style.borderTopColor = 'rgba(80, 80, 90, 0.3)';
+          tabBar.style.cssText += `
+            background-color: rgba(60, 60, 67, 0.95) !important;
+            border-top-color: rgba(80, 80, 90, 0.3) !important;
+          `;
         }
         
         // Update tab colors
         const tabs = document.querySelectorAll('.mobile-nav a');
         tabs.forEach(tab => {
           if (tab.classList.contains('active')) {
-            tab.style.color = '#0A84FF'; // iOS blue for active tab
+            tab.style.cssText += 'color: #0A84FF !important;'; // iOS blue for active tab
           } else {
-            tab.style.color = 'white';
+            tab.style.cssText += 'color: white !important;';
           }
         });
+
+        // Update top page title bar to match
+        const pageTitle = document.querySelector('.ios-page-title');
+        if (pageTitle) {
+          if (document.body.classList.contains('dark')) {
+            pageTitle.style.cssText += `
+              background-color: rgba(28, 28, 30, 0.95) !important;
+              border-bottom-color: #38383a !important;
+              color: white !important;
+            `;
+          } else {
+            pageTitle.style.cssText += `
+              background-color: rgba(60, 60, 67, 0.95) !important;
+              border-bottom-color: rgba(80, 80, 90, 0.3) !important;
+              color: white !important;
+            `;
+          }
+        }
       }
     });
   });

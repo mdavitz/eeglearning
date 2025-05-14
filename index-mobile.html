@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="EEG Learning">
+  <meta name="theme-color" content="#007aff">
+  <title>EEG Learning - Epilepsy Education</title>
+  <meta name="description" content="Interactive and comprehensive epilepsy and EEG education for medical residents and students.">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/ios-style-mobile.css">
+  <link rel="stylesheet" href="assets/css/mobile-home-redesign.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Scripts -->
+  <script src="assets/js/jquery.min.js" defer></script>
+  <script src="assets/js/bootstrap.bundle.min.js" defer></script>
+  <script src="assets/js/theme-toggle.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+  <!-- iOS Mobile Layout -->
+  <link rel="stylesheet" href="assets/css/ios-style-mobile.css">
+  <script src="assets/js/ios-mobile-init.js" defer></script>
+  <script src="assets/js/ios-mobile.js" defer></script>
+</head>
+<body>
+  <!-- Include header -->
+  <div id="header-placeholder"></div>
+  
+  <main>
+    <div id="home-content" class="cards-container">
+      <h2>Explore Epilepsy</h2>
+      
+      <!-- Mobile-optimized homepage (only shows on mobile) -->
+      <div class="mobile-homepage">
+        <!-- Search bar -->
+        <div class="mobile-search-container">
+          <i class="fas fa-search mobile-search-icon"></i>
+          <input type="text" class="mobile-search" placeholder="Search topics, resources...">
+        </div>
+        
+        <!-- Featured section with horizontal scroll -->
+        <div class="featured-section">
+          <div class="section-header">
+            <h3 class="section-title">Featured</h3>
+            <a href="#" class="section-link">See All</a>
+          </div>
+          <div class="featured-content">
+            <div class="featured-card">
+              <h3>EEG Simulator</h3>
+              <p>Practice analyzing EEG patterns and waveforms</p>
+              <button class="featured-card-btn">Start Training</button>
+              <i class="fas fa-chart-line featured-card-icon"></i>
+            </div>
+            <div class="featured-card">
+              <h3>ILAE Classification</h3>
+              <p>Learn the latest seizure classification system</p>
+              <button class="featured-card-btn">Explore</button>
+              <i class="fas fa-sitemap featured-card-icon"></i>
+            </div>
+            <div class="featured-card">
+              <h3>Seizure Management</h3>
+              <p>Complete guide to epilepsy treatment options</p>
+              <button class="featured-card-btn">View Guide</button>
+              <i class="fas fa-pills featured-card-icon"></i>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Categories section -->
+        <div class="categories-section">
+          <div class="section-header">
+            <h3 class="section-title">Categories</h3>
+          </div>
+          <div class="categories-grid">
+            <div class="category-card">
+              <div class="category-icon">
+                <i class="fas fa-book-medical"></i>
+              </div>
+              <div class="category-text">
+                <h4 class="category-title">Learning Modules</h4>
+                <p class="category-count">5 resources</p>
+              </div>
+            </div>
+            <div class="category-card">
+              <div class="category-icon">
+                <i class="fas fa-brain"></i>
+              </div>
+              <div class="category-text">
+                <h4 class="category-title">Clinical EEG</h4>
+                <p class="category-count">4 resources</p>
+              </div>
+            </div>
+            <div class="category-card">
+              <div class="category-icon">
+                <i class="fas fa-heartbeat"></i>
+              </div>
+              <div class="category-text">
+                <h4 class="category-title">Seizure Types</h4>
+                <p class="category-count">3 resources</p>
+              </div>
+            </div>
+            <div class="category-card">
+              <div class="category-icon">
+                <i class="fas fa-gamepad"></i>
+              </div>
+              <div class="category-text">
+                <h4 class="category-title">Interactive Tools</h4>
+                <p class="category-count">2 resources</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick access section -->
+        <div class="quick-access-section">
+          <div class="section-header">
+            <h3 class="section-title">Quick Access</h3>
+          </div>
+          <div class="quick-access-grid">
+            <a href="eeg_simulator.html" class="quick-card">
+              <div class="quick-icon">
+                <i class="fas fa-wave-square"></i>
+              </div>
+              <p class="quick-title">EEG Simulator</p>
+            </a>
+            <a href="eeg_videos.html" class="quick-card">
+              <div class="quick-icon">
+                <i class="fas fa-film"></i>
+              </div>
+              <p class="quick-title">EEG Videos</p>
+            </a>
+            <a href="acns_criteria.html" class="quick-card">
+              <div class="quick-icon">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <p class="quick-title">ACNS Criteria</p>
+            </a>
+            <a href="learning_resources.html" class="quick-card">
+              <div class="quick-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <p class="quick-title">Resources</p>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Recent content section -->
+        <div class="recent-section">
+          <div class="section-header">
+            <h3 class="section-title">Recently Updated</h3>
+          </div>
+          <div class="recent-list">
+            <a href="seizure_management.html" class="recent-item">
+              <div class="recent-icon">
+                <i class="fas fa-file-medical"></i>
+              </div>
+              <div class="recent-text">
+                <h4 class="recent-title">Seizure Management</h4>
+                <p class="recent-subtitle">Updated 2 days ago</p>
+              </div>
+              <i class="fas fa-chevron-right recent-chevron"></i>
+            </a>
+            <a href="eeg_atlas.html" class="recent-item">
+              <div class="recent-icon">
+                <i class="fas fa-atlas"></i>
+              </div>
+              <div class="recent-text">
+                <h4 class="recent-title">EEG Atlas</h4>
+                <p class="recent-subtitle">Updated 1 week ago</p>
+              </div>
+              <i class="fas fa-chevron-right recent-chevron"></i>
+            </a>
+            <a href="natus_instructions.html" class="recent-item">
+              <div class="recent-icon">
+                <i class="fas fa-desktop"></i>
+              </div>
+              <div class="recent-text">
+                <h4 class="recent-title">Natus & Persyst</h4>
+                <p class="recent-subtitle">Updated 2 weeks ago</p>
+              </div>
+              <i class="fas fa-chevron-right recent-chevron"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Original card grid (only shows on desktop) -->
+      <div class="cards-grid">
+        <div class="card">
+          <i class="fas fa-brain"></i>
+          <h3>Epilepsy Rotation</h3>
+          <p>Essential materials for the epilepsy rotation</p>
+          <a href="epilepsy_rotation.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-file-medical"></i>
+          <h3>Seizure Management</h3>
+          <p>Guide to seizure treatment and considerations</p>
+          <a href="seizure_management.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-file-alt"></i>
+          <h3>ILAE Classification</h3>
+          <p>Overview of the current ILAE seizure classification</p>
+          <a href="ilae_classification.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-desktop"></i>
+          <h3>Natus & Persyst</h3>
+          <p>Instructions for using Natus and Persyst software</p>
+          <a href="natus_instructions.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>ACNS Criteria</h3>
+          <p>Standardized EEG terminology from ACNS</p>
+          <a href="acns_criteria.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-question-circle"></i>
+          <h3>Question Bank</h3>
+          <p>Practice questions for boards and self-assessment</p>
+          <a href="question_bank.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-wave-square"></i>
+          <h3>EEG Simulator</h3>
+          <p>Interactive EEG pattern recognition training</p>
+          <a href="eeg_simulator.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-film"></i>
+          <h3>EEG Videos</h3>
+          <p>Educational videos demonstrating EEG patterns</p>
+          <a href="eeg_videos.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-book"></i>
+          <h3>Learning Resources</h3>
+          <p>Recommended textbooks, articles, and online resources</p>
+          <a href="learning_resources.html" class="card-link"></a>
+        </div>
+        <div class="card">
+          <i class="fas fa-atlas"></i>
+          <h3>EEG Atlas</h3>
+          <p>Visual library of common EEG patterns</p>
+          <a href="eeg_atlas.html" class="card-link"></a>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Include footer -->
+  <div id="footer-placeholder"></div>
+  
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <a href="index.html" class="active">
+      <i class="fas fa-home"></i>
+    </a>
+    <a href="eeg_simulator.html">
+      <i class="fas fa-wave-square"></i>
+    </a>
+    <a href="learning_resources.html">
+      <i class="fas fa-book"></i>
+    </a>
+    <a href="profile.html">
+      <i class="fas fa-user"></i>
+    </a>
+  </nav>
+
+  <script>
+    $(function() {
+      // Load header and footer
+      $("#header-placeholder").load("includes/header.html");
+      $("#footer-placeholder").load("includes/footer.html");
+      
+      // Mobile header title
+      if (window.innerWidth < 768) {
+        $(".main-header h1").text("EEG Learning");
+      }
+    });
+  </script>
+</body>
+</html> 
