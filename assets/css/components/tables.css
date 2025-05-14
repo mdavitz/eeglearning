@@ -90,6 +90,51 @@ body.dark .custom-table tr:nth-child(even) {
   .custom-table td {
     padding: 12px;
   }
+  
+  /* Transform table to cards on mobile */
+  .custom-table[data-mobile-cards="true"] {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .custom-table[data-mobile-cards="true"] thead {
+    display: none;
+  }
+  
+  .custom-table[data-mobile-cards="true"] tr {
+    display: block;
+    margin-bottom: 15px;
+    background: var(--info-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px var(--shadow-color);
+    border: none;
+  }
+  
+  .custom-table[data-mobile-cards="true"] td {
+    display: block;
+    text-align: left;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    border-left: none !important;
+  }
+  
+  .custom-table[data-mobile-cards="true"] td:last-child {
+    border-bottom: none;
+  }
+  
+  .custom-table[data-mobile-cards="true"] td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--accent-color);
+  }
+  
+  /* Custom handling for status epilepticus table */
+  table:not([data-mobile-cards="true"]) td[data-label="Phase"]::before {
+    display: none;
+  }
 }
 
 /* Large font mode adjustments for tables */
