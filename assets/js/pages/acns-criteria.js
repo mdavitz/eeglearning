@@ -1,5 +1,5 @@
 /**
- * Filters the sections displayed on the ACNS Criteria page based on the selected quick link.
+ * Filters the sections displayed on the ACNS Terminology page based on the selected quick link.
  * Mimics the filterCategory function from seizure_management.html.
  * @param {string} category - The category to display ('all', 'reference-charts', 'training-module').
  */
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
   }
   
-  console.log('Initializing ACNS criteria page specific script...');
+  console.log('Initializing ACNS terminology page specific script...');
 
   // Set the 'All' button as active initially and show all sections
   const allBtn = document.getElementById('all-btn');

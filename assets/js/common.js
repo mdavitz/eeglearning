@@ -315,7 +315,7 @@ function getTabName(url) {
     'seizure_management.html': 'Seizure Management',
     'ilae_classification.html': 'ILAE Classification',
     'natus_instructions.html': 'Natus & Persyst',
-    'acns_criteria.html': 'ACNS Criteria',
+    'acns_criteria.html': 'ACNS Terminology',
     'eeg_atlas.html': 'EEG Atlas',
     'eeg_videos.html': 'EEG Videos',
     'faq.html': 'Learning Resources'

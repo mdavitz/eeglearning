@@ -234,6 +234,18 @@ body.dark h6 {
   color: var(--text-color);
 }
 
+/* Disable transitions on initial load */
+body:not(.transitions-enabled) * {
+  transition: none !important;
+}
+
+/* Enable transitions when transitions-enabled class is applied */
+body.transitions-enabled * {
+  transition-property: background-color, color, border-color, box-shadow, transform, opacity;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: ease;
+}
+
 /*-----------------------------------------------
   ACCESSIBILITY & PRINT STYLES
 -----------------------------------------------*/

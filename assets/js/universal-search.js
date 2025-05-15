@@ -107,7 +107,7 @@ const UniversalSearch = {
         keywords: ["epilepsy", "rotation", "education", "EEG"]
       },
       {
-        title: "ACNS Criteria",
+        title: "ACNS Terminology",
         content: "Standardized terminology for EEG monitoring in critical care settings, including criteria for seizures and status epilepticus.",
         url: "acns_criteria.html",
         keywords: ["ACNS", "critical care", "terminology", "EEG", "monitoring"]

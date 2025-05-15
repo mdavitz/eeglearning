@@ -43,7 +43,7 @@
   padding: 1.5rem 1.25rem;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: none;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -270,4 +270,9 @@ body.dark #home-content .card i {
 #home-content .card p {
   margin-bottom: 0.5rem;
   flex-grow: 0;
+}
+
+/* Add a class that will be applied after DOM is fully loaded */
+.transitions-enabled #home-content .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

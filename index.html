@@ -497,7 +497,7 @@
             <div class="mobile-card-icon">
               <i class="fas fa-chart-bar"></i>
             </div>
-            <h3 class="mobile-card-title">ACNS Criteria</h3>
+            <h3 class="mobile-card-title">ACNS Terminology</h3>
           </a>
           
           <a href="question_bank.html" class="mobile-card locked">
@@ -577,10 +577,10 @@
         </div>
         <!-- Card 5 -->
         <div class="card">
-          <a href="acns_criteria.html" class="card-link">ACNS Criteria</a>
+          <a href="acns_criteria.html" class="card-link">ACNS Terminology</a>
           <i class="fa-solid fa-chart-bar"></i>
           <div class="content-wrapper">
-            <h3>ACNS Criteria</h3>
+            <h3>ACNS Terminology</h3>
             <p>Reference ACNS standardized terminology and EEG pattern classification criteria.</p>
           </div>
         </div>
@@ -850,6 +850,14 @@
     window.addEventListener('appinstalled', () => {
       document.getElementById('installBtn').style.display = 'none';
       deferredPrompt = null;
+    });
+    
+    // Fix for card blinking on load
+    window.addEventListener('load', function() {
+      // Enable transitions only after everything is loaded
+      setTimeout(function() {
+        document.body.classList.add('transitions-enabled');
+      }, 100);
     });
     
     // Disclaimer auto-popup functionality
