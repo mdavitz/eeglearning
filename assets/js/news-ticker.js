@@ -1,6 +1,6 @@
 /**
- * News Ticker - Shows the latest articles from multiple epilepsy journals in the header
- * Sources: Epilepsia, Epilepsy Currents, and Neurology
+ * News Ticker - Shows the latest articles from Epilepsia journal in the header
+ * Source: Epilepsia
  */
 
 class NewsTicker {
@@ -17,20 +17,10 @@ class NewsTicker {
           name: 'Epilepsia',
           url: 'https://onlinelibrary.wiley.com/journal/15281167',
           rssUrl: 'https://onlinelibrary.wiley.com/feed/15281167/most-recent'
-        },
-        {
-          name: 'Epilepsy Currents',
-          url: 'https://journals.sagepub.com/home/EPI',
-          rssUrl: 'https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=epicy&type=etoc&feed=rss'
-        },
-        {
-          name: 'Neurology',
-          url: 'https://www.neurology.org/collection/epilepsy-seizures',
-          rssUrl: 'https://www.neurology.org/rss/current.xml'
         }
       ],
       articleCount: options.articleCount || 20,
-      scrollSpeed: options.scrollSpeed || 60, // Scroll duration in seconds (changed from 658)
+      scrollSpeed: options.scrollSpeed || 60, // Scroll duration in seconds
       siteColors: {
         blue: '#0066cc', // Site's blue color
         white: '#ffffff'  // Header icon white color
@@ -62,7 +52,7 @@ class NewsTicker {
       this.renderTicker();
       this.displayArticles();
       
-      // Attempt to fetch articles from all sources in background
+      // Attempt to fetch articles from Epilepsia in background
       await this.fetchAllArticles();
       
       // Only update UI if we actually got articles
@@ -81,43 +71,38 @@ class NewsTicker {
       // Create array to hold all articles
       let allArticles = [];
       
-      // Log which sources we're attempting to fetch
-      console.log(`Attempting to fetch from ${this.options.sources.length} sources:`, 
-        this.options.sources.map(s => s.name).join(', '));
+      // Log which source we're attempting to fetch
+      console.log(`Attempting to fetch from Epilepsia`);
       
-      // Try to fetch from each source
-      for (const source of this.options.sources) {
-        try {
-          console.log(`Fetching from ${source.name}...`);
-          const articles = await this.fetchArticlesFromSource(source);
+      // Try to fetch from Epilepsia
+      const source = this.options.sources[0];
+      try {
+        console.log(`Fetching from ${source.name}...`);
+        const articles = await this.fetchArticlesFromSource(source);
+        
+        if (articles && articles.length) {
+          console.log(`✅ Success: Got ${articles.length} articles from ${source.name}`);
+          // Add source information to each article
+          articles.forEach(article => {
+            article.source = source.name;
+            article.sourceUrl = source.url;
+          });
           
-          if (articles && articles.length) {
-            console.log(`✅ Success: Got ${articles.length} articles from ${source.name}`);
-            // Add source information to each article
-            articles.forEach(article => {
-              article.source = source.name;
-              article.sourceUrl = source.url;
-            });
-            
-            allArticles = [...allArticles, ...articles];
-          } else {
-            console.warn(`⚠️ No articles found from ${source.name}`);
-          }
-        } catch (e) {
-          console.warn(`❌ Error fetching from ${source.name}:`, e);
+          allArticles = [...articles];
+        } else {
+          console.warn(`⚠️ No articles found from ${source.name}`);
         }
+      } catch (e) {
+        console.warn(`❌ Error fetching from ${source.name}:`, e);
       }
       
       // Log overall results
-      console.log(`Retrieved ${allArticles.length} total articles from all sources`);
+      console.log(`Retrieved ${allArticles.length} total articles from Epilepsia`);
       
       // If we got any articles, use them
       if (allArticles.length > 0) {
         // Sort by date (newest first) and take most recent ones
         this.sortAndFilterArticles(allArticles);
-        
-        // Randomly shuffle the articles for display
-        this.randomizeArticles(allArticles);
         
         // Use the new articles
         this.articles = allArticles;
@@ -301,28 +286,28 @@ class NewsTicker {
         formattedDate: "May 2024"
       },
       {
-        title: "Identifying Barriers to Antiseizure Medication Adherence Among Adults With Epilepsy",
-        link: "https://journals.sagepub.com/doi/full/10.1177/15357597231168505",
-        source: "Epilepsy Currents",
+        title: "A multicentre validation of automated seizure detection using long-term scalp EEG",
+        link: "https://onlinelibrary.wiley.com/doi/10.1111/epi.17892",
+        source: "Epilepsia",
         formattedDate: "April 2024"
       },
       {
-        title: "The role of EEG in the diagnosis and classification of epilepsy syndromes",
-        link: "https://journals.sagepub.com/doi/full/10.1177/15357597231167419",
-        source: "Epilepsy Currents",
+        title: "Environmental and occupational risk factors for epilepsy in adults",
+        link: "https://onlinelibrary.wiley.com/doi/10.1111/epi.17885",
+        source: "Epilepsia",
         formattedDate: "April 2024"
       },
       {
-        title: "Evaluation of Nonmotor Seizures With Stereo-EEG",
-        link: "https://www.neurology.org/doi/10.1212/WNL.0000000000207426",
-        source: "Neurology",
-        formattedDate: "May 2024"
+        title: "Cannabidiol for drug-resistant epilepsies: Advanced MRI insights into treatment response",
+        link: "https://onlinelibrary.wiley.com/doi/10.1111/epi.17878",
+        source: "Epilepsia",
+        formattedDate: "March 2024"
       },
       {
-        title: "Treatment Response of Childhood Absence Epilepsy in a High-Resolution EEG Study",
-        link: "https://www.neurology.org/doi/10.1212/WNL.0000000000207306",
-        source: "Neurology",
-        formattedDate: "April 2024"
+        title: "Seizure forecasting using multimodal intracranial and wearable data",
+        link: "https://onlinelibrary.wiley.com/doi/10.1111/epi.17881",
+        source: "Epilepsia",
+        formattedDate: "March 2024"
       }
     ];
   }
@@ -408,15 +393,6 @@ class NewsTicker {
           font-size: 13px;
           white-space: nowrap;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Different background colors for different sources */
-        .news-ticker__item-source[data-source="Epilepsy Currents"] {
-          background-color: #5a84e4;
-        }
-        
-        .news-ticker__item-source[data-source="Neurology"] {
-          background-color: #3d4db7;
         }
         
         /* Mobile adjustments */
