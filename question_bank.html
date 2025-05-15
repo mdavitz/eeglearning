@@ -85,6 +85,7 @@
       background-color: var(--card-bg);
       color: var(--text-color);
       border-color: var(--border-color);
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     }
     
     /* Fix select options in dark mode */
@@ -94,12 +95,12 @@
     }
     
     body.dark .controls-section button {
-      background-color: var(--accent-color);
-      color: #fff;
+      background-color: rgba(41, 151, 255, 0.15);
+      color: var(--accent-color);
     }
     
     body.dark .controls-section button:hover {
-      background-color: var(--accent-hover);
+      background-color: rgba(41, 151, 255, 0.25);
     }
     
     body.dark .controls-section span {
@@ -205,14 +206,14 @@
       box-shadow: 0 4px 6px var(--shadow-color);
     }
     
-    /* Filter + Controls */
+    /* Filter + Controls - Updated to match seizure management buttons */
     .filter-container {
       max-width: 900px;
       margin: 1.5rem auto;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 1rem;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       background: var(--card-bg);
       padding: 1rem;
@@ -223,19 +224,27 @@
     .filter-section, .controls-section {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    
+    .filter-section {
+      flex-direction: column;
+      align-items: flex-start;
     }
     
     .filter-section label {
       font-weight: 500;
       color: var(--text-color);
+      margin-bottom: 0.5rem;
     }
     
     #chapterFilter {
       padding: 0.5rem 1rem;
       border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
       background: var(--option-bg);
       color: var(--text-color);
       transition: background 0.3s, color 0.3s, border-color 0.3s;
@@ -247,35 +256,66 @@
       background-position: right 0.7rem center;
       background-size: 1em;
       padding-right: 2.5rem;
+      width: 100%;
     }
     
+    .controls-section {
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    
+    /* Updated button styles to match seizure-management */
     .controls-section button {
-      padding: 0.5rem 1rem;
+      padding: 8px 18px;
       border: none;
-      background: var(--accent-color);
-      color: #fff;
-      border-radius: 4px;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: all var(--transition-duration);
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: rgba(0, 102, 204, 0.1);
+      color: var(--accent-color);
+      flex: 1;
+      text-align: center;
+      min-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .controls-section button:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
+      background-color: rgba(0, 102, 204, 0.2);
+      transform: scale(1.02);
+    }
+    
+    /* Special styling for the Reset button */
+    .controls-section #resetBtn {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .controls-section #resetBtn:hover {
+      background-color: var(--accent-hover);
     }
     
     .controls-section span {
-      padding: 0.5rem 0.75rem;
+      padding: 8px 18px;
       background: var(--option-bg);
       border: 1px solid var(--border-color);
-      border-radius: 4px;
-      font-size: 1rem;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
       color: var(--text-color);
       transition: background 0.3s, color 0.3s, border-color 0.3s;
+      flex: 1;
+      text-align: center;
+      min-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
-    /* Drill Controls */
+    /* Drill Controls - updated to match seizure-management */
     #drillControls {
       display: none;
       max-width: 900px;
@@ -286,32 +326,142 @@
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 8px var(--shadow-color);
+      justify-content: space-between;
+      flex-wrap: wrap;
     }
     
     #drillControls button {
-      padding: 0.5rem 1rem;
+      padding: 8px 18px;
       border: none;
-      background: var(--accent-color);
-      color: #fff;
-      border-radius: 4px;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: all var(--transition-duration);
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: rgba(41, 151, 255, 0.15);
+      color: var(--accent-color);
+      flex: 1;
+      min-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     #drillControls button:hover:not(:disabled) {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
+      background-color: rgba(41, 151, 255, 0.25);
+      transform: scale(1.02);
     }
     
     #drillControls button:disabled {
       background: var(--text-secondary);
       cursor: default;
+      opacity: 0.5;
+    }
+    
+    #drillControls #exitDrillBtn {
+      background-color: var(--accent-color);
+      color: white;
+      flex-basis: 100%;
+      margin-top: 0.5rem;
+    }
+    
+    #drillControls #exitDrillBtn:hover {
+      background-color: var(--accent-hover);
     }
     
     #drillIndicator {
       font-size: 1rem;
       color: var(--text-color);
+      flex: 1;
+      min-width: 60px;
+    }
+    
+    /* Mobile responsiveness - updated for new button styles */
+    @media (max-width: 768px) {
+      .filter-container {
+        width: 100%;
+        gap: 0.8rem;
+        padding: 0.8rem;
+      }
+      
+      .filter-section, .controls-section {
+        gap: 10px;
+      }
+      
+      #chapterFilter {
+        font-size: 0.9rem;
+        padding: 8px 14px;
+      }
+      
+      .controls-section button, .controls-section span {
+        min-width: 0;
+        flex: 1;
+        font-size: 0.9rem;
+        padding: 8px 14px;
+        margin-bottom: 4px;
+      }
+      
+      .page-container {
+        padding: 1.5rem 1rem;
+      }
+      
+      #drillControls {
+        gap: 10px;
+      }
+      
+      #drillControls button {
+        min-width: 0;
+        flex: 1;
+        font-size: 0.9rem;
+        padding: 8px 14px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .filter-container {
+        padding: 0.7rem;
+      }
+      
+      .controls-section {
+        gap: 8px;
+      }
+      
+      .controls-section button, .controls-section span, #drillControls button {
+        font-size: 0.85rem;
+        padding: 7px 12px;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .filter-container {
+        padding: 0.6rem;
+      }
+      
+      .controls-section {
+        flex-direction: column;
+        gap: 6px;
+        align-items: stretch;
+        width: 100%;
+      }
+      
+      .controls-section button, .controls-section span {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin: 2px 0;
+      }
+      
+      #drillControls {
+        flex-direction: column;
+        gap: 6px;
+      }
+      
+      #drillControls button, #drillIndicator {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin: 2px 0;
+      }
     }
     
     /* Floating progress bar */
@@ -779,6 +929,182 @@
         color: #f5f5f7 !important;
       }
     }
+    
+    body.dark .double-cats img {
+      border: 3px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    /* Fullscreen mode styles */
+    .fullscreen-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      z-index: 10000;
+      overflow-y: auto;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+    
+    .fullscreen-container.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    #fullscreenControls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 10001;
+      box-sizing: border-box;
+    }
+    
+    #fullscreenControls button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: rgba(41, 151, 255, 0.15);
+      color: var(--accent-color);
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    #fullscreenControls button:hover:not(:disabled) {
+      background-color: rgba(41, 151, 255, 0.25);
+      transform: scale(1.02);
+    }
+    
+    #fullscreenControls button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    
+    #fullscreenControls #exitFullscreenBtn {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    #fullscreenControls #exitFullscreenBtn:hover {
+      background-color: var(--accent-hover);
+    }
+    
+    #fullscreenIndicator {
+      font-size: 1rem;
+      color: var(--text-color);
+      background: var(--card-bg);
+      padding: 10px 20px;
+      border-radius: 980px;
+      min-width: 80px;
+      text-align: center;
+    }
+    
+    #fullscreenContent {
+      max-width: 900px;
+      margin: 0 auto 100px; /* Add margin at bottom to account for fixed controls */
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    
+    #fullscreenContent .question-card {
+      margin-bottom: 0;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      transform: none !important;
+    }
+    
+    #fullscreenContent .question-card:hover {
+      transform: none !important;
+      box-shadow: none;
+    }
+    
+    #fullscreenContent .question-card p {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    #fullscreenContent .options button {
+      font-size: 1.2rem;
+      padding: 1rem 1.5rem;
+      min-height: 4rem;
+    }
+    
+    /* Fullscreen responsive design */
+    @media (max-width: 768px) {
+      .fullscreen-container {
+        padding: 1rem;
+      }
+      
+      #fullscreenContent {
+        padding: 1.5rem;
+      }
+      
+      #fullscreenControls button {
+        min-width: 0;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      
+      #fullscreenContent .question-card p {
+        font-size: 1.2rem;
+      }
+      
+      #fullscreenContent .options button {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .fullscreen-container {
+        padding: 0.8rem;
+      }
+      
+      #fullscreenContent {
+        padding: 1.2rem;
+      }
+      
+      #fullscreenControls {
+        padding: 0.8rem;
+      }
+      
+      #fullscreenControls button {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+      }
+      
+      #fullscreenIndicator {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+        min-width: 60px;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
   <!-- iOS Mobile Layout -->
   <link rel="stylesheet" href="assets/css/ios-style-mobile.css">
@@ -1126,6 +1452,7 @@
         <div class="controls-section">
           <button id="resetBtn"><i class="fas fa-redo-alt"></i> Reset</button>
           <button id="drillToggle"><i class="fas fa-tasks"></i> Enter Drill Mode</button>
+          <button id="fullscreenToggle"><i class="fas fa-expand"></i> Full Screen</button>
           <span id="streakCounter"><i class="fas fa-fire"></i> Streak: 0</span>
           <button id="toggleProgressBtn"><i class="fas fa-chart-bar"></i> Hide Progress Bar</button>
         </div>
@@ -1136,6 +1463,19 @@
         <span id="drillIndicator">0/0</span>
         <button id="nextBtn" disabled>Next <i class="fas fa-arrow-right"></i></button>
         <button id="exitDrillBtn"><i class="fas fa-times"></i> Exit Drill Mode</button>
+      </div>
+
+      <!-- Fullscreen mode controls -->
+      <div id="fullscreenControls" style="display:none;">
+        <button id="prevFullscreenBtn"><i class="fas fa-arrow-left"></i> Previous</button>
+        <span id="fullscreenIndicator">0/0</span>
+        <button id="nextFullscreenBtn">Next <i class="fas fa-arrow-right"></i></button>
+        <button id="exitFullscreenBtn"><i class="fas fa-compress"></i> Exit Full Screen</button>
+      </div>
+
+      <!-- Fullscreen container -->
+      <div id="fullscreenContainer" class="fullscreen-container">
+        <div id="fullscreenContent"></div>
       </div>
 
       <!-- Floating progress bar -->
@@ -1183,6 +1523,84 @@
     function getCookie(n){return document.cookie.split('; ').reduce((r,v)=>{const [k,val]=v.split('=');return k===n?decodeURIComponent(val):r;},'');}
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 
+    // Question state persistence
+    const QUESTION_STATES_COOKIE = 'questionStates';
+    let questionStates = {};
+    
+    // Load question states from cookie
+    function loadQuestionStates() {
+      const savedData = getCookie(QUESTION_STATES_COOKIE);
+      if (savedData) {
+        try {
+          questionStates = JSON.parse(savedData);
+        } catch (e) {
+          console.error('Failed to parse saved question states:', e);
+          questionStates = {};
+        }
+      }
+    }
+    
+    // Save question states to cookie
+    function saveQuestionStates() {
+      // Check if we're at risk of hitting cookie size limits (typically ~4KB)
+      // If too many questions are answered, we'll only keep the most recent ones
+      const MAX_COOKIE_SIZE = 3800; // Bytes, conservatively under 4KB
+      const MAX_SAVED_QUESTIONS = 200; // Maximum number of questions to save
+      
+      let jsonData = JSON.stringify(questionStates);
+      
+      // If the data is too large, trim older entries
+      if (jsonData.length > MAX_COOKIE_SIZE || Object.keys(questionStates).length > MAX_SAVED_QUESTIONS) {
+        // Sort by timestamp (newest first)
+        const sortedEntries = Object.entries(questionStates)
+          .sort((a, b) => b[1].timestamp - a[1].timestamp);
+        
+        // Keep only the newest entries
+        const newQuestionStates = {};
+        sortedEntries.slice(0, MAX_SAVED_QUESTIONS).forEach(([key, value]) => {
+          newQuestionStates[key] = value;
+        });
+        
+        questionStates = newQuestionStates;
+        jsonData = JSON.stringify(questionStates);
+        
+        // If still too large, reduce further
+        if (jsonData.length > MAX_COOKIE_SIZE) {
+          const reducedStates = {};
+          const keepCount = Math.floor(MAX_SAVED_QUESTIONS * 0.8); // Reduce by 20%
+          sortedEntries.slice(0, keepCount).forEach(([key, value]) => {
+            reducedStates[key] = value;
+          });
+          questionStates = reducedStates;
+          jsonData = JSON.stringify(questionStates);
+        }
+      }
+      
+      setCookie(QUESTION_STATES_COOKIE, jsonData, 365);
+    }
+    
+    // Get a unique ID for a question
+    function getQuestionId(chapterId, questionNumber, questionText) {
+      return `${chapterId}_${questionNumber}_${questionText.substring(0, 30).replace(/\s+/g, '_')}`;
+    }
+    
+    // Save state for a specific question
+    function saveQuestionState(questionId, optionIndex, isCorrect) {
+      questionStates[questionId] = {
+        answered: true,
+        selectedOption: optionIndex,
+        isCorrect: isCorrect,
+        timestamp: Date.now()
+      };
+      saveQuestionStates();
+    }
+    
+    // Clear all saved question states
+    function clearQuestionStates() {
+      questionStates = {};
+      saveQuestionStates();
+    }
+
     let streak=0;
     function updateStreak(){document.getElementById('streakCounter').innerHTML=`<i class="fas fa-fire"></i> Streak: ${streak}`;}
     function incrementScore(){let c=+getCookie('correctCount')||0;setCookie('correctCount',++c,365);}
@@ -1222,7 +1640,30 @@
 
     let drillCards=[], drillIndex=0;
 
+    function resetQuestions(){
+      setCookie('correctCount',0,365);
+      setCookie('totalCount',0,365);
+      clearQuestionStates(); // Clear saved question states
+      streak=0; updateStreak(); updateProgressBar();
+      document.getElementById('drillToggle').innerHTML='<i class="fas fa-tasks"></i> Enter Drill Mode';
+      document.getElementById('drillControls').style.display='none';
+      document.querySelector('.filter-container').style.display='flex';
+      loadQuestions(); initFilter();
+      
+      // Set the chapter filter to Chapter 1 after reset
+      const chapterFilter = document.getElementById('chapterFilter');
+      if (chapterFilter) {
+        chapterFilter.value = 'chapter1';
+        // Trigger the change event to filter the questions
+        const event = new Event('change');
+        chapterFilter.dispatchEvent(event);
+      }
+    }
+
     function loadQuestions(){
+      // Load saved question states first
+      loadQuestionStates();
+      
       const bank=document.getElementById('questionBank');
       bank.innerHTML='';
       chaptersOrder.forEach(ch=>{
@@ -1238,13 +1679,18 @@
           qs.forEach((q,i)=>{
             const card=document.createElement('div');
             card.className='question-card';
+            const questionId = getQuestionId(ch, i, q.questionText);
+            card.dataset.questionId = questionId;
+            
             const flag=document.createElement('button');
             flag.className='flag-btn'; flag.textContent='🚩';
             flag.onclick=()=>card.classList.toggle('flagged');
             card.appendChild(flag);
+            
             const p=document.createElement('p');
             p.textContent=`${i+1}. ${q.questionText}`;
             card.appendChild(p);
+            
             if(q.figure){
               const img=document.createElement('img');
               img.src=`assets/questions/${q.figure}`; 
@@ -1252,40 +1698,80 @@
               img.className='question-img';
               card.appendChild(img);
             }
+            
             const ul=document.createElement('ul');
             ul.className='options';
             const fb=document.createElement('div'); fb.className='feedback-message';
             const ex=document.createElement('div'); ex.className='explanation hidden';
             ex.textContent=q.explanation||'';
             const corr=(q.correctAnswerLetter||'').trim().toUpperCase();
-            q.options.forEach(opt=>{
+            
+            // Create option buttons
+            q.options.forEach((opt, optIndex)=>{
               const li=document.createElement('li');
               const btn=document.createElement('button');
               btn.textContent=`${opt.value}. ${opt.text}`;
+              btn.dataset.optionIndex = optIndex;
+              
               btn.onclick=e=>{
                 if(e.ctrlKey){btn.classList.toggle('highlight');return;}
                 if(e.altKey){btn.classList.toggle('crossed');return;}
+                
                 const sel=opt.value.trim().toUpperCase();
                 incrementTotal();
+                
                 if(sel===corr){
                   btn.classList.add('selected','correct');
                   [...ul.querySelectorAll('button')].forEach(b=>b.disabled=true);
                   streak++; updateStreak(); incrementScore(); showCatMeme();
                   fb.textContent='Correct!'; fb.className='feedback-message correct';
+                  
+                  // Save question state
+                  saveQuestionState(questionId, optIndex, true);
                 } else {
                   btn.classList.add('selected','incorrect');
                   btn.disabled=true; card.classList.add('missed');
                   streak=0; updateStreak();
                   fb.textContent='Incorrect.'; fb.className='feedback-message incorrect';
+                  
+                  // Save question state
+                  saveQuestionState(questionId, optIndex, false);
                 }
+                
                 ex.classList.remove('hidden');
                 updateProgressBar();
               };
+              
               li.appendChild(btn); ul.appendChild(li);
             });
+            
             card.appendChild(ul); card.appendChild(fb); card.appendChild(ex);
             cont.appendChild(card);
+            
+            // Apply saved state if available
+            const savedState = questionStates[questionId];
+            if (savedState && savedState.answered) {
+              const buttons = ul.querySelectorAll('button');
+              const selectedButton = buttons[savedState.selectedOption];
+              
+              if (selectedButton) {
+                if (savedState.isCorrect) {
+                  selectedButton.classList.add('selected', 'correct');
+                  buttons.forEach(b => b.disabled = true);
+                  fb.textContent = 'Correct!';
+                  fb.className = 'feedback-message correct';
+                } else {
+                  selectedButton.classList.add('selected', 'incorrect');
+                  selectedButton.disabled = true;
+                  card.classList.add('missed');
+                  fb.textContent = 'Incorrect.';
+                  fb.className = 'feedback-message incorrect';
+                }
+                ex.classList.remove('hidden');
+              }
+            }
           });
+          
           bank.appendChild(cont);
         }).catch(err => {
           console.error(`Error loading chapter ${ch}:`, err);
@@ -1469,25 +1955,6 @@
       }
     });
 
-    function resetQuestions(){
-      setCookie('correctCount',0,365);
-      setCookie('totalCount',0,365);
-      streak=0; updateStreak(); updateProgressBar();
-      document.getElementById('drillToggle').innerHTML='<i class="fas fa-tasks"></i> Enter Drill Mode';
-      document.getElementById('drillControls').style.display='none';
-      document.querySelector('.filter-container').style.display='flex';
-      loadQuestions(); initFilter();
-      
-      // Set the chapter filter to Chapter 1 after reset
-      const chapterFilter = document.getElementById('chapterFilter');
-      if (chapterFilter) {
-        chapterFilter.value = 'chapter1';
-        // Trigger the change event to filter the questions
-        const event = new Event('change');
-        chapterFilter.dispatchEvent(event);
-      }
-    }
-
     function initFilter(){
       const chapterFilter = document.getElementById('chapterFilter');
       
@@ -1517,81 +1984,7 @@
       };
     }
 
-    document.addEventListener('DOMContentLoaded',()=>{
-      // Wait for includes to load before initializing the question bank
-      setTimeout(() => {
-        loadQuestions(); 
-        initFilter();
-        updateProgressBar();
-        
-        // Set the chapter filter to Chapter 1 by default and apply filtering immediately
-        const chapterFilter = document.getElementById('chapterFilter');
-        if (chapterFilter) {
-          chapterFilter.value = 'chapter1';
-          // Trigger the change event to filter the questions
-          const event = new Event('change');
-          chapterFilter.dispatchEvent(event);
-          
-          // Apply filtering directly - this ensures it works even if the event doesn't trigger properly
-          document.querySelectorAll('.chapter-container').forEach(ctn => {
-            const show = ctn.dataset.chapter === 'chapter1';
-            ctn.style.display = show ? 'block' : 'none';
-          });
-        }
-        
-        document.getElementById('resetBtn').onclick=resetQuestions;
-        document.getElementById('drillToggle').onclick=()=>{
-          const dc=document.getElementById('drillControls'),
-                fc=document.querySelector('.filter-container');
-          if(dc.style.display==='flex'){
-            resetQuestions();
-          } else {
-            document.getElementById('drillToggle').innerHTML='<i class="fas fa-times"></i> Exit Drill Mode';
-            fc.style.display='none';
-            const cards=Array.from(document.querySelectorAll('.question-card'));
-            shuffle(cards);
-            const bank=document.getElementById('questionBank');
-            bank.innerHTML='';
-            cards.forEach(c=>{ bank.appendChild(c); c.style.display='none'; });
-            drillCards=cards; drillIndex=0;
-            if (cards.length > 0) {
-              cards[0].style.display='block';
-            }
-            dc.style.display='flex';
-            document.getElementById('prevBtn').disabled=true;
-            document.getElementById('nextBtn').disabled=cards.length<=1;
-            document.getElementById('drillIndicator').textContent=`1/${cards.length}`;
-          }
-        };
-        document.getElementById('prevBtn').onclick=()=>{
-          if(drillIndex>0){
-            drillCards[drillIndex].style.display='none';
-            drillIndex--; drillCards[drillIndex].style.display='block';
-            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
-            document.getElementById('prevBtn').disabled=drillIndex===0;
-            document.getElementById('nextBtn').disabled=false;
-          }
-        };
-        document.getElementById('nextBtn').onclick=()=>{
-          if(drillIndex<drillCards.length-1){
-            drillCards[drillIndex].style.display='none';
-            drillIndex++; drillCards[drillIndex].style.display='block';
-            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
-            document.getElementById('nextBtn').disabled=drillIndex===drillCards.length-1;
-            document.getElementById('prevBtn').disabled=false;
-          }
-        };
-        document.getElementById('exitDrillBtn').onclick=resetQuestions;
-        document.getElementById('toggleProgressBtn').onclick=function(){
-          const pw=document.getElementById('progressWrapper');
-          pw.classList.toggle('hidden');
-          this.innerHTML=pw.classList.contains('hidden')?'<i class="fas fa-chart-bar"></i> Show Progress Bar':'<i class="fas fa-chart-bar"></i> Hide Progress Bar';
-        };
-        
-        // Start preloading cat images
-        setTimeout(preloadLocalCatImages, 1500); // Delay initial preload to prioritize page content
-      }, 800);
-    });
+    // Event listeners are consolidated at the bottom of the file
 
     // Event listener for Escape key to close cat meme
     document.addEventListener('keydown', function(e) {
@@ -1644,6 +2037,258 @@
       document.querySelectorAll('select').forEach(select => {
         select.addEventListener('focus', applyDarkModeToSelects);
       });
+    });
+
+    // ===== FULLSCREEN MODE FUNCTIONALITY =====
+    let fullscreenCards = [];
+    let fullscreenIndex = 0;
+
+    function enterFullscreenMode() {
+      // Get all visible question cards
+      const visibleCards = Array.from(document.querySelectorAll('.question-card')).filter(card => {
+        // Filter for only cards that are currently visible
+        const container = card.closest('.chapter-container');
+        return container && container.style.display !== 'none' && card.style.display !== 'none';
+      });
+
+      if (visibleCards.length === 0) {
+        alert('No questions available to display in full screen mode.');
+        return;
+      }
+
+      fullscreenCards = visibleCards;
+      fullscreenIndex = 0;
+
+      // Clone the first card and place it in the fullscreen container
+      const firstCard = fullscreenCards[0].cloneNode(true);
+      const fullscreenContent = document.getElementById('fullscreenContent');
+      fullscreenContent.innerHTML = '';
+      fullscreenContent.appendChild(firstCard);
+
+      // Set up button event handlers in the cloned card
+      setupFullscreenCardButtons(firstCard);
+
+      // Show the fullscreen container
+      document.getElementById('fullscreenContainer').classList.add('active');
+      document.getElementById('fullscreenControls').style.display = 'flex';
+      document.getElementById('fullscreenIndicator').textContent = `1/${fullscreenCards.length}`;
+
+      // Disable previous button if on first question
+      document.getElementById('prevFullscreenBtn').disabled = fullscreenIndex === 0;
+      // Disable next button if only one question
+      document.getElementById('nextFullscreenBtn').disabled = fullscreenCards.length <= 1;
+
+      // Disable body scrolling
+      document.body.style.overflow = 'hidden';
+    }
+
+    function setupFullscreenCardButtons(card) {
+      // Get the question ID from the original card
+      const questionId = fullscreenCards[fullscreenIndex].dataset.questionId;
+      
+      // Set up the flag button
+      const flagBtn = card.querySelector('.flag-btn');
+      if (flagBtn) {
+        flagBtn.onclick = function() {
+          // Toggle flagged class on both the clone and the original
+          card.classList.toggle('flagged');
+          fullscreenCards[fullscreenIndex].classList.toggle('flagged');
+        };
+      }
+
+      // Set up answer option buttons
+      const buttons = card.querySelectorAll('.options button');
+      const originalButtons = fullscreenCards[fullscreenIndex].querySelectorAll('.options button');
+      
+      buttons.forEach((btn, index) => {
+        const optionIndex = parseInt(btn.dataset.optionIndex || index);
+        
+        btn.onclick = function(e) {
+          if (e.ctrlKey) {
+            btn.classList.toggle('highlight');
+            originalButtons[index].classList.toggle('highlight');
+            return;
+          }
+          if (e.altKey) {
+            btn.classList.toggle('crossed');
+            originalButtons[index].classList.toggle('crossed');
+            return;
+          }
+
+          // If button is already disabled or has a class, do nothing
+          if (btn.disabled || btn.classList.contains('selected')) {
+            return;
+          }
+
+          // Call the click event on the original button to ensure all functionality works
+          originalButtons[index].click();
+
+          // Now mirror the changes to our cloned button
+          if (originalButtons[index].classList.contains('selected')) {
+            btn.classList.add('selected');
+            
+            if (originalButtons[index].classList.contains('correct')) {
+              btn.classList.add('correct');
+              buttons.forEach(b => b.disabled = true);
+            } else if (originalButtons[index].classList.contains('incorrect')) {
+              btn.classList.add('incorrect');
+              btn.disabled = true;
+            }
+          }
+
+          // Show explanation if it was revealed in the original
+          const explanation = card.querySelector('.explanation');
+          const originalExplanation = fullscreenCards[fullscreenIndex].querySelector('.explanation');
+          if (originalExplanation && !originalExplanation.classList.contains('hidden')) {
+            explanation.classList.remove('hidden');
+          }
+
+          // Update feedback message
+          const feedback = card.querySelector('.feedback-message');
+          const originalFeedback = fullscreenCards[fullscreenIndex].querySelector('.feedback-message');
+          if (originalFeedback) {
+            feedback.textContent = originalFeedback.textContent;
+            feedback.className = originalFeedback.className;
+          }
+        };
+      });
+    }
+
+    function exitFullscreenMode() {
+      document.getElementById('fullscreenContainer').classList.remove('active');
+      document.getElementById('fullscreenControls').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function navigateFullscreen(direction) {
+      if (direction === 'prev' && fullscreenIndex > 0) {
+        fullscreenIndex--;
+      } else if (direction === 'next' && fullscreenIndex < fullscreenCards.length - 1) {
+        fullscreenIndex++;
+      } else {
+        return; // Invalid navigation
+      }
+
+      // Clone the new card and update the fullscreen container
+      const newCard = fullscreenCards[fullscreenIndex].cloneNode(true);
+      const fullscreenContent = document.getElementById('fullscreenContent');
+      fullscreenContent.innerHTML = '';
+      fullscreenContent.appendChild(newCard);
+
+      // Set up the event handlers for buttons in the new card
+      setupFullscreenCardButtons(newCard);
+
+      // Update the indicator
+      document.getElementById('fullscreenIndicator').textContent = `${fullscreenIndex + 1}/${fullscreenCards.length}`;
+
+      // Update button states
+      document.getElementById('prevFullscreenBtn').disabled = fullscreenIndex === 0;
+      document.getElementById('nextFullscreenBtn').disabled = fullscreenIndex === fullscreenCards.length - 1;
+
+      // Scroll to the top of the fullscreen container
+      document.getElementById('fullscreenContainer').scrollTop = 0;
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      // Wait for includes to load before initializing the question bank
+      setTimeout(() => {
+        loadQuestions(); 
+        initFilter();
+        updateProgressBar();
+        
+        // Set the chapter filter to Chapter 1 by default and apply filtering immediately
+        const chapterFilter = document.getElementById('chapterFilter');
+        if (chapterFilter) {
+          chapterFilter.value = 'chapter1';
+          // Trigger the change event to filter the questions
+          const event = new Event('change');
+          chapterFilter.dispatchEvent(event);
+          
+          // Apply filtering directly - this ensures it works even if the event doesn't trigger properly
+          document.querySelectorAll('.chapter-container').forEach(ctn => {
+            const show = ctn.dataset.chapter === 'chapter1';
+            ctn.style.display = show ? 'block' : 'none';
+          });
+        }
+        
+        document.getElementById('resetBtn').onclick=resetQuestions;
+        document.getElementById('drillToggle').onclick=()=>{
+          const dc=document.getElementById('drillControls'),
+                fc=document.querySelector('.filter-container');
+          if(dc.style.display==='flex'){
+            resetQuestions();
+          } else {
+            document.getElementById('drillToggle').innerHTML='<i class="fas fa-times"></i> Exit Drill Mode';
+            fc.style.display='none';
+            const cards=Array.from(document.querySelectorAll('.question-card'));
+            shuffle(cards);
+            const bank=document.getElementById('questionBank');
+            bank.innerHTML='';
+            cards.forEach(c=>{ bank.appendChild(c); c.style.display='none'; });
+            drillCards=cards; drillIndex=0;
+            if (cards.length > 0) {
+              cards[0].style.display='block';
+            }
+            dc.style.display='flex';
+            document.getElementById('prevBtn').disabled=true;
+            document.getElementById('nextBtn').disabled=cards.length<=1;
+            document.getElementById('drillIndicator').textContent=`1/${cards.length}`;
+          }
+        };
+        
+        // Full Screen Mode button handlers
+        document.getElementById('fullscreenToggle').onclick = enterFullscreenMode;
+        document.getElementById('exitFullscreenBtn').onclick = exitFullscreenMode;
+        document.getElementById('prevFullscreenBtn').onclick = () => navigateFullscreen('prev');
+        document.getElementById('nextFullscreenBtn').onclick = () => navigateFullscreen('next');
+        
+        // Handle Escape key to exit fullscreen mode
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            if (document.getElementById('fullscreenContainer').classList.contains('active')) {
+              exitFullscreenMode();
+            } else {
+              closeCatMeme();
+            }
+          } else if (e.key === 'ArrowLeft' && document.getElementById('fullscreenContainer').classList.contains('active')) {
+            if (!document.getElementById('prevFullscreenBtn').disabled) {
+              navigateFullscreen('prev');
+            }
+          } else if (e.key === 'ArrowRight' && document.getElementById('fullscreenContainer').classList.contains('active')) {
+            if (!document.getElementById('nextFullscreenBtn').disabled) {
+              navigateFullscreen('next');
+            }
+          }
+        });
+        
+        document.getElementById('prevBtn').onclick=()=>{
+          if(drillIndex>0){
+            drillCards[drillIndex].style.display='none';
+            drillIndex--; drillCards[drillIndex].style.display='block';
+            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
+            document.getElementById('prevBtn').disabled=drillIndex===0;
+            document.getElementById('nextBtn').disabled=false;
+          }
+        };
+        document.getElementById('nextBtn').onclick=()=>{
+          if(drillIndex<drillCards.length-1){
+            drillCards[drillIndex].style.display='none';
+            drillIndex++; drillCards[drillIndex].style.display='block';
+            document.getElementById('drillIndicator').textContent=`${drillIndex+1}/${drillCards.length}`;
+            document.getElementById('nextBtn').disabled=drillIndex===drillCards.length-1;
+            document.getElementById('prevBtn').disabled=false;
+          }
+        };
+        document.getElementById('exitDrillBtn').onclick=resetQuestions;
+        document.getElementById('toggleProgressBtn').onclick=function(){
+          const pw=document.getElementById('progressWrapper');
+          pw.classList.toggle('hidden');
+          this.innerHTML=pw.classList.contains('hidden')?'<i class="fas fa-chart-bar"></i> Show Progress Bar':'<i class="fas fa-chart-bar"></i> Hide Progress Bar';
+        };
+        
+        // Start preloading cat images
+        setTimeout(preloadLocalCatImages, 1500); // Delay initial preload to prioritize page content
+      }, 800);
     });
   </script>
 </body>

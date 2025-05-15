@@ -678,10 +678,13 @@ body.dark #seizure-management .green-button:hover {
   }
   
   #seizure-management .quick-links {
-    flex-wrap: wrap;
     gap: 8px;
-    justify-content: center;
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.2rem;
+    justify-content: space-between;
+  }
+  
+  #seizure-management .quick-links #all-btn {
+    margin-bottom: 4px;
   }
   
   #seizure-management .quick-links a {
@@ -689,7 +692,7 @@ body.dark #seizure-management .green-button:hover {
     padding: 6px 12px;
     min-width: 0;
     border-radius: 6px;
-    flex: 1 0 calc(33.33% - 8px);
+    flex: 1;
     text-align: center;
   }
   
@@ -761,13 +764,19 @@ body.dark #seizure-management .green-button:hover {
   #seizure-management .quick-links {
     gap: 6px;
     margin-bottom: 0.8rem;
+    justify-content: space-between;
+  }
+  
+  #seizure-management .quick-links #all-btn {
+    margin-bottom: 3px;
   }
   
   #seizure-management .quick-links a {
     font-size: 0.8rem !important;
     padding: 5px 10px;
     border-radius: 4px;
-    flex: 1 0 calc(50% - 6px);
+    flex: 1;
+    min-width: 0;
   }
   
   #seizure-management .info-box {
@@ -859,15 +868,25 @@ body.dark #seizure-management .green-button:hover {
   #seizure-management .quick-links {
     gap: 4px;
     margin-bottom: 0.6rem;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  #seizure-management .quick-links #all-btn {
+    margin-bottom: 2px;
   }
   
   #seizure-management .quick-links a {
     font-size: 0.75rem !important;
     padding: 4px 8px;
     border-radius: 4px;
-    width: 100%;
-    flex: none;
+    min-width: 0;
+    text-align: center;
+  }
+  
+  #seizure-management .quick-links a:not(#all-btn) {
+    flex: 1 0 calc(33.33% - 4px);
   }
   
   #seizure-management .info-box {
@@ -921,10 +940,11 @@ body.dark #seizure-management .green-button:hover {
 /* Add quick links styles at the top */
 #seizure-management .quick-links {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
 }
 
 #seizure-management .quick-links a {
@@ -938,6 +958,15 @@ body.dark #seizure-management .green-button:hover {
   transition: background-color 0.3s, transform 0.3s;
   font-size: 14px;
   font-weight: 500;
+  flex: 1;
+  text-align: center;
+  min-width: 120px;
+}
+
+/* Style for the "All Content" button to be on its own row */
+#seizure-management .quick-links #all-btn {
+  flex-basis: 100%;
+  margin-bottom: 5px;
 }
 
 #seizure-management .quick-links a:hover,
