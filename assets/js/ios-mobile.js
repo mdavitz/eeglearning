@@ -48,12 +48,10 @@ function enforceMobileStyle() {
   // Hide regular header and footer
   const header = document.querySelector('header, #header-container');
   const footer = document.querySelector('footer, #footer-container');
-  const disclaimer = document.querySelector('#disclaimer-container');
   const copyright = document.querySelector('#copyright-container');
   
   if (header) header.style.display = 'none';
   if (footer) footer.style.display = 'none';
-  if (disclaimer) disclaimer.style.display = 'none';
   if (copyright) copyright.style.display = 'none';
   
   // Update page title - need to do this here as well for navigation
@@ -193,12 +191,10 @@ function initMobileInterface() {
   // Hide header and footer on mobile
   const header = document.querySelector('header, #header-container');
   const footer = document.querySelector('footer, #footer-container');
-  const disclaimer = document.querySelector('#disclaimer-container');
   const copyright = document.querySelector('#copyright-container');
   
   if (header) header.style.display = 'none';
   if (footer) footer.style.display = 'none';
-  if (disclaimer) disclaimer.style.display = 'none';
   if (copyright) copyright.style.display = 'none';
   
   // Update page title

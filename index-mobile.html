@@ -278,6 +278,9 @@
       <i class="fas fa-user"></i>
     </a>
   </nav>
+  
+  <!-- Add disclaimer container -->
+  <div id="disclaimer-container"></div>
 
   <script>
     $(function() {
@@ -289,6 +292,44 @@
       if (window.innerWidth < 768) {
         $(".main-header h1").text("EEG Learning");
       }
+      
+      // Load and display disclaimer on first login
+      $("#disclaimer-container").load("includes/disclaimer.html", function() {
+        // Check if disclaimer has been shown in the last 30 days
+        const lastShown = localStorage.getItem('disclaimerLastShown');
+        const currentTime = new Date().getTime();
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+        
+        // Show disclaimer if never shown or if it's been more than 30 days
+        if (!lastShown || (currentTime - parseInt(lastShown)) > thirtyDaysInMs) {
+          setTimeout(function() {
+            const disclaimerModal = document.getElementById('disclaimer-modal');
+            if (disclaimerModal) {
+              disclaimerModal.classList.add('active');
+              console.log('Showing mobile disclaimer - not shown in the last 30 days');
+              
+              // Store current timestamp when disclaimer is shown
+              localStorage.setItem('disclaimerLastShown', currentTime.toString());
+              
+              // Handle disclaimer close and acknowledge button
+              const disclaimerClose = document.getElementById('disclaimer-close');
+              const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
+              
+              if (disclaimerClose) {
+                disclaimerClose.addEventListener('click', function() {
+                  disclaimerModal.classList.remove('active');
+                });
+              }
+              
+              if (disclaimerAcknowledge) {
+                disclaimerAcknowledge.addEventListener('click', function() {
+                  disclaimerModal.classList.remove('active');
+                });
+              }
+            }
+          }, 1000);
+        }
+      });
     });
   </script>
 </body>
