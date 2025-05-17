@@ -45,6 +45,10 @@ function enforceMobileStyle() {
   // Only apply mobile styles if window width is mobile
   if (window.innerWidth > 767) return;
 
+  // Important: Preserve the disclaimer modal state if it's active
+  const disclaimerModal = document.getElementById('disclaimer-modal');
+  const wasActive = disclaimerModal && disclaimerModal.classList.contains('active');
+  
   // Hide regular header and footer
   const header = document.querySelector('header, #header-container');
   const footer = document.querySelector('footer, #footer-container');
@@ -53,6 +57,13 @@ function enforceMobileStyle() {
   if (header) header.style.display = 'none';
   if (footer) footer.style.display = 'none';
   if (copyright) copyright.style.display = 'none';
+  
+  // If disclaimer was active, ensure it remains visible
+  if (wasActive && disclaimerModal) {
+    disclaimerModal.style.display = 'flex';
+    disclaimerModal.style.zIndex = '10000';
+    disclaimerModal.classList.add('active');
+  }
   
   // Update page title - need to do this here as well for navigation
   updatePageTitle();
@@ -188,6 +199,10 @@ function applyPageTitleStyle(pageTitleElement) {
  * Initializes the mobile interface
  */
 function initMobileInterface() {
+  // Important: Preserve the disclaimer modal state if it's active
+  const disclaimerModal = document.getElementById('disclaimer-modal');
+  const wasActive = disclaimerModal && disclaimerModal.classList.contains('active');
+  
   // Hide header and footer on mobile
   const header = document.querySelector('header, #header-container');
   const footer = document.querySelector('footer, #footer-container');
@@ -196,6 +211,13 @@ function initMobileInterface() {
   if (header) header.style.display = 'none';
   if (footer) footer.style.display = 'none';
   if (copyright) copyright.style.display = 'none';
+  
+  // If disclaimer was active, ensure it remains visible
+  if (wasActive && disclaimerModal) {
+    disclaimerModal.style.display = 'flex';
+    disclaimerModal.style.zIndex = '10000';
+    disclaimerModal.classList.add('active');
+  }
   
   // Update page title
   updatePageTitle();
@@ -1047,6 +1069,50 @@ function showSettingsSheet() {
   
   settingsContainer.appendChild(disclaimerLink);
   
+  // Add copyright link
+  const copyrightLink = document.createElement('a');
+  copyrightLink.href = '#';
+  copyrightLink.className = 'ios-setting-link';
+  copyrightLink.style.display = 'flex';
+  copyrightLink.style.alignItems = 'center';
+  copyrightLink.style.padding = '12px 0';
+  copyrightLink.style.textDecoration = 'none';
+  copyrightLink.style.color = 'var(--ios-blue)';
+  
+  const copyrightIcon = document.createElement('i');
+  copyrightIcon.className = 'fa-solid fa-copyright';
+  copyrightIcon.style.marginRight = '12px';
+  copyrightIcon.style.fontSize = '18px';
+  copyrightIcon.style.width = '24px';
+  copyrightIcon.style.textAlign = 'center';
+  copyrightLink.appendChild(copyrightIcon);
+  
+  const copyrightLabel = document.createElement('span');
+  copyrightLabel.textContent = 'Copyright';
+  copyrightLabel.style.fontSize = '16px';
+  copyrightLabel.style.flex = '1';
+  copyrightLink.appendChild(copyrightLabel);
+  
+  const copyrightChevron = document.createElement('i');
+  copyrightChevron.className = 'fa-solid fa-chevron-right';
+  copyrightChevron.style.fontSize = '12px';
+  copyrightChevron.style.color = 'var(--ios-gray)';
+  copyrightLink.appendChild(copyrightChevron);
+  
+  copyrightLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Close settings first
+    dismissSheet();
+    
+    // Create and show a mobile-optimized copyright popup
+    setTimeout(() => {
+      showCopyrightPopup();
+    }, 400);
+  });
+  
+  settingsContainer.appendChild(copyrightLink);
+  
   // Add copyright text
   const copyrightText = document.createElement('div');
   copyrightText.className = 'ios-copyright';
@@ -1054,7 +1120,7 @@ function showSettingsSheet() {
   copyrightText.style.color = 'var(--ios-gray)';
   copyrightText.style.textAlign = 'center';
   copyrightText.style.margin = '20px 0 10px';
-  copyrightText.innerHTML = '© ' + new Date().getFullYear() + ' EEG Learning. All rights reserved.';
+  copyrightText.innerHTML = '© 2025 Matthew S. Davitz, MD.';
   settingsContainer.appendChild(copyrightText);
   
   // Add version info
@@ -1202,6 +1268,117 @@ function showDisclaimerPopup() {
   
   closeButton.addEventListener('click', closePopup);
   acknowledgeButton.addEventListener('click', closePopup);
+}
+
+/**
+ * Shows a mobile-optimized copyright popup
+ */
+function showCopyrightPopup() {
+  // Create popup container
+  const popup = document.createElement('div');
+  popup.className = 'ios-sheet ios-fullscreen-sheet';
+  popup.style.zIndex = '2000';
+  
+  // Add title
+  const title = document.createElement('h2');
+  title.textContent = 'Copyright';
+  title.style.fontSize = '20px';
+  title.style.fontWeight = '600';
+  title.style.marginBottom = '20px';
+  title.style.textAlign = 'center';
+  title.style.marginTop = '20px';
+  title.style.color = 'var(--ios-text)';
+  popup.appendChild(title);
+  
+  // Close button
+  const closeButton = document.createElement('button');
+  closeButton.className = 'ios-sheet-close';
+  closeButton.innerHTML = '<i class="fa-solid fa-times"></i>';
+  closeButton.style.position = 'absolute';
+  closeButton.style.top = '15px';
+  closeButton.style.right = '15px';
+  closeButton.style.background = 'rgba(142, 142, 147, 0.2)';
+  closeButton.style.border = 'none';
+  closeButton.style.borderRadius = '50%';
+  closeButton.style.width = '32px';
+  closeButton.style.height = '32px';
+  closeButton.style.display = 'flex';
+  closeButton.style.alignItems = 'center';
+  closeButton.style.justifyContent = 'center';
+  closeButton.style.fontSize = '16px';
+  closeButton.style.color = 'var(--ios-gray)';
+  popup.appendChild(closeButton);
+  
+  // Content
+  const content = document.createElement('div');
+  content.style.padding = '0 20px';
+  content.style.color = 'var(--ios-text)';
+  content.style.fontSize = '16px';
+  content.style.lineHeight = '1.5';
+  content.style.overflowY = 'auto';
+  content.style.height = 'calc(100% - 140px)';
+  
+  content.innerHTML = `
+    <p>
+      Unless otherwise noted, all intellectual property, including, but not limited to, copyrights to the web site and its contents 
+      are the property of the Matthew S. Davitz MD. Except when indicated, 
+      permission is hereby granted to reproduce, distribute, and display copies 
+      of content material for nonprofit educational and nonprofit library purposes, 
+      provided that: (i) copies are distributed at or below costs; (ii) author and 
+      source are acknowledged; and (iii) a copyright notice is attached to the copies, 
+      such notice being in the form of "Matthew S. Davitz MD. 2025".
+    </p>
+  `;
+  
+  popup.appendChild(content);
+  
+  // Close button at bottom
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Close';
+  closeBtn.style.display = 'block';
+  closeBtn.style.width = 'calc(100% - 40px)';
+  closeBtn.style.margin = '20px auto';
+  closeBtn.style.padding = '14px 20px';
+  closeBtn.style.backgroundColor = 'var(--ios-blue)';
+  closeBtn.style.color = 'white';
+  closeBtn.style.border = 'none';
+  closeBtn.style.borderRadius = '12px';
+  closeBtn.style.fontSize = '16px';
+  closeBtn.style.fontWeight = '500';
+  closeBtn.style.cursor = 'pointer';
+  
+  popup.appendChild(closeBtn);
+  
+  // Add overlay
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.right = '0';
+  overlay.style.bottom = '0';
+  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  overlay.style.zIndex = '1999';
+  
+  // Add to document
+  document.body.appendChild(overlay);
+  document.body.appendChild(popup);
+  
+  // Animate in
+  setTimeout(() => {
+    popup.classList.add('active');
+  }, 10);
+  
+  // Close handlers
+  const closePopup = () => {
+    popup.classList.remove('active');
+    setTimeout(() => {
+      popup.remove();
+      overlay.remove();
+    }, 300);
+  };
+  
+  closeButton.addEventListener('click', closePopup);
+  closeBtn.addEventListener('click', closePopup);
 }
 
 /**

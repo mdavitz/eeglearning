@@ -292,45 +292,90 @@
       if (window.innerWidth < 768) {
         $(".main-header h1").text("EEG Learning");
       }
-      
-      // Load and display disclaimer on first login
-      $("#disclaimer-container").load("includes/disclaimer.html", function() {
-        // Check if disclaimer has been shown in the last 30 days
-        const lastShown = localStorage.getItem('disclaimerLastShown');
-        const currentTime = new Date().getTime();
-        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-        
-        // Show disclaimer if never shown or if it's been more than 30 days
-        if (!lastShown || (currentTime - parseInt(lastShown)) > thirtyDaysInMs) {
-          setTimeout(function() {
-            const disclaimerModal = document.getElementById('disclaimer-modal');
-            if (disclaimerModal) {
-              disclaimerModal.classList.add('active');
-              console.log('Showing mobile disclaimer - not shown in the last 30 days');
-              
-              // Store current timestamp when disclaimer is shown
-              localStorage.setItem('disclaimerLastShown', currentTime.toString());
-              
-              // Handle disclaimer close and acknowledge button
-              const disclaimerClose = document.getElementById('disclaimer-close');
-              const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
-              
-              if (disclaimerClose) {
-                disclaimerClose.addEventListener('click', function() {
-                  disclaimerModal.classList.remove('active');
-                });
-              }
-              
-              if (disclaimerAcknowledge) {
-                disclaimerAcknowledge.addEventListener('click', function() {
-                  disclaimerModal.classList.remove('active');
-                });
-              }
-            }
-          }, 1000);
-        }
-      });
     });
+    
+    // Ensure disclaimer is loaded and shown correctly on first visit
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load the disclaimer HTML directly into the container
+      fetch('includes/disclaimer.html')
+        .then(response => response.text())
+        .then(html => {
+          const disclaimerContainer = document.getElementById('disclaimer-container');
+          if (disclaimerContainer) {
+            disclaimerContainer.innerHTML = html;
+            
+            // Now check if we should show it (after it's fully loaded)
+            setTimeout(function() {
+              checkAndShowDisclaimer();
+            }, 500);
+          }
+        })
+        .catch(error => console.error('Error loading disclaimer:', error));
+    });
+    
+    // Function to check if disclaimer should be shown and display it
+    function checkAndShowDisclaimer() {
+      // Reset disclaimer display if it was hidden by mobile scripts
+      const disclaimerContainer = document.getElementById('disclaimer-container');
+      if (disclaimerContainer) {
+        disclaimerContainer.style.display = 'block';
+      }
+      
+      // Check if disclaimer has been shown in the last 30 days
+      const lastShown = localStorage.getItem('disclaimerLastShown');
+      const currentTime = new Date().getTime();
+      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+      
+      // Force show for debugging - remove in production
+      // localStorage.removeItem('disclaimerLastShown');
+      
+      // Show disclaimer if never shown or if it's been more than 30 days
+      if (!lastShown || (currentTime - parseInt(lastShown)) > thirtyDaysInMs) {
+        console.log('Should show disclaimer - not shown in the last 30 days');
+        
+        const disclaimerModal = document.getElementById('disclaimer-modal');
+        if (disclaimerModal) {
+          // Ensure the modal is visible and above other elements
+          disclaimerModal.style.display = 'flex';
+          disclaimerModal.style.zIndex = '10000';
+          disclaimerModal.classList.add('active');
+          
+          // Store current timestamp when disclaimer is shown
+          localStorage.setItem('disclaimerLastShown', currentTime.toString());
+          
+          // Handle disclaimer close and acknowledge button
+          const disclaimerClose = document.getElementById('disclaimer-close');
+          const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
+          
+          if (disclaimerClose) {
+            disclaimerClose.addEventListener('click', function() {
+              disclaimerModal.classList.remove('active');
+            });
+          }
+          
+          if (disclaimerAcknowledge) {
+            disclaimerAcknowledge.addEventListener('click', function() {
+              disclaimerModal.classList.remove('active');
+            });
+          }
+        } else {
+          console.error('Disclaimer modal element not found');
+        }
+      } else {
+        console.log('Disclaimer not shown - already seen in the last 30 days');
+      }
+    }
+    
+    // Function to debug/test the disclaimer - can be called from console: resetDisclaimerState()
+    function resetDisclaimerState() {
+      console.log('Resetting disclaimer state for testing...');
+      localStorage.removeItem('disclaimerLastShown');
+      checkAndShowDisclaimer();
+      return 'Disclaimer state reset - it should now appear on next page load';
+    }
+    
+    // Uncomment to force disclaimer to show during testing
+    // setTimeout(resetDisclaimerState, 2000);
   </script>
 </body>
 </html> 
